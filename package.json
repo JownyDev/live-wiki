@@ -1,0 +1,22 @@
+{
+  "name": "live-wiki",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.44.0",
+    "@typescript-eslint/parser": "^8.44.0",
+    "eslint": "^9.35.0",
+    "eslint-config-prettier": "^10.0.0",
+    "prettier": "^3.7.0",
+    "typescript": "^5.5.4",
+    "vitest": "^3.2.4"
+  }
+}
