@@ -5,36 +5,43 @@ import matter from 'gray-matter';
 type CharacterListItem = { id: string; name: string };
 type Character = { id: string; name: string; body: string };
 
+type NodeErrorWithCode = Error & { code?: string };
+
 const getCharactersDir = (baseDir?: string): string => {
-  const resolvedBaseDir =
-    baseDir ?? path.resolve(process.cwd(), 'content');
+  const resolvedBaseDir = baseDir ?? path.resolve(process.cwd(), 'content');
   return path.join(resolvedBaseDir, 'characters');
 };
 
-const parseAndValidateCharacterMarkdown = (
-  markdown: string,
-): { id: string; name: string; body: string } => {
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const getStringField = (record: Record<string, unknown>, field: string): string => {
+  const value = record[field];
+  if (typeof value !== 'string') {
+    throw new Error(`Invalid ${field}`);
+  }
+  return value;
+};
+
+const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
   const parsed = matter(markdown);
   const data: unknown = parsed.data;
 
-  if (typeof data !== 'object' || data === null) {
+  if (!isRecord(data)) {
     throw new Error('Invalid frontmatter');
   }
-
-  const record = data as Record<string, unknown>;
-
-  if (record.type !== 'character') {
+  if (data.type !== 'character') {
     throw new Error('Invalid type');
   }
-  if (typeof record.id !== 'string') {
-    throw new Error('Invalid id');
-  }
-  if (typeof record.name !== 'string') {
-    throw new Error('Invalid name');
-  }
 
-  return { id: record.id, name: record.name, body: parsed.content };
+  const id = getStringField(data, 'id');
+  const name = getStringField(data, 'name');
+
+  return { id, name, body: parsed.content };
 };
+
+const isEnoentError = (error: unknown): error is NodeErrorWithCode =>
+  error instanceof Error && (error as NodeErrorWithCode).code === 'ENOENT';
 
 export async function listCharacters(
   baseDir?: string,
@@ -69,17 +76,11 @@ export async function getCharacterById(
   try {
     markdown = await readFile(filePath, 'utf8');
   } catch (error: unknown) {
-    if (
-      typeof error === 'object' &&
-      error !== null &&
-      'code' in error &&
-      (error as { code?: unknown }).code === 'ENOENT'
-    ) {
+    if (isEnoentError(error)) {
       return null;
     }
     throw error;
   }
 
-  const parsed = parseAndValidateCharacterMarkdown(markdown);
-  return { id: parsed.id, name: parsed.name, body: parsed.body };
+  return parseAndValidateCharacterMarkdown(markdown);
 }
