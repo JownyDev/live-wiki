@@ -1,0 +1,30 @@
+---
+import { listCharacters } from '../../lib/content/characters';
+
+const title = 'Characters';
+const characters = await listCharacters();
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <main>
+      <h1>{title}</h1>
+      {characters.length === 0 ? (
+        <p>No characters yet.</p>
+      ) : (
+        <ul>
+          {characters.map((character) => (
+            <li>
+              <a href={`/characters/${character.id}`}>{character.name}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
+  </body>
+</html>

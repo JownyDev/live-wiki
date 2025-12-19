@@ -1,0 +1,40 @@
+---
+import { getCharacterById, listCharacters } from '../../lib/content/characters';
+
+export async function getStaticPaths() {
+  const characters = await listCharacters();
+  return characters.map((character) => ({
+    params: { id: character.id },
+  }));
+}
+
+const id = Astro.params.id;
+const character = typeof id === 'string' ? await getCharacterById(id) : null;
+const title = character ? character.name : 'Character not found';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <main>
+      {character ? (
+        <>
+          <h1>{character.name}</h1>
+          <div style="white-space: pre-wrap;">{character.body}</div>
+        </>
+      ) : (
+        <>
+          <h1>Character not found</h1>
+          <p>The requested character does not exist.</p>
+          <p>
+            <a href="/characters">Back to characters</a>
+          </p>
+        </>
+      )}
+    </main>
+  </body>
+</html>
