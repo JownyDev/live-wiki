@@ -77,19 +77,28 @@ const parseAndValidateEventMarkdown = (markdown: string): Event => {
 const isEnoentError = (error: unknown): error is NodeErrorWithCode =>
   error instanceof Error && (error as NodeErrorWithCode).code === 'ENOENT';
 
-export async function listEvents(baseDir?: string): Promise<Array<EventListItem>> {
-  const eventsDir = getEventsDir(baseDir);
+const listEventMarkdownFiles = async (eventsDir: string): Promise<string[]> => {
   const entries = await readdir(eventsDir, { withFileTypes: true });
-
-  const markdownFiles = entries
+  return entries
     .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
     .map((entry) => entry.name);
+};
+
+const readEventFromFile = async (eventsDir: string, filename: string): Promise<Event> => {
+  const filePath = path.join(eventsDir, filename);
+  const markdown = await readFile(filePath, 'utf8');
+  return parseAndValidateEventMarkdown(markdown);
+};
+
+const getCharacterTag = (characterId: string): string => `character:${characterId}`;
+
+export async function listEvents(baseDir?: string): Promise<Array<EventListItem>> {
+  const eventsDir = getEventsDir(baseDir);
+  const markdownFiles = await listEventMarkdownFiles(eventsDir);
 
   const events: EventListItem[] = [];
   for (const filename of markdownFiles) {
-    const filePath = path.join(eventsDir, filename);
-    const markdown = await readFile(filePath, 'utf8');
-    const { id, title, date } = parseAndValidateEventMarkdown(markdown);
+    const { id, title, date } = await readEventFromFile(eventsDir, filename);
     events.push({ id, title, date });
   }
 
@@ -122,18 +131,12 @@ export async function listEventsByCharacterId(
   baseDir?: string,
 ): Promise<Array<EventListItem>> {
   const eventsDir = getEventsDir(baseDir);
-  const entries = await readdir(eventsDir, { withFileTypes: true });
+  const markdownFiles = await listEventMarkdownFiles(eventsDir);
 
-  const markdownFiles = entries
-    .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
-    .map((entry) => entry.name);
-
-  const characterTag = `character:${characterId}`;
+  const characterTag = getCharacterTag(characterId);
   const events: EventListItem[] = [];
   for (const filename of markdownFiles) {
-    const filePath = path.join(eventsDir, filename);
-    const markdown = await readFile(filePath, 'utf8');
-    const { id, title, date, who } = parseAndValidateEventMarkdown(markdown);
+    const { id, title, date, who } = await readEventFromFile(eventsDir, filename);
     if (who.includes(characterTag)) {
       events.push({ id, title, date });
     }
