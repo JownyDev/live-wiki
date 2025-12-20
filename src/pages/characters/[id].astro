@@ -1,5 +1,6 @@
 ---
 import { getCharacterById, listCharacters } from '../../lib/content/characters';
+import { listEventsByCharacterId } from '../../lib/content/events';
 
 export async function getStaticPaths() {
   const characters = await listCharacters();
@@ -10,7 +11,9 @@ export async function getStaticPaths() {
 
 const id = Astro.params.id;
 const character = typeof id === 'string' ? await getCharacterById(id) : null;
-const title = character ? character.name : 'Character not found';
+const events =
+  character && typeof id === 'string' ? await listEventsByCharacterId(id) : [];
+const title = character ? character.name : 'Personaje no encontrado';
 ---
 
 <html lang="en">
@@ -25,13 +28,28 @@ const title = character ? character.name : 'Character not found';
         <>
           <h1>{character.name}</h1>
           <div style="white-space: pre-wrap;">{character.body}</div>
+          <section>
+            <h2>Eventos</h2>
+            {events.length === 0 ? (
+              <p>Sin eventos.</p>
+            ) : (
+              <ul>
+                {events.map((event) => (
+                  <li>
+                    <a href={`/events/${event.id}`}>{event.title}</a>
+                    <span> ({event.date})</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
         </>
       ) : (
         <>
-          <h1>Character not found</h1>
-          <p>The requested character does not exist.</p>
+          <h1>Personaje no encontrado</h1>
+          <p>El personaje solicitado no existe.</p>
           <p>
-            <a href="/characters">Back to characters</a>
+            <a href="/characters">Volver a personajes</a>
           </p>
         </>
       )}

@@ -1,0 +1,41 @@
+---
+import { getEventById, listEvents } from '../../lib/content/events';
+
+export async function getStaticPaths() {
+  const events = await listEvents();
+  return events.map((event) => ({
+    params: { id: event.id },
+  }));
+}
+
+const id = Astro.params.id;
+const event = typeof id === 'string' ? await getEventById(id) : null;
+const title = event ? event.title : 'Evento no encontrado';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <main>
+      {event ? (
+        <>
+          <h1>{event.title}</h1>
+          <p>{event.date}</p>
+          <div style="white-space: pre-wrap;">{event.body}</div>
+        </>
+      ) : (
+        <>
+          <h1>Evento no encontrado</h1>
+          <p>El evento solicitado no existe.</p>
+          <p>
+            <a href="/events">Volver a eventos</a>
+          </p>
+        </>
+      )}
+    </main>
+  </body>
+</html>

@@ -1,8 +1,8 @@
 ---
-import { listCharacters } from '../../lib/content/characters';
+import { listEvents } from '../../lib/content/events';
 
-const title = 'Personajes';
-const characters = await listCharacters();
+const title = 'Eventos';
+const events = await listEvents();
 ---
 
 <html lang="en">
@@ -14,13 +14,14 @@ const characters = await listCharacters();
   <body>
     <main>
       <h1>{title}</h1>
-      {characters.length === 0 ? (
-        <p>No hay personajes todavía.</p>
+      {events.length === 0 ? (
+        <p>No hay eventos todavía.</p>
       ) : (
         <ul>
-          {characters.map((character) => (
+          {events.map((event) => (
             <li>
-              <a href={`/characters/${character.id}`}>{character.name}</a>
+              <a href={`/events/${event.id}`}>{event.title}</a>
+              <span> ({event.date})</span>
             </li>
           ))}
         </ul>
