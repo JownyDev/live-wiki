@@ -1,33 +1,18 @@
-import { readdir, readFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import matter from 'gray-matter';
+import { getStringField, parseFrontmatter } from './frontmatter';
+import { listMarkdownFiles } from './markdown-files';
 
 export type SimpleEntityListItem = { id: string; name: string };
 export type SimpleEntity = { id: string; name: string; body: string };
 
 type NodeErrorWithCode = Error & { code?: string };
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null;
-
-const getStringField = (record: Record<string, unknown>, field: string): string => {
-  const value = record[field];
-  if (typeof value !== 'string') {
-    throw new Error(`Invalid ${field}`);
-  }
-  return value;
-};
-
 const parseAndValidateSimpleEntityMarkdown = (
   markdown: string,
   expectedType: string,
 ): SimpleEntity => {
-  const parsed = matter(markdown);
-  const data: unknown = parsed.data;
-
-  if (!isRecord(data)) {
-    throw new Error('Invalid frontmatter');
-  }
+  const { data, content } = parseFrontmatter(markdown);
   if (data.type !== expectedType) {
     throw new Error('Invalid type');
   }
@@ -35,7 +20,7 @@ const parseAndValidateSimpleEntityMarkdown = (
   const id = getStringField(data, 'id');
   const name = getStringField(data, 'name');
 
-  return { id, name, body: parsed.content };
+  return { id, name, body: content };
 };
 
 const isEnoentError = (error: unknown): error is NodeErrorWithCode =>
@@ -45,11 +30,7 @@ export async function listSimpleEntities(
   dir: string,
   expectedType: string,
 ): Promise<Array<SimpleEntityListItem>> {
-  const entries = await readdir(dir, { withFileTypes: true });
-
-  const markdownFiles = entries
-    .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
-    .map((entry) => entry.name);
+  const markdownFiles = await listMarkdownFiles(dir);
 
   const entities: SimpleEntityListItem[] = [];
   for (const filename of markdownFiles) {
