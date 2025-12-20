@@ -116,3 +116,29 @@ export async function getEventById(
 
   return parseAndValidateEventMarkdown(markdown);
 }
+
+export async function listEventsByCharacterId(
+  characterId: string,
+  baseDir?: string,
+): Promise<Array<EventListItem>> {
+  const eventsDir = getEventsDir(baseDir);
+  const entries = await readdir(eventsDir, { withFileTypes: true });
+
+  const markdownFiles = entries
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+    .map((entry) => entry.name);
+
+  const characterTag = `character:${characterId}`;
+  const events: EventListItem[] = [];
+  for (const filename of markdownFiles) {
+    const filePath = path.join(eventsDir, filename);
+    const markdown = await readFile(filePath, 'utf8');
+    const { id, title, date, who } = parseAndValidateEventMarkdown(markdown);
+    if (who.includes(characterTag)) {
+      events.push({ id, title, date });
+    }
+  }
+
+  events.sort((a, b) => a.date.localeCompare(b.date));
+  return events;
+}
