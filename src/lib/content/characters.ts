@@ -1,68 +1,37 @@
-import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
-import matter from 'gray-matter';
+import {
+  getSimpleEntityById,
+  listSimpleEntities,
+  type SimpleEntity,
+  type SimpleEntityListItem,
+} from './simple-entities';
 
-type CharacterListItem = { id: string; name: string };
-type Character = { id: string; name: string; body: string };
-
-type NodeErrorWithCode = Error & { code?: string };
+export type CharacterListItem = { id: string; name: string };
+export type Character = { id: string; name: string; body: string };
 
 const getCharactersDir = (baseDir?: string): string => {
   const resolvedBaseDir = baseDir ?? path.resolve(process.cwd(), 'content');
   return path.join(resolvedBaseDir, 'characters');
 };
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null;
+const toCharacterListItem = (entity: SimpleEntityListItem): CharacterListItem => ({
+  id: entity.id,
+  name: entity.name,
+});
 
-const getStringField = (record: Record<string, unknown>, field: string): string => {
-  const value = record[field];
-  if (typeof value !== 'string') {
-    throw new Error(`Invalid ${field}`);
-  }
-  return value;
-};
-
-const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
-  const parsed = matter(markdown);
-  const data: unknown = parsed.data;
-
-  if (!isRecord(data)) {
-    throw new Error('Invalid frontmatter');
-  }
-  if (data.type !== 'character') {
-    throw new Error('Invalid type');
-  }
-
-  const id = getStringField(data, 'id');
-  const name = getStringField(data, 'name');
-
-  return { id, name, body: parsed.content };
-};
-
-const isEnoentError = (error: unknown): error is NodeErrorWithCode =>
-  error instanceof Error && (error as NodeErrorWithCode).code === 'ENOENT';
+const toCharacter = (entity: SimpleEntity): Character => ({
+  id: entity.id,
+  name: entity.name,
+  body: entity.body,
+});
 
 export async function listCharacters(
   baseDir?: string,
 ): Promise<Array<CharacterListItem>> {
   const charactersDir = getCharactersDir(baseDir);
-  const entries = await readdir(charactersDir, { withFileTypes: true });
-
-  const markdownFiles = entries
-    .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
-    .map((entry) => entry.name);
-
-  const characters: CharacterListItem[] = [];
-  for (const filename of markdownFiles) {
-    const filePath = path.join(charactersDir, filename);
-    const markdown = await readFile(filePath, 'utf8');
-    const { id, name } = parseAndValidateCharacterMarkdown(markdown);
-    characters.push({ id, name });
-  }
-
-  characters.sort((a, b) => a.id.localeCompare(b.id));
-  return characters;
+  // Adaptador para preservar el tipo público y permitir ampliar Character más adelante.
+  const entities = await listSimpleEntities(charactersDir, 'character');
+  return entities.map(toCharacterListItem);
 }
 
 export async function getCharacterById(
@@ -70,17 +39,7 @@ export async function getCharacterById(
   baseDir?: string,
 ): Promise<Character | null> {
   const charactersDir = getCharactersDir(baseDir);
-  const filePath = path.join(charactersDir, `${id}.md`);
-
-  let markdown: string;
-  try {
-    markdown = await readFile(filePath, 'utf8');
-  } catch (error: unknown) {
-    if (isEnoentError(error)) {
-      return null;
-    }
-    throw error;
-  }
-
-  return parseAndValidateCharacterMarkdown(markdown);
+  // Adaptador para preservar el tipo público y permitir ampliar Character más adelante.
+  const entity = await getSimpleEntityById(charactersDir, 'character', id);
+  return entity ? toCharacter(entity) : null;
 }
