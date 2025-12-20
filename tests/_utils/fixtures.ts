@@ -32,6 +32,26 @@ export const getEventsByCharacterFixtureBaseDir = (): string => {
   return path.resolve(import.meta.dirname, '..', 'fixtures', 'events-by-character');
 };
 
+export type PlaceFixtureName =
+  | 'haven-docks.md'
+  | 'invalid-wrong-type.md'
+  | 'invalid-missing-id.md'
+  | 'invalid-missing-name.md';
+
+export const getPlacesFixtureBaseDir = (): string => {
+  return path.resolve(import.meta.dirname, '..', 'fixtures', 'places');
+};
+
+export type PlanetFixtureName =
+  | 'varda-prime.md'
+  | 'invalid-wrong-type.md'
+  | 'invalid-missing-id.md'
+  | 'invalid-missing-name.md';
+
+export const getPlanetsFixtureBaseDir = (): string => {
+  return path.resolve(import.meta.dirname, '..', 'fixtures', 'planets');
+};
+
 export const createTempBaseDirWithCharacterFixtures = async (
   fixtureNames: readonly CharacterFixtureName[],
 ): Promise<string> => {
@@ -79,6 +99,42 @@ export const createTempBaseDirWithEventByCharacterFixtures = async (
   for (const fixtureName of fixtureNames) {
     const sourcePath = path.join(fixtureBaseDir, 'events', fixtureName);
     const destPath = path.join(eventsDir, fixtureName);
+    const contents = await readFile(sourcePath, 'utf8');
+    await writeFile(destPath, contents, 'utf8');
+  }
+
+  return tempBaseDir;
+};
+
+export const createTempBaseDirWithPlaceFixtures = async (
+  fixtureNames: readonly PlaceFixtureName[],
+): Promise<string> => {
+  const tempBaseDir = await mkdtemp(path.join(os.tmpdir(), 'live-wiki-'));
+  const placesDir = path.join(tempBaseDir, 'places');
+  await mkdir(placesDir, { recursive: true });
+
+  const fixtureBaseDir = getPlacesFixtureBaseDir();
+  for (const fixtureName of fixtureNames) {
+    const sourcePath = path.join(fixtureBaseDir, 'places', fixtureName);
+    const destPath = path.join(placesDir, fixtureName);
+    const contents = await readFile(sourcePath, 'utf8');
+    await writeFile(destPath, contents, 'utf8');
+  }
+
+  return tempBaseDir;
+};
+
+export const createTempBaseDirWithPlanetFixtures = async (
+  fixtureNames: readonly PlanetFixtureName[],
+): Promise<string> => {
+  const tempBaseDir = await mkdtemp(path.join(os.tmpdir(), 'live-wiki-'));
+  const planetsDir = path.join(tempBaseDir, 'planets');
+  await mkdir(planetsDir, { recursive: true });
+
+  const fixtureBaseDir = getPlanetsFixtureBaseDir();
+  for (const fixtureName of fixtureNames) {
+    const sourcePath = path.join(fixtureBaseDir, 'planets', fixtureName);
+    const destPath = path.join(planetsDir, fixtureName);
     const contents = await readFile(sourcePath, 'utf8');
     await writeFile(destPath, contents, 'utf8');
   }
