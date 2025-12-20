@@ -12,6 +12,17 @@ export const getCharactersFixtureBaseDir = (): string => {
   return path.resolve(import.meta.dirname, '..', 'fixtures', 'characters');
 };
 
+export type EventFixtureName =
+  | 'first-contact.md'
+  | 'invalid-wrong-type.md'
+  | 'invalid-date.md'
+  | 'invalid-missing-id.md'
+  | 'invalid-missing-title.md';
+
+export const getEventsFixtureBaseDir = (): string => {
+  return path.resolve(import.meta.dirname, '..', 'fixtures', 'events');
+};
+
 export const createTempBaseDirWithCharacterFixtures = async (
   fixtureNames: readonly CharacterFixtureName[],
 ): Promise<string> => {
@@ -30,3 +41,20 @@ export const createTempBaseDirWithCharacterFixtures = async (
   return tempBaseDir;
 };
 
+export const createTempBaseDirWithEventFixtures = async (
+  fixtureNames: readonly EventFixtureName[],
+): Promise<string> => {
+  const tempBaseDir = await mkdtemp(path.join(os.tmpdir(), 'live-wiki-'));
+  const eventsDir = path.join(tempBaseDir, 'events');
+  await mkdir(eventsDir, { recursive: true });
+
+  const fixtureBaseDir = getEventsFixtureBaseDir();
+  for (const fixtureName of fixtureNames) {
+    const sourcePath = path.join(fixtureBaseDir, 'events', fixtureName);
+    const destPath = path.join(eventsDir, fixtureName);
+    const contents = await readFile(sourcePath, 'utf8');
+    await writeFile(destPath, contents, 'utf8');
+  }
+
+  return tempBaseDir;
+};
