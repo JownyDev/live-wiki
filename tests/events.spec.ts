@@ -32,13 +32,17 @@ describe('content/events contract', () => {
 
     const result = await getEventById('first-contact', baseDir);
     expect(result).not.toBeNull();
+    if (!result) {
+      throw new Error('Expected event');
+    }
     expect(result).toEqual({
       id: 'first-contact',
       title: 'First Contact',
       date: '2023-07-19',
       who: ['character:kael-nyx'],
-      body: expect.stringContaining('edge of the nebula'),
+      body: result.body,
     });
+    expect(result.body).toContain('edge of the nebula');
   });
 
   it('getEventById("no-existe") returns null when the file does not exist', async () => {

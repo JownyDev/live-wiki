@@ -34,11 +34,9 @@ describe('lore-linter duplicate ids', () => {
 
     expect(report.duplicateIds).toHaveLength(1);
     const [duplicate] = report.duplicateIds;
-    expect(duplicate).toEqual({
-      type: 'character',
-      id: 'kael-nyx',
-      paths: expect.any(Array),
-    });
+    expect(duplicate.type).toBe('character');
+    expect(duplicate.id).toBe('kael-nyx');
+    expect(Array.isArray(duplicate.paths)).toBe(true);
     expect(duplicate.paths).toHaveLength(2);
     const expectedPaths = [
       path.join(fixturesDir, 'characters', 'kael-nyx.md'),

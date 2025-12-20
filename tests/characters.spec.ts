@@ -31,11 +31,15 @@ describe('content/characters contract', () => {
 
     const result = await getCharacterById('kael-nyx', baseDir);
     expect(result).not.toBeNull();
+    if (!result) {
+      throw new Error('Expected character');
+    }
     expect(result).toEqual({
       id: 'kael-nyx',
       name: 'Kael Nyx',
-      body: expect.stringContaining('walks the neon alleys'),
+      body: result.body,
     });
+    expect(result.body).toContain('walks the neon alleys');
   });
 
   it('getCharacterById("no-existe") returns null when the file does not exist', async () => {
@@ -72,4 +76,3 @@ describe('content/characters contract', () => {
     await expect(listCharacters(baseDir)).rejects.toThrow();
   });
 });
-

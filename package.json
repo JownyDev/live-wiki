@@ -8,10 +8,11 @@
     "format": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
+    "quality": "pnpm lint && pnpm typecheck && pnpm test --run",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+    "verify": "pnpm quality && pnpm build"
   },
   "devDependencies": {
     "@types/node": "^25.0.3",
