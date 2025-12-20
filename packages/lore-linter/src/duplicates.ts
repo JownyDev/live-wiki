@@ -1,13 +1,13 @@
 import type { LoreIdentity } from './frontmatter';
 
-/** Duplicate ids found for the same type across different files. */
+/** Representa un conflicto de type+id con los paths involucrados. */
 export type DuplicateId = {
   type: string;
   id: string;
   paths: string[];
 };
 
-/** Build a list of duplicate ids from parsed records. */
+/** Agrupa por type+id y devuelve solo los casos con mas de un archivo. */
 export const collectDuplicateIds = (
   records: Array<{ meta: LoreIdentity; path: string }>,
 ): DuplicateId[] => {

@@ -2,13 +2,13 @@ import { collectDuplicateIds, type DuplicateId } from './duplicates';
 import { extractTypeAndId } from './frontmatter';
 import { listMarkdownFiles } from './fs';
 
-/** Duplicate ids found for the same type across different files. */
+/** IDs duplicados para el mismo type con paths asociados. */
 export type LintReport = {
   duplicateIds: DuplicateId[];
 };
 
 /**
- * Scan a directory of markdown files and report duplicate ids per type.
+ * Punto de entrada publico: coordina lectura, parseo y deteccion de duplicados.
  */
 export const scanLoreDirectory = async (baseDir: string): Promise<LintReport> => {
   const files = await listMarkdownFiles(baseDir);
