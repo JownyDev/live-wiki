@@ -1,5 +1,6 @@
 ---
 import { getEventById, listEvents } from '../../lib/content/events';
+import { getCharacterById } from '../../lib/content/characters';
 
 export async function getStaticPaths() {
   const events = await listEvents();
@@ -11,6 +12,37 @@ export async function getStaticPaths() {
 const id = Astro.params.id;
 const event = typeof id === 'string' ? await getEventById(id) : null;
 const title = event ? event.title : 'Evento no encontrado';
+
+type Participant = { id: string; name: string | null };
+
+const parseCharacterId = (entry: string): string | null => {
+  const prefix = 'character:';
+  if (!entry.startsWith(prefix)) {
+    return null;
+  }
+  const characterId = entry.slice(prefix.length).trim();
+  return characterId.length > 0 ? characterId : null;
+};
+
+const participants: Participant[] = event
+  ? (
+      await Promise.all(
+        event.who
+          .map(parseCharacterId)
+          .filter((characterId): characterId is string => characterId !== null)
+          .map(async (characterId) => {
+            const character = await getCharacterById(characterId);
+            return {
+              id: characterId,
+              name: character ? character.name : null,
+            };
+          }),
+      )
+    ).filter(
+      (participant, index, all) =>
+        all.findIndex((entry) => entry.id === participant.id) === index,
+    )
+  : [];
 ---
 
 <html lang="en">
@@ -26,6 +58,24 @@ const title = event ? event.title : 'Evento no encontrado';
           <h1>{event.title}</h1>
           <p>{event.date}</p>
           <div style="white-space: pre-wrap;">{event.body}</div>
+          <section>
+            <h2>Participantes</h2>
+            {participants.length === 0 ? (
+              <p>Sin participantes.</p>
+            ) : (
+              <ul>
+                {participants.map((participant) => (
+                  <li>
+                    {participant.name ? (
+                      <a href={`/characters/${participant.id}`}>{participant.name}</a>
+                    ) : (
+                      <span>{participant.id} (no encontrado)</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
         </>
       ) : (
         <>
