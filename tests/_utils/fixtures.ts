@@ -23,6 +23,15 @@ export const getEventsFixtureBaseDir = (): string => {
   return path.resolve(import.meta.dirname, '..', 'fixtures', 'events');
 };
 
+export type EventByCharacterFixtureName =
+  | 'alpha-sighting.md'
+  | 'relay-run.md'
+  | 'silent-interval.md';
+
+export const getEventsByCharacterFixtureBaseDir = (): string => {
+  return path.resolve(import.meta.dirname, '..', 'fixtures', 'events-by-character');
+};
+
 export const createTempBaseDirWithCharacterFixtures = async (
   fixtureNames: readonly CharacterFixtureName[],
 ): Promise<string> => {
@@ -49,6 +58,24 @@ export const createTempBaseDirWithEventFixtures = async (
   await mkdir(eventsDir, { recursive: true });
 
   const fixtureBaseDir = getEventsFixtureBaseDir();
+  for (const fixtureName of fixtureNames) {
+    const sourcePath = path.join(fixtureBaseDir, 'events', fixtureName);
+    const destPath = path.join(eventsDir, fixtureName);
+    const contents = await readFile(sourcePath, 'utf8');
+    await writeFile(destPath, contents, 'utf8');
+  }
+
+  return tempBaseDir;
+};
+
+export const createTempBaseDirWithEventByCharacterFixtures = async (
+  fixtureNames: readonly EventByCharacterFixtureName[],
+): Promise<string> => {
+  const tempBaseDir = await mkdtemp(path.join(os.tmpdir(), 'live-wiki-'));
+  const eventsDir = path.join(tempBaseDir, 'events');
+  await mkdir(eventsDir, { recursive: true });
+
+  const fixtureBaseDir = getEventsByCharacterFixtureBaseDir();
   for (const fixtureName of fixtureNames) {
     const sourcePath = path.join(fixtureBaseDir, 'events', fixtureName);
     const destPath = path.join(eventsDir, fixtureName);
