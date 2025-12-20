@@ -14,6 +14,9 @@ export const getCharactersFixtureBaseDir = (): string => {
 
 export type EventFixtureName =
   | 'first-contact.md'
+  | 'signal-rift.md'
+  | 'invalid-who.md'
+  | 'invalid-locations.md'
   | 'invalid-wrong-type.md'
   | 'invalid-date.md'
   | 'invalid-missing-id.md'
