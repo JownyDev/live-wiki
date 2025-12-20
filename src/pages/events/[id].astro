@@ -15,21 +15,12 @@ const title = event ? event.title : 'Evento no encontrado';
 
 type Participant = { id: string; name: string | null };
 
-const parseCharacterId = (entry: string): string | null => {
-  const prefix = 'character:';
-  if (!entry.startsWith(prefix)) {
-    return null;
-  }
-  const characterId = entry.slice(prefix.length).trim();
-  return characterId.length > 0 ? characterId : null;
-};
-
 const participants: Participant[] = event
   ? (
       await Promise.all(
         event.who
-          .map(parseCharacterId)
-          .filter((characterId): characterId is string => characterId !== null)
+          .map((participant) => participant.character)
+          .filter((characterId) => characterId.length > 0)
           .map(async (characterId) => {
             const character = await getCharacterById(characterId);
             return {
