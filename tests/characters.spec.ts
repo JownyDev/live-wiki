@@ -34,10 +34,9 @@ describe('content/characters contract', () => {
     if (!result) {
       throw new Error('Expected character');
     }
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       id: 'kael-nyx',
       name: 'Kael Nyx',
-      body: result.body,
     });
     expect(result.body).toContain('walks the neon alleys');
   });

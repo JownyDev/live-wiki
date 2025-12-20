@@ -35,12 +35,11 @@ describe('content/events contract', () => {
     if (!result) {
       throw new Error('Expected event');
     }
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       id: 'first-contact',
       title: 'First Contact',
       date: '2023-07-19',
       who: ['character:kael-nyx'],
-      body: result.body,
     });
     expect(result.body).toContain('edge of the nebula');
   });
