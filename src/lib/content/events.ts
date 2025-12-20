@@ -2,12 +2,14 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import {
   getDateField,
+  getEventParticipantsField,
+  getLocationsField,
   getStringField,
   parseFrontmatter,
+  type EventParticipant,
 } from './frontmatter';
 import { listMarkdownFiles } from './markdown-files';
 
-type EventParticipant = { character: string };
 type EventListItem = { id: string; title: string; date: string };
 type Event = {
   id: string;
@@ -25,51 +27,6 @@ const getEventsDir = (baseDir?: string): string => {
   return path.join(resolvedBaseDir, 'events');
 };
 
-const getWhoField = (record: Record<string, unknown>, field: string): EventParticipant[] => {
-  const value = record[field];
-  if (typeof value === 'undefined') {
-    return [];
-  }
-  if (!Array.isArray(value)) {
-    throw new Error(`Invalid ${field}`);
-  }
-  return value.map((entry) => {
-    if (typeof entry !== 'object' || entry === null) {
-      throw new Error(`Invalid ${field}`);
-    }
-    const character = (entry as Record<string, unknown>).character;
-    if (typeof character !== 'string') {
-      throw new Error(`Invalid ${field}`);
-    }
-    return { character };
-  });
-};
-
-const isAllowedLocation = (location: string): boolean => {
-  if (location === 'unknown') {
-    return true;
-  }
-  return (
-    location.startsWith('place:') ||
-    location.startsWith('planet:') ||
-    location.startsWith('space:')
-  );
-};
-
-const getLocationsField = (record: Record<string, unknown>, field: string): string[] => {
-  const value = record[field];
-  if (typeof value === 'undefined') {
-    return [];
-  }
-  if (!Array.isArray(value) || !value.every((item) => typeof item === 'string')) {
-    throw new Error(`Invalid ${field}`);
-  }
-  if (!value.every((item) => isAllowedLocation(item))) {
-    throw new Error(`Invalid ${field}`);
-  }
-  return value;
-};
-
 const parseAndValidateEventMarkdown = (markdown: string): Event => {
   const { data, content } = parseFrontmatter(markdown);
   if (data.type !== 'event') {
@@ -79,7 +36,7 @@ const parseAndValidateEventMarkdown = (markdown: string): Event => {
   const id = getStringField(data, 'id');
   const title = getStringField(data, 'title');
   const date = getDateField(data, 'date');
-  const who = getWhoField(data, 'who');
+  const who = getEventParticipantsField(data, 'who');
   const locations = getLocationsField(data, 'locations');
 
   return { id, title, date, who, locations, body: content };

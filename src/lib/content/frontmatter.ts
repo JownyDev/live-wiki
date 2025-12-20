@@ -37,6 +37,59 @@ export const getStringArrayField = (
   return value;
 };
 
+export type EventParticipant = { character: string };
+
+export const getEventParticipantsField = (
+  record: Record<string, unknown>,
+  field: string,
+): EventParticipant[] => {
+  const value = record[field];
+  if (typeof value === 'undefined') {
+    return [];
+  }
+  if (!Array.isArray(value)) {
+    throw new Error(`Invalid ${field}`);
+  }
+  return value.map((entry) => {
+    if (typeof entry !== 'object' || entry === null) {
+      throw new Error(`Invalid ${field}`);
+    }
+    const character = (entry as Record<string, unknown>).character;
+    if (typeof character !== 'string') {
+      throw new Error(`Invalid ${field}`);
+    }
+    return { character };
+  });
+};
+
+const isAllowedLocation = (location: string): boolean => {
+  if (location === 'unknown') {
+    return true;
+  }
+  return (
+    location.startsWith('place:') ||
+    location.startsWith('planet:') ||
+    location.startsWith('space:')
+  );
+};
+
+export const getLocationsField = (
+  record: Record<string, unknown>,
+  field: string,
+): string[] => {
+  const value = record[field];
+  if (typeof value === 'undefined') {
+    return [];
+  }
+  if (!Array.isArray(value) || !value.every((item) => typeof item === 'string')) {
+    throw new Error(`Invalid ${field}`);
+  }
+  if (!value.every((item) => isAllowedLocation(item))) {
+    throw new Error(`Invalid ${field}`);
+  }
+  return value;
+};
+
 const isIsoDate = (value: string): boolean => /^\d{4}-\d{2}-\d{2}$/.test(value);
 
 export const getDateField = (record: Record<string, unknown>, field: string): string => {
