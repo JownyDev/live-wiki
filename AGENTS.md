@@ -120,3 +120,19 @@ CI falla por:
 - Todo export público en `packages/*` lleva JSDoc corto:
   - propósito, params, retorno, edge cases.
 - Cambios de arquitectura requieren ADR breve y técnico.
+
+---
+
+## Comentarios (cuando y cómo)
+
+- Añade comentarios **solo cuando aporten contexto útil** (no describas lo obvio).
+- Comenta especialmente:
+  - **Intención / por qué** (decisiones, trade-offs, invariantes).
+  - **Reglas de negocio** y su razonamiento (por ejemplo, validaciones del linter).
+  - **Casos límite** y comportamientos no evidentes.
+  - **Workarounds** y enlaces a issues/ADRs si aplica.
+- Evita comentarios redundantes tipo “incrementa i” o “lee el archivo”.
+- Mantén los comentarios **cortos y accionables** (1–3 líneas). Si se vuelve largo, muévelo a doc/ADR.
+- Código (identificadores) en inglés; comentarios en ES.
+
+---
