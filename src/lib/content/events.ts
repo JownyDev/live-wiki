@@ -34,6 +34,7 @@ const getDateField = (record: Record<string, unknown>, field: string): string =>
     return value;
   }
   if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    // Normaliza Date de frontmatter a YYYY-MM-DD para un formato estable.
     return value.toISOString().slice(0, 10);
   }
   throw new Error(`Invalid ${field}`);
@@ -45,6 +46,7 @@ const getStringArrayField = (
 ): string[] => {
   const value = record[field];
   if (typeof value === 'undefined') {
+    // Permite ausencia de "who" para no romper eventos validos sin personajes.
     return [];
   }
   if (!Array.isArray(value) || !value.every((item) => typeof item === 'string')) {
