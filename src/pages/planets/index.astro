@@ -1,0 +1,30 @@
+---
+import { listPlanets } from '../../lib/content/planets';
+
+const title = 'Planetas';
+const planets = await listPlanets();
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <main>
+      <h1>{title}</h1>
+      {planets.length === 0 ? (
+        <p>No hay planetas todavía.</p>
+      ) : (
+        <ul>
+          {planets.map((planet) => (
+            <li>
+              <a href={`/planets/${planet.id}`}>{planet.name}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
+  </body>
+</html>

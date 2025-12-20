@@ -1,0 +1,40 @@
+---
+import { getPlaceById, listPlaces } from '../../lib/content/places';
+
+export async function getStaticPaths() {
+  const places = await listPlaces();
+  return places.map((place) => ({
+    params: { id: place.id },
+  }));
+}
+
+const id = Astro.params.id;
+const place = typeof id === 'string' ? await getPlaceById(id) : null;
+const title = place ? place.name : 'Lugar no encontrado';
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <main>
+      {place ? (
+        <>
+          <h1>{place.name}</h1>
+          <div style="white-space: pre-wrap;">{place.body}</div>
+        </>
+      ) : (
+        <>
+          <h1>Lugar no encontrado</h1>
+          <p>El lugar solicitado no existe.</p>
+          <p>
+            <a href="/places">Volver a lugares</a>
+          </p>
+        </>
+      )}
+    </main>
+  </body>
+</html>

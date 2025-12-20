@@ -1,0 +1,40 @@
+---
+import { getPlanetById, listPlanets } from '../../lib/content/planets';
+
+export async function getStaticPaths() {
+  const planets = await listPlanets();
+  return planets.map((planet) => ({
+    params: { id: planet.id },
+  }));
+}
+
+const id = Astro.params.id;
+const planet = typeof id === 'string' ? await getPlanetById(id) : null;
+const title = planet ? planet.name : 'Planeta no encontrado';
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <main>
+      {planet ? (
+        <>
+          <h1>{planet.name}</h1>
+          <div style="white-space: pre-wrap;">{planet.body}</div>
+        </>
+      ) : (
+        <>
+          <h1>Planeta no encontrado</h1>
+          <p>El planeta solicitado no existe.</p>
+          <p>
+            <a href="/planets">Volver a planetas</a>
+          </p>
+        </>
+      )}
+    </main>
+  </body>
+</html>
