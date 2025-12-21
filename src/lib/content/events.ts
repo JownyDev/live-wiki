@@ -27,6 +27,11 @@ const getEventsDir = (baseDir?: string): string => {
   return path.join(resolvedBaseDir, 'events');
 };
 
+const getPlacesDir = (baseDir?: string): string => {
+  const resolvedBaseDir = baseDir ?? path.resolve(process.cwd(), 'content');
+  return path.join(resolvedBaseDir, 'places');
+};
+
 const parseAndValidateEventMarkdown = (markdown: string): Event => {
   const { data, content } = parseFrontmatter(markdown);
   if (data.type !== 'event') {
@@ -49,6 +54,53 @@ const readEventFromFile = async (eventsDir: string, filename: string): Promise<E
   const filePath = path.join(eventsDir, filename);
   const markdown = await readFile(filePath, 'utf8');
   return parseAndValidateEventMarkdown(markdown);
+};
+
+const parsePlacePlanetId = (
+  markdown: string,
+): { id: string; planetId: string | null } => {
+  const { data } = parseFrontmatter(markdown);
+  if (data.type !== 'place') {
+    throw new Error('Invalid type');
+  }
+
+  const id = getStringField(data, 'id');
+  const planetValue = data.planetId;
+  if (typeof planetValue === 'undefined') {
+    return { id, planetId: null };
+  }
+  if (typeof planetValue !== 'string') {
+    throw new Error('Invalid planetId');
+  }
+  if (!planetValue.startsWith('planet:')) {
+    throw new Error('Invalid planetId');
+  }
+
+  return { id, planetId: planetValue.slice('planet:'.length) };
+};
+
+const listPlacePlanetIds = async (baseDir?: string): Promise<Map<string, string>> => {
+  const placesDir = getPlacesDir(baseDir);
+  const markdownFiles = await listMarkdownFiles(placesDir);
+  const planetIdsByPlace = new Map<string, string>();
+
+  for (const filename of markdownFiles) {
+    const filePath = path.join(placesDir, filename);
+    const markdown = await readFile(filePath, 'utf8');
+    const { id, planetId } = parsePlacePlanetId(markdown);
+    if (planetId) {
+      planetIdsByPlace.set(id, planetId);
+    }
+  }
+
+  return planetIdsByPlace;
+};
+
+const getLocationId = (location: string, prefix: string): string | null => {
+  if (!location.startsWith(prefix)) {
+    return null;
+  }
+  return location.slice(prefix.length);
 };
 
 export async function listEvents(baseDir?: string): Promise<Array<EventListItem>> {
@@ -100,6 +152,57 @@ export async function listEventsByCharacterId(
     }
   }
 
+  events.sort((a, b) => a.date.localeCompare(b.date));
+  return events;
+}
+
+export async function listEventsByPlaceId(
+  placeId: string,
+  baseDir?: string,
+): Promise<Array<EventListItem>> {
+  const eventsDir = getEventsDir(baseDir);
+  const markdownFiles = await listMarkdownFiles(eventsDir);
+  const targetLocation = `place:${placeId}`;
+
+  const events: EventListItem[] = [];
+  for (const filename of markdownFiles) {
+    const { id, title, date, locations } = await readEventFromFile(eventsDir, filename);
+    if (locations.includes(targetLocation)) {
+      events.push({ id, title, date });
+    }
+  }
+
+  events.sort((a, b) => a.date.localeCompare(b.date));
+  return events;
+}
+
+export async function listEventsByPlanetId(
+  planetId: string,
+  baseDir?: string,
+): Promise<Array<EventListItem>> {
+  const eventsDir = getEventsDir(baseDir);
+  const markdownFiles = await listMarkdownFiles(eventsDir);
+  const planetIdsByPlace = await listPlacePlanetIds(baseDir);
+  const targetLocation = `planet:${planetId}`;
+
+  const eventsById = new Map<string, EventListItem>();
+  for (const filename of markdownFiles) {
+    const { id, title, date, locations } = await readEventFromFile(eventsDir, filename);
+    const hasDirectPlanet = locations.includes(targetLocation);
+    const hasDerivedPlanet = locations.some((location) => {
+      const placeRef = getLocationId(location, 'place:');
+      if (!placeRef) {
+        return false;
+      }
+      return planetIdsByPlace.get(placeRef) === planetId;
+    });
+
+    if (hasDirectPlanet || hasDerivedPlanet) {
+      eventsById.set(id, { id, title, date });
+    }
+  }
+
+  const events = Array.from(eventsById.values());
   events.sort((a, b) => a.date.localeCompare(b.date));
   return events;
 }
