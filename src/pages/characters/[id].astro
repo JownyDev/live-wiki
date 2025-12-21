@@ -1,6 +1,7 @@
 ---
 import { getCharacterById, listCharacters } from '../../lib/content/characters';
 import { listEventsByCharacterId } from '../../lib/content/events';
+import { parseLocationRef } from '../../lib/content/location-refs';
 
 export async function getStaticPaths() {
   const characters = await listCharacters();
@@ -14,6 +15,25 @@ const character = typeof id === 'string' ? await getCharacterById(id) : null;
 const events =
   character && typeof id === 'string' ? await listEventsByCharacterId(id) : [];
 const title = character ? character.name : 'Personaje no encontrado';
+const originView = (() => {
+  if (!character?.origin) {
+    return { text: 'Sin origen' };
+  }
+  const parsed = parseLocationRef(character.origin);
+  if (!parsed) {
+    return { text: 'Sin origen' };
+  }
+  switch (parsed.kind) {
+    case 'place':
+      return { text: parsed.id, href: `/places/${parsed.id}` };
+    case 'planet':
+      return { text: parsed.id, href: `/planets/${parsed.id}` };
+    case 'space':
+      return { text: parsed.id };
+    case 'unknown':
+      return { text: 'Desconocido' };
+  }
+})();
 ---
 
 <html lang="en">
@@ -27,6 +47,14 @@ const title = character ? character.name : 'Personaje no encontrado';
       {character ? (
         <>
           <h1>{character.name}</h1>
+          <section>
+            <h2>Origen</h2>
+            {originView.href ? (
+              <a href={originView.href}>{originView.text}</a>
+            ) : (
+              <p>{originView.text}</p>
+            )}
+          </section>
           <div style="white-space: pre-wrap;">{character.body}</div>
           <section>
             <h2>Eventos</h2>
