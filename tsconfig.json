@@ -1,8 +1,7 @@
 {
-  "extends": "astro/tsconfigs/strict",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "noEmit": true,
-    "types": ["vitest/globals"]
+    "noEmit": true
   },
   "include": ["src", "tests", "astro.config.ts"]
 }
