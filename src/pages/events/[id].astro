@@ -1,6 +1,9 @@
 ---
 import { getEventById, listEvents } from '../../lib/content/events';
 import { getCharacterById } from '../../lib/content/characters';
+import { getPlaceById } from '../../lib/content/places';
+import { getPlanetById } from '../../lib/content/planets';
+import { parseLocationRef } from '../../lib/content/location-refs';
 
 export async function getStaticPaths() {
   const events = await listEvents();
@@ -34,6 +37,41 @@ const participants: Participant[] = event
         all.findIndex((entry) => entry.id === participant.id) === index,
     )
   : [];
+
+type LocationView = { text: string; href?: string };
+
+const locations: LocationView[] = event
+  ? (
+      await Promise.all(
+        event.locations.map(async (location) => {
+          const parsed = parseLocationRef(location);
+          if (!parsed) {
+            return { text: 'Desconocido' };
+          }
+          switch (parsed.kind) {
+            case 'place': {
+              const place = await getPlaceById(parsed.id);
+              if (!place) {
+                return { text: `${parsed.id} (no encontrado)` };
+              }
+              return { text: place.name, href: `/places/${place.id}` };
+            }
+            case 'planet': {
+              const planet = await getPlanetById(parsed.id);
+              if (!planet) {
+                return { text: `${parsed.id} (no encontrado)` };
+              }
+              return { text: planet.name, href: `/planets/${planet.id}` };
+            }
+            case 'space':
+              return { text: parsed.id };
+            case 'unknown':
+              return { text: 'Desconocido' };
+          }
+        }),
+      )
+    ).filter((entry): entry is LocationView => Boolean(entry))
+  : [];
 ---
 
 <html lang="en">
@@ -61,6 +99,24 @@ const participants: Participant[] = event
                       <a href={`/characters/${participant.id}`}>{participant.name}</a>
                     ) : (
                       <span>{participant.id} (no encontrado)</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+          <section>
+            <h2>Ubicaciones</h2>
+            {locations.length === 0 ? (
+              <p>Sin ubicaciones.</p>
+            ) : (
+              <ul>
+                {locations.map((location) => (
+                  <li>
+                    {location.href ? (
+                      <a href={location.href}>{location.text}</a>
+                    ) : (
+                      <span>{location.text}</span>
                     )}
                   </li>
                 ))}

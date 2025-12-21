@@ -1,5 +1,6 @@
 ---
 import { getPlaceById, listPlaces } from '../../lib/content/places';
+import { listEventsByPlaceId } from '../../lib/content/events';
 
 export async function getStaticPaths() {
   const places = await listPlaces();
@@ -10,6 +11,8 @@ export async function getStaticPaths() {
 
 const id = Astro.params.id;
 const place = typeof id === 'string' ? await getPlaceById(id) : null;
+const events =
+  place && typeof id === 'string' ? await listEventsByPlaceId(id) : [];
 const title = place ? place.name : 'Lugar no encontrado';
 ---
 
@@ -24,6 +27,21 @@ const title = place ? place.name : 'Lugar no encontrado';
       {place ? (
         <>
           <h1>{place.name}</h1>
+          <section>
+            <h2>Eventos aquí</h2>
+            {events.length === 0 ? (
+              <p>Sin eventos.</p>
+            ) : (
+              <ul>
+                {events.map((event) => (
+                  <li>
+                    <a href={`/events/${event.id}`}>{event.title}</a>
+                    <span> ({event.date})</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
           <div style="white-space: pre-wrap;">{place.body}</div>
         </>
       ) : (
