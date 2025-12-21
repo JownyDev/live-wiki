@@ -55,6 +55,7 @@ export async function getCharacterById(
   baseDir?: string,
 ): Promise<Character | null> {
   const charactersDir = getCharactersDir(baseDir);
+  // Parsea origin aqui para no acoplar SimpleEntity a la semantica de localizaciones.
   const filePath = path.join(charactersDir, `${id}.md`);
 
   let markdown: string;

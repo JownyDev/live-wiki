@@ -9,9 +9,11 @@ const parseWithPrefix = (value: string, prefix: string): string | null => {
     return null;
   }
   const id = value.slice(prefix.length);
+  // Evita aceptar referencias vacias (e.g. "space:") como validas.
   return id.length > 0 ? id : null;
 };
 
+// Parser unico para evitar divergencias entre queries y validacion (ver docs/design/002-life-wiki.md).
 /** Normaliza una referencia de localizacion tipada. */
 export const parseLocationRef = (value: string): LocationRef | null => {
   if (value === 'unknown') {

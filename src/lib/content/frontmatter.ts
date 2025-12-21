@@ -85,6 +85,7 @@ export const getOptionalLocationField = (
   field: string,
 ): string | null => {
   const value = record[field];
+  // Para campos opcionales (e.g. origin) permitimos ausencia o null sin romper contenido valido.
   if (typeof value === 'undefined' || value === null) {
     return null;
   }

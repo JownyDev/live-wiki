@@ -87,6 +87,7 @@ const listPlacePlanetIds = async (baseDir?: string): Promise<Map<string, string>
   const markdownFiles = await listMarkdownFiles(placesDir);
   const planetIdsByPlace = new Map<string, string>();
 
+  // Deriva planetas desde places para evitar duplicar el dato en events (ver docs/design/002-life-wiki.md).
   for (const filename of markdownFiles) {
     const filePath = path.join(placesDir, filename);
     const markdown = await readFile(filePath, 'utf8');
@@ -186,6 +187,7 @@ export async function listEventsByPlanetId(
   const planetIdsByPlace = await listPlacePlanetIds(baseDir);
   const targetLocation = `planet:${planetId}`;
 
+  // Evita duplicados cuando un evento coincide por planet directo y por place derivado.
   const eventsById = new Map<string, EventListItem>();
   for (const filename of markdownFiles) {
     const { id, title, date, locations } = await readEventFromFile(eventsDir, filename);
