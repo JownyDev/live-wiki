@@ -41,6 +41,7 @@ export async function listSimpleEntities(
   }
 
   entities.sort((a, b) => a.id.localeCompare(b.id));
+  // Orden estable por id para listas deterministas en el SSG.
   return entities;
 }
 

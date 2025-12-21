@@ -15,6 +15,7 @@ export async function listPlaces(
   baseDir?: string,
 ): Promise<Array<SimpleEntityListItem>> {
   const placesDir = getPlacesDir(baseDir);
+  // Reusa el parser basico del MVP para mantener el esquema minimo consistente.
   return await listSimpleEntities(placesDir, 'place');
 }
 
@@ -23,5 +24,6 @@ export async function getPlaceById(
   baseDir?: string,
 ): Promise<SimpleEntity | null> {
   const placesDir = getPlacesDir(baseDir);
+  // El contenido de place es texto libre; solo validamos el frontmatter minimo.
   return await getSimpleEntityById(placesDir, 'place', id);
 }

@@ -18,6 +18,7 @@ export const scanLoreDirectory = async (baseDir: string): Promise<LintReport> =>
   for (const filePath of files) {
     const metadata = await extractTypeAndId(filePath);
     if (!metadata) {
+      // Contenido incompleto no debe bloquear el lint; se reporta en checks especificos.
       continue;
     }
     records.push({ meta: metadata, path: filePath });

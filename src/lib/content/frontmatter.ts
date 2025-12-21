@@ -69,6 +69,7 @@ export const getLocationsField = (
 ): string[] => {
   const value = record[field];
   if (typeof value === 'undefined') {
+    // Localizacion flexible: ausencia valida para eventos sin lugar fijo (ver docs/design/002-life-wiki.md).
     return [];
   }
   if (!Array.isArray(value) || !value.every((item) => typeof item === 'string')) {

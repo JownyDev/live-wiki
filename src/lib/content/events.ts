@@ -154,6 +154,7 @@ export async function listEventsByCharacterId(
     }
   }
 
+  // Timeline ascendente como base para vistas de "eventos de X" en el MVP.
   events.sort((a, b) => a.date.localeCompare(b.date));
   return events;
 }
@@ -174,6 +175,7 @@ export async function listEventsByPlaceId(
     }
   }
 
+  // Timeline ascendente para vistas por lugar.
   events.sort((a, b) => a.date.localeCompare(b.date));
   return events;
 }
@@ -206,6 +208,7 @@ export async function listEventsByPlanetId(
   }
 
   const events = Array.from(eventsById.values());
+  // Timeline ascendente para vistas por planeta.
   events.sort((a, b) => a.date.localeCompare(b.date));
   return events;
 }
