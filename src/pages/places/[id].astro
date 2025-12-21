@@ -14,6 +14,24 @@ const place = typeof id === 'string' ? await getPlaceById(id) : null;
 const events =
   place && typeof id === 'string' ? await listEventsByPlaceId(id) : [];
 const title = place ? place.name : 'Lugar no encontrado';
+const planetLabel = (() => {
+  if (!place) {
+    return 'Desconocido';
+  }
+  if (place.planetId) {
+    return { text: place.planetId, href: `/planets/${place.planetId}` };
+  }
+  if (place.locationType === 'space') {
+    return 'Espacio';
+  }
+  if (place.locationType === 'planet') {
+    return 'Planeta';
+  }
+  if (place.locationType === 'unknown') {
+    return 'Desconocido';
+  }
+  return 'Desconocido';
+})();
 ---
 
 <html lang="es">
@@ -27,6 +45,14 @@ const title = place ? place.name : 'Lugar no encontrado';
       {place ? (
         <>
           <h1>{place.name}</h1>
+          <section>
+            <h2>Planeta</h2>
+            {typeof planetLabel === 'string' ? (
+              <p>{planetLabel}</p>
+            ) : (
+              <a href={planetLabel.href}>{planetLabel.text}</a>
+            )}
+          </section>
           <section>
             <h2>Eventos aquí</h2>
             {events.length === 0 ? (

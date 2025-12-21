@@ -1,15 +1,68 @@
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { getStringField, parseFrontmatter } from './frontmatter';
+import { parseLocationRef } from './location-refs';
 import {
-  getSimpleEntityById,
   listSimpleEntities,
   type SimpleEntity,
   type SimpleEntityListItem,
 } from './simple-entities';
 
+export type Place = SimpleEntity & {
+  planetId: string | null;
+  locationType: 'space' | 'planet' | 'unknown' | null;
+};
+
+type NodeErrorWithCode = Error & { code?: string };
+
 const getPlacesDir = (baseDir?: string): string => {
   const resolvedBaseDir = baseDir ?? path.resolve(process.cwd(), 'content');
   return path.join(resolvedBaseDir, 'places');
 };
+
+const parseLocationType = (value: unknown): 'space' | 'planet' | 'unknown' | null => {
+  if (typeof value === 'undefined') {
+    return null;
+  }
+  if (typeof value !== 'string') {
+    throw new Error('Invalid locationType');
+  }
+  if (value !== 'space' && value !== 'planet' && value !== 'unknown') {
+    throw new Error('Invalid locationType');
+  }
+  return value;
+};
+
+const parsePlanetId = (value: unknown): string | null => {
+  if (typeof value === 'undefined') {
+    return null;
+  }
+  if (typeof value !== 'string') {
+    throw new Error('Invalid planetId');
+  }
+  const parsed = parseLocationRef(value);
+  if (!parsed || parsed.kind !== 'planet') {
+    throw new Error('Invalid planetId');
+  }
+  return parsed.id;
+};
+
+const parseAndValidatePlaceMarkdown = (markdown: string): Place => {
+  const { data, content } = parseFrontmatter(markdown);
+  if (data.type !== 'place') {
+    throw new Error('Invalid type');
+  }
+
+  const id = getStringField(data, 'id');
+  const name = getStringField(data, 'name');
+  const planetId = parsePlanetId(data.planetId);
+  const locationType = parseLocationType(data.locationType);
+
+  return { id, name, planetId, locationType, body: content };
+};
+
+const isEnoentError = (error: unknown): error is NodeErrorWithCode =>
+  error instanceof Error && (error as NodeErrorWithCode).code === 'ENOENT';
 
 export async function listPlaces(
   baseDir?: string,
@@ -22,8 +75,20 @@ export async function listPlaces(
 export async function getPlaceById(
   id: string,
   baseDir?: string,
-): Promise<SimpleEntity | null> {
+): Promise<Place | null> {
   const placesDir = getPlacesDir(baseDir);
-  // El contenido de place es texto libre; solo validamos el frontmatter minimo.
-  return await getSimpleEntityById(placesDir, 'place', id);
+  // Parsea planetId/locationType aqui para no acoplar SimpleEntity a localizacion.
+  const filePath = path.join(placesDir, `${id}.md`);
+
+  let markdown: string;
+  try {
+    markdown = await readFile(filePath, 'utf8');
+  } catch (error: unknown) {
+    if (isEnoentError(error)) {
+      return null;
+    }
+    throw error;
+  }
+
+  return parseAndValidatePlaceMarkdown(markdown);
 }
