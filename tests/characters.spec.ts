@@ -10,7 +10,7 @@ const loadCharactersModule = async (): Promise<{
   getCharacterById: (
     id: string,
     baseDir?: string,
-  ) => Promise<{ id: string; name: string; body: string } | null>;
+  ) => Promise<{ id: string; name: string; body: string; origin: string | null } | null>;
 }> => {
   return await import('../src/lib/content/characters');
 };
@@ -46,6 +46,68 @@ describe('content/characters contract', () => {
     const { getCharacterById } = await loadCharactersModule();
 
     await expect(getCharacterById('no-existe', baseDir)).resolves.toBeNull();
+  });
+
+  it('getCharacterById exposes valid origins and allows missing or null origin', async () => {
+    const baseDir = await createTempBaseDirWithCharacterFixtures([
+      'origin-absent.md',
+      'origin-null.md',
+      'origin-place.md',
+      'origin-space.md',
+      'origin-unknown.md',
+    ]);
+    const { getCharacterById } = await loadCharactersModule();
+
+    const fromPlace = await getCharacterById('origin-place', baseDir);
+    expect(fromPlace).not.toBeNull();
+    if (!fromPlace) {
+      throw new Error('Expected character');
+    }
+    expect(fromPlace).toMatchObject({
+      id: 'origin-place',
+      origin: 'place:haven-docks',
+    });
+
+    const fromSpace = await getCharacterById('origin-space', baseDir);
+    expect(fromSpace).not.toBeNull();
+    if (!fromSpace) {
+      throw new Error('Expected character');
+    }
+    expect(fromSpace).toMatchObject({
+      id: 'origin-space',
+      origin: 'space:Nebula cradle',
+    });
+
+    const fromUnknown = await getCharacterById('origin-unknown', baseDir);
+    expect(fromUnknown).not.toBeNull();
+    if (!fromUnknown) {
+      throw new Error('Expected character');
+    }
+    expect(fromUnknown).toMatchObject({
+      id: 'origin-unknown',
+      origin: 'unknown',
+    });
+
+    const originAbsent = await getCharacterById('origin-absent', baseDir);
+    expect(originAbsent).not.toBeNull();
+    if (!originAbsent) {
+      throw new Error('Expected character');
+    }
+    expect(originAbsent.origin).toBeNull();
+
+    const originNull = await getCharacterById('origin-null', baseDir);
+    expect(originNull).not.toBeNull();
+    if (!originNull) {
+      throw new Error('Expected character');
+    }
+    expect(originNull.origin).toBeNull();
+  });
+
+  it('getCharacterById throws when origin has an invalid format', async () => {
+    const baseDir = await createTempBaseDirWithCharacterFixtures(['origin-invalid.md']);
+    const { getCharacterById } = await loadCharactersModule();
+
+    await expect(getCharacterById('origin-invalid', baseDir)).rejects.toThrow();
   });
 
   it('listCharacters throws if it finds a markdown with an incorrect type', async () => {

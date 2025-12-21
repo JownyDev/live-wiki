@@ -4,6 +4,12 @@ import path from 'node:path';
 
 export type CharacterFixtureName =
   | 'kael-nyx.md'
+  | 'origin-absent.md'
+  | 'origin-invalid.md'
+  | 'origin-null.md'
+  | 'origin-place.md'
+  | 'origin-space.md'
+  | 'origin-unknown.md'
   | 'invalid-missing-name.md'
   | 'invalid-wrong-type.md'
   | 'invalid-missing-id.md';
