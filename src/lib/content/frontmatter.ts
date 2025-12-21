@@ -80,6 +80,23 @@ export const getLocationsField = (
   return value;
 };
 
+export const getOptionalLocationField = (
+  record: Record<string, unknown>,
+  field: string,
+): string | null => {
+  const value = record[field];
+  if (typeof value === 'undefined' || value === null) {
+    return null;
+  }
+  if (typeof value !== 'string') {
+    throw new Error(`Invalid ${field}`);
+  }
+  if (!isAllowedLocationRef(value)) {
+    throw new Error(`Invalid ${field}`);
+  }
+  return value;
+};
+
 const isIsoDate = (value: string): boolean => /^\d{4}-\d{2}-\d{2}$/.test(value);
 
 export const getDateField = (record: Record<string, unknown>, field: string): string => {

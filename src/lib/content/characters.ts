@@ -1,7 +1,10 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { getStringField, parseFrontmatter } from './frontmatter';
-import { parseLocationRef } from './location-refs';
+import {
+  getOptionalLocationField,
+  getStringField,
+  parseFrontmatter,
+} from './frontmatter';
 import {
   listSimpleEntities,
   type SimpleEntityListItem,
@@ -22,19 +25,6 @@ const toCharacterListItem = (entity: SimpleEntityListItem): CharacterListItem =>
   name: entity.name,
 });
 
-const parseCharacterOrigin = (origin: unknown): string | null => {
-  if (typeof origin === 'undefined' || origin === null) {
-    return null;
-  }
-  if (typeof origin !== 'string') {
-    throw new Error('Invalid origin');
-  }
-  if (!parseLocationRef(origin)) {
-    throw new Error('Invalid origin');
-  }
-  return origin;
-};
-
 const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
   const { data, content } = parseFrontmatter(markdown);
   if (data.type !== 'character') {
@@ -43,7 +33,7 @@ const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
 
   const id = getStringField(data, 'id');
   const name = getStringField(data, 'name');
-  const origin = parseCharacterOrigin(data.origin);
+  const origin = getOptionalLocationField(data, 'origin');
 
   return { id, name, origin, body: content };
 };
