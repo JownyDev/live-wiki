@@ -39,7 +39,7 @@ const astroConfigs = astroPlugin.configs['flat/recommended'].map((config) => ({
     parserOptions: {
       ...config.languageOptions?.parserOptions,
       parser: tsParser,
-      project: './tsconfig.json',
+      project: './tsconfig.astro.json',
       tsconfigRootDir: import.meta.dirname,
       extraFileExtensions: ['.astro'],
     },
