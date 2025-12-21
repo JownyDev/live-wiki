@@ -32,9 +32,8 @@ const isValidIsoDate = (value: string): boolean => {
   return day >= 1 && day <= daysInMonth;
 };
 
-const getIdOrNull = (data: Record<string, unknown>): string | null => {
-  return isString(data.id) ? data.id : null;
-};
+const getIdOrNull = (data: Record<string, unknown>): string | null =>
+  isString(data.id) ? data.id : null;
 
 const getRawField = (raw: string | null, field: string): string | null => {
   if (!raw) {
@@ -54,6 +53,75 @@ const isValidWho = (value: unknown): boolean => {
   return value.every((entry) => isRecord(entry) && isString(entry.character));
 };
 
+const requiredStringFieldsByType: Partial<Record<string, string[]>> = {
+  character: ['id', 'name'],
+  place: ['id', 'name'],
+  planet: ['id', 'name'],
+  event: ['id', 'title'],
+};
+
+type SchemaContext = {
+  type: string;
+  id: string | null;
+  data: Record<string, unknown>;
+  raw: string | null;
+  errors: SchemaError[];
+};
+
+const addRequiredStringFields = (context: SchemaContext, fields: string[]): void => {
+  for (const field of fields) {
+    if (!isString(context.data[field])) {
+      context.errors.push({ type: context.type, id: context.id, field, reason: 'required' });
+    }
+  }
+};
+
+const validateEventDate = (context: SchemaContext): void => {
+  const rawDate = getRawField(context.raw, 'date');
+  const parsedDate = context.data.date;
+
+  if (rawDate === null && typeof parsedDate === 'undefined') {
+    context.errors.push({ type: context.type, id: context.id, field: 'date', reason: 'required' });
+    return;
+  }
+
+  // Usa el raw para evitar que YAML normalice fechas invalidas.
+  if (rawDate !== null) {
+    if (!isValidIsoDate(rawDate)) {
+      context.errors.push({
+        type: context.type,
+        id: context.id,
+        field: 'date',
+        reason: 'invalid-date',
+      });
+    }
+    return;
+  }
+
+  if (!isString(parsedDate) || !isValidIsoDate(parsedDate)) {
+    context.errors.push({
+      type: context.type,
+      id: context.id,
+      field: 'date',
+      reason: 'invalid-date',
+    });
+  }
+};
+
+const validateEventWho = (context: SchemaContext): void => {
+  const who = context.data.who;
+  if (typeof who === 'undefined') {
+    context.errors.push({ type: context.type, id: context.id, field: 'who', reason: 'required' });
+  } else if (!isValidWho(who)) {
+    context.errors.push({
+      type: context.type,
+      id: context.id,
+      field: 'who',
+      reason: 'invalid-shape',
+    });
+  }
+};
+
 /**
  * Valida schema minimo por tipo y fechas ISO en events.
  * @param docs Documentos con frontmatter parseado.
@@ -68,59 +136,22 @@ export const collectSchemaErrors = (docs: RawDoc[]): SchemaError[] => {
       continue;
     }
     const id = getIdOrNull(doc.data);
+    const context: SchemaContext = {
+      type,
+      id,
+      data: doc.data,
+      raw: doc.raw,
+      errors,
+    };
 
-    if (type === 'character') {
-      if (!isString(doc.data.id)) {
-        errors.push({ type, id, field: 'id', reason: 'required' });
-      }
-      if (!isString(doc.data.name)) {
-        errors.push({ type, id, field: 'name', reason: 'required' });
-      }
-    }
-
-    if (type === 'place') {
-      if (!isString(doc.data.id)) {
-        errors.push({ type, id, field: 'id', reason: 'required' });
-      }
-      if (!isString(doc.data.name)) {
-        errors.push({ type, id, field: 'name', reason: 'required' });
-      }
-    }
-
-    if (type === 'planet') {
-      if (!isString(doc.data.id)) {
-        errors.push({ type, id, field: 'id', reason: 'required' });
-      }
-      if (!isString(doc.data.name)) {
-        errors.push({ type, id, field: 'name', reason: 'required' });
-      }
+    const requiredFields = requiredStringFieldsByType[type];
+    if (requiredFields) {
+      addRequiredStringFields(context, requiredFields);
     }
 
     if (type === 'event') {
-      if (!isString(doc.data.id)) {
-        errors.push({ type, id, field: 'id', reason: 'required' });
-      }
-      if (!isString(doc.data.title)) {
-        errors.push({ type, id, field: 'title', reason: 'required' });
-      }
-
-      const rawDate = getRawField(doc.raw, 'date');
-      if (rawDate === null && typeof doc.data.date === 'undefined') {
-        errors.push({ type, id, field: 'date', reason: 'required' });
-      } else if (rawDate !== null && !isValidIsoDate(rawDate)) {
-        errors.push({ type, id, field: 'date', reason: 'invalid-date' });
-      } else if (rawDate === null && !isString(doc.data.date)) {
-        errors.push({ type, id, field: 'date', reason: 'invalid-date' });
-      } else if (rawDate === null && isString(doc.data.date) && !isValidIsoDate(doc.data.date)) {
-        errors.push({ type, id, field: 'date', reason: 'invalid-date' });
-      }
-
-      const who = doc.data.who;
-      if (typeof who === 'undefined') {
-        errors.push({ type, id, field: 'who', reason: 'required' });
-      } else if (!isValidWho(who)) {
-        errors.push({ type, id, field: 'who', reason: 'invalid-shape' });
-      }
+      validateEventDate(context);
+      validateEventWho(context);
     }
   }
 
