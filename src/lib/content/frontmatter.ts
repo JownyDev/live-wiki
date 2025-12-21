@@ -1,4 +1,5 @@
 import matter from 'gray-matter';
+import { isAllowedLocationRef } from './location-refs';
 
 type FrontmatterPayload = { data: Record<string, unknown>; content: string };
 
@@ -62,17 +63,6 @@ export const getEventParticipantsField = (
   });
 };
 
-const isAllowedLocation = (location: string): boolean => {
-  if (location === 'unknown') {
-    return true;
-  }
-  return (
-    location.startsWith('place:') ||
-    location.startsWith('planet:') ||
-    location.startsWith('space:')
-  );
-};
-
 export const getLocationsField = (
   record: Record<string, unknown>,
   field: string,
@@ -84,7 +74,7 @@ export const getLocationsField = (
   if (!Array.isArray(value) || !value.every((item) => typeof item === 'string')) {
     throw new Error(`Invalid ${field}`);
   }
-  if (!value.every((item) => isAllowedLocation(item))) {
+  if (!value.every((item) => isAllowedLocationRef(item))) {
     throw new Error(`Invalid ${field}`);
   }
   return value;

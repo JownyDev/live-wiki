@@ -8,6 +8,7 @@ import {
   parseFrontmatter,
   type EventParticipant,
 } from './frontmatter';
+import { parseLocationRef } from './location-refs';
 import { listMarkdownFiles } from './markdown-files';
 
 type EventListItem = { id: string; title: string; date: string };
@@ -72,11 +73,13 @@ const parsePlacePlanetId = (
   if (typeof planetValue !== 'string') {
     throw new Error('Invalid planetId');
   }
-  if (!planetValue.startsWith('planet:')) {
+
+  const parsed = parseLocationRef(planetValue);
+  if (!parsed || parsed.kind !== 'planet') {
     throw new Error('Invalid planetId');
   }
 
-  return { id, planetId: planetValue.slice('planet:'.length) };
+  return { id, planetId: parsed.id };
 };
 
 const listPlacePlanetIds = async (baseDir?: string): Promise<Map<string, string>> => {
@@ -96,11 +99,9 @@ const listPlacePlanetIds = async (baseDir?: string): Promise<Map<string, string>
   return planetIdsByPlace;
 };
 
-const getLocationId = (location: string, prefix: string): string | null => {
-  if (!location.startsWith(prefix)) {
-    return null;
-  }
-  return location.slice(prefix.length);
+const getPlaceIdFromLocation = (location: string): string | null => {
+  const parsed = parseLocationRef(location);
+  return parsed?.kind === 'place' ? parsed.id : null;
 };
 
 export async function listEvents(baseDir?: string): Promise<Array<EventListItem>> {
@@ -190,7 +191,7 @@ export async function listEventsByPlanetId(
     const { id, title, date, locations } = await readEventFromFile(eventsDir, filename);
     const hasDirectPlanet = locations.includes(targetLocation);
     const hasDerivedPlanet = locations.some((location) => {
-      const placeRef = getLocationId(location, 'place:');
+      const placeRef = getPlaceIdFromLocation(location);
       if (!placeRef) {
         return false;
       }
