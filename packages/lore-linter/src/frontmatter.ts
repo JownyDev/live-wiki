@@ -14,17 +14,42 @@ const isString = (value: unknown): value is string => {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 
+const extractRawFrontmatter = (contents: string): string | null => {
+  const match = contents.match(/^---\s*\n([\s\S]*?)\n---/);
+  return match ? match[1] : null;
+};
+
+export type FrontmatterPayload = {
+  data: Record<string, unknown>;
+  raw: string | null;
+};
+
 /**
  * Lee el frontmatter y devuelve un record para otros checks.
  * @param filePath Ruta al markdown.
  * @returns Datos del frontmatter o null si no es un record.
  */
+/**
+ * Lee el frontmatter y devuelve datos + raw para validaciones mas estrictas.
+ * @param filePath Ruta al markdown.
+ * @returns Payload con data parseada y raw (si existe).
+ */
+export const readFrontmatter = async (
+  filePath: string,
+): Promise<FrontmatterPayload | null> => {
+  const contents = await readFile(filePath, 'utf8');
+  const data = matter(contents).data;
+  if (!isRecord(data)) {
+    return null;
+  }
+  return { data, raw: extractRawFrontmatter(contents) };
+};
+
 export const readFrontmatterData = async (
   filePath: string,
 ): Promise<Record<string, unknown> | null> => {
-  const contents = await readFile(filePath, 'utf8');
-  const data = matter(contents).data;
-  return isRecord(data) ? data : null;
+  const payload = await readFrontmatter(filePath);
+  return payload ? payload.data : null;
 };
 
 /**

@@ -5,13 +5,15 @@ import {
   type LoreDoc,
 } from './broken-references';
 import { collectDuplicateIds, type DuplicateId } from './duplicates';
-import { readFrontmatterData } from './frontmatter';
+import { readFrontmatter } from './frontmatter';
 import { listMarkdownFiles } from './fs';
+import { collectSchemaErrors, type RawDoc, type SchemaError } from './schema-validation';
 
 /** Reporte del linter con duplicados y referencias rotas. */
 export type LintReport = {
   duplicateIds: DuplicateId[];
   brokenReferences: BrokenReference[];
+  schemaErrors: SchemaError[];
 };
 
 const isString = (value: unknown): value is string => typeof value === 'string';
@@ -26,27 +28,31 @@ export const scanLoreDirectory = async (baseDir: string): Promise<LintReport> =>
   const records: Array<{ meta: { type: string; id: string }; path: string }> =
     [];
   const docs: LoreDoc[] = [];
+  const rawDocs: RawDoc[] = [];
 
   for (const filePath of files) {
-    const data = await readFrontmatterData(filePath);
-    if (!data) {
+    const payload = await readFrontmatter(filePath);
+    if (!payload) {
       continue;
     }
-    const type = data.type;
-    const id = data.id;
+    rawDocs.push({ data: payload.data, raw: payload.raw });
+    const type = payload.data.type;
+    const id = payload.data.id;
     if (!isString(type) || !isString(id)) {
       // Contenido incompleto no debe bloquear el lint; se reporta en checks especificos.
       continue;
     }
     records.push({ meta: { type, id }, path: filePath });
-    docs.push({ type, id, data });
+    docs.push({ type, id, data: payload.data });
   }
 
   const index = buildReferenceIndex(docs);
   const brokenReferences = collectBrokenReferences(docs, index);
+  const schemaErrors = collectSchemaErrors(rawDocs);
 
   return {
     duplicateIds: collectDuplicateIds(records),
     brokenReferences,
+    schemaErrors,
   };
 };
