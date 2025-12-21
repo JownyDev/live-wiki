@@ -1,7 +1,11 @@
 import { readdir } from 'node:fs/promises';
 import path from 'node:path';
 
-/** Recorre subdirectorios y solo incluye .md para alinear el linter con contenido. */
+/**
+ * Recorre subdirectorios y solo incluye .md para alinear el linter con contenido.
+ * @param baseDir Directorio raiz a recorrer.
+ * @returns Paths absolutos a markdown encontrados.
+ */
 export const listMarkdownFiles = async (baseDir: string): Promise<string[]> => {
   const entries = await readdir(baseDir, { withFileTypes: true });
   const results: string[] = [];

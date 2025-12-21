@@ -7,7 +7,11 @@ export type DuplicateId = {
   paths: string[];
 };
 
-/** Agrupa por type+id y devuelve solo los casos con mas de un archivo. */
+/**
+ * Agrupa por type+id y devuelve solo los casos con mas de un archivo.
+ * @param records Pares (meta, path) ya parseados.
+ * @returns Lista de duplicados con sus paths.
+ */
 export const collectDuplicateIds = (
   records: Array<{ meta: LoreIdentity; path: string }>,
 ): DuplicateId[] => {

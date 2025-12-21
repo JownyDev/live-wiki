@@ -14,6 +14,11 @@ const isString = (value: unknown): value is string => {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 
+/**
+ * Lee el frontmatter y devuelve un record para otros checks.
+ * @param filePath Ruta al markdown.
+ * @returns Datos del frontmatter o null si no es un record.
+ */
 export const readFrontmatterData = async (
   filePath: string,
 ): Promise<Record<string, unknown> | null> => {
@@ -22,7 +27,11 @@ export const readFrontmatterData = async (
   return isRecord(data) ? data : null;
 };
 
-/** Ignora archivos sin type/id para no romper el lint por contenido incompleto. */
+/**
+ * Ignora archivos sin type/id para no romper el lint por contenido incompleto.
+ * @param filePath Ruta al markdown.
+ * @returns Identidad basica o null si no es valida.
+ */
 export const extractTypeAndId = async (
   filePath: string,
 ): Promise<LoreIdentity | null> => {
