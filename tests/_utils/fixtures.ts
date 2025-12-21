@@ -35,6 +35,18 @@ export const getEventsByCharacterFixtureBaseDir = (): string => {
   return path.resolve(import.meta.dirname, '..', 'fixtures', 'events-by-character');
 };
 
+export type EventByLocationFixtureName =
+  | 'aurora-summit.md'
+  | 'borealis-skirmish.md'
+  | 'deep-space-drift.md'
+  | 'double-sighting.md'
+  | 'market-uprising.md'
+  | 'plaza-accord.md';
+
+export const getEventsByLocationFixtureBaseDir = (): string => {
+  return path.resolve(import.meta.dirname, '..', 'fixtures', 'events-by-location');
+};
+
 export type PlaceFixtureName =
   | 'haven-docks.md'
   | 'invalid-wrong-type.md'
@@ -45,6 +57,16 @@ export const getPlacesFixtureBaseDir = (): string => {
   return path.resolve(import.meta.dirname, '..', 'fixtures', 'places');
 };
 
+export type PlaceByLocationFixtureName =
+  | 'drifter-hub.md'
+  | 'harbor-south.md'
+  | 'rift-outpost.md'
+  | 'skyline-plaza.md';
+
+export const getPlacesByLocationFixtureBaseDir = (): string => {
+  return path.resolve(import.meta.dirname, '..', 'fixtures', 'events-by-location');
+};
+
 export type PlanetFixtureName =
   | 'varda-prime.md'
   | 'invalid-wrong-type.md'
@@ -53,6 +75,12 @@ export type PlanetFixtureName =
 
 export const getPlanetsFixtureBaseDir = (): string => {
   return path.resolve(import.meta.dirname, '..', 'fixtures', 'planets');
+};
+
+export type PlanetByLocationFixtureName = 'aurora.md' | 'borealis.md' | 'cinder.md';
+
+export const getPlanetsByLocationFixtureBaseDir = (): string => {
+  return path.resolve(import.meta.dirname, '..', 'fixtures', 'events-by-location');
 };
 
 export const createTempBaseDirWithCharacterFixtures = async (
@@ -102,6 +130,44 @@ export const createTempBaseDirWithEventByCharacterFixtures = async (
   for (const fixtureName of fixtureNames) {
     const sourcePath = path.join(fixtureBaseDir, 'events', fixtureName);
     const destPath = path.join(eventsDir, fixtureName);
+    const contents = await readFile(sourcePath, 'utf8');
+    await writeFile(destPath, contents, 'utf8');
+  }
+
+  return tempBaseDir;
+};
+
+export const createTempBaseDirWithEventByLocationFixtures = async (
+  eventFixtures: readonly EventByLocationFixtureName[],
+  placeFixtures: readonly PlaceByLocationFixtureName[],
+  planetFixtures: readonly PlanetByLocationFixtureName[],
+): Promise<string> => {
+  const tempBaseDir = await mkdtemp(path.join(os.tmpdir(), 'live-wiki-'));
+  const eventsDir = path.join(tempBaseDir, 'events');
+  const placesDir = path.join(tempBaseDir, 'places');
+  const planetsDir = path.join(tempBaseDir, 'planets');
+  await mkdir(eventsDir, { recursive: true });
+  await mkdir(placesDir, { recursive: true });
+  await mkdir(planetsDir, { recursive: true });
+
+  const fixtureBaseDir = getEventsByLocationFixtureBaseDir();
+  for (const fixtureName of eventFixtures) {
+    const sourcePath = path.join(fixtureBaseDir, 'events', fixtureName);
+    const destPath = path.join(eventsDir, fixtureName);
+    const contents = await readFile(sourcePath, 'utf8');
+    await writeFile(destPath, contents, 'utf8');
+  }
+
+  for (const fixtureName of placeFixtures) {
+    const sourcePath = path.join(fixtureBaseDir, 'places', fixtureName);
+    const destPath = path.join(placesDir, fixtureName);
+    const contents = await readFile(sourcePath, 'utf8');
+    await writeFile(destPath, contents, 'utf8');
+  }
+
+  for (const fixtureName of planetFixtures) {
+    const sourcePath = path.join(fixtureBaseDir, 'planets', fixtureName);
+    const destPath = path.join(planetsDir, fixtureName);
     const contents = await readFile(sourcePath, 'utf8');
     await writeFile(destPath, contents, 'utf8');
   }
