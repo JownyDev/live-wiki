@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { getStringField, parseFrontmatter } from './frontmatter';
+import { getStringArrayField, getStringField, parseFrontmatter } from './frontmatter';
 import { parseLocationRef } from './location-refs';
 import { listMarkdownFiles } from './markdown-files';
 import {
@@ -37,15 +37,23 @@ const parseWithPrefix = (value: string, prefix: string): string | null => {
   return id.length > 0 ? id : null;
 };
 
+const allowedRepresentsPrefixes = ['character:', 'event:'] as const;
+const allowedLocationKinds = new Set(['place', 'planet']);
+
+const hasAllowedPrefix = (value: string, prefixes: readonly string[]): boolean =>
+  prefixes.some((prefix) => parseWithPrefix(value, prefix) !== null);
+
+const isValidElementRef = (value: string, elementIds: Set<string>): boolean => {
+  const elementId = parseWithPrefix(value, 'element:');
+  return elementId ? elementIds.has(elementId) : false;
+};
+
 const isAllowedRepresentsRef = (value: string): boolean => {
-  if (parseWithPrefix(value, 'character:')) {
-    return true;
-  }
-  if (parseWithPrefix(value, 'event:')) {
+  if (hasAllowedPrefix(value, allowedRepresentsPrefixes)) {
     return true;
   }
   const parsedLocation = parseLocationRef(value);
-  return parsedLocation?.kind === 'place' || parsedLocation?.kind === 'planet';
+  return parsedLocation ? allowedLocationKinds.has(parsedLocation.kind) : false;
 };
 
 const listElementIds = async (baseDir?: string): Promise<Set<string>> => {
@@ -59,20 +67,13 @@ const parseElementsField = (
   field: string,
   elementIds: Set<string>,
 ): string[] => {
-  const value = record[field];
-  if (!Array.isArray(value) || !value.every((item) => typeof item === 'string')) {
-    throw new Error(`Invalid ${field}`);
-  }
+  const value = getStringArrayField(record, field);
   if (value.length !== 2) {
     throw new Error(`Invalid ${field}`);
   }
 
   for (const item of value) {
-    const elementId = parseWithPrefix(item, 'element:');
-    if (!elementId) {
-      throw new Error(`Invalid ${field}`);
-    }
-    if (!elementIds.has(elementId)) {
+    if (!isValidElementRef(item, elementIds)) {
       throw new Error(`Invalid ${field}`);
     }
   }
@@ -84,13 +85,7 @@ const parseRepresentsField = (
   record: Record<string, unknown>,
   field: string,
 ): string[] => {
-  const value = record[field];
-  if (typeof value === 'undefined') {
-    return [];
-  }
-  if (!Array.isArray(value) || !value.every((item) => typeof item === 'string')) {
-    throw new Error(`Invalid ${field}`);
-  }
+  const value = getStringArrayField(record, field);
   if (!value.every((item) => isAllowedRepresentsRef(item))) {
     throw new Error(`Invalid ${field}`);
   }
@@ -117,6 +112,16 @@ const parseAndValidateCardMarkdown = (
 const isEnoentError = (error: unknown): error is NodeErrorWithCode =>
   error instanceof Error && (error as NodeErrorWithCode).code === 'ENOENT';
 
+const readCardFromFile = async (
+  cardsDir: string,
+  filename: string,
+  elementIds: Set<string>,
+): Promise<Card> => {
+  const filePath = path.join(cardsDir, filename);
+  const markdown = await readFile(filePath, 'utf8');
+  return parseAndValidateCardMarkdown(markdown, elementIds);
+};
+
 export async function listCards(baseDir?: string): Promise<Array<CardListItem>> {
   const cardsDir = getCardsDir(baseDir);
   const elementIds = await listElementIds(baseDir);
@@ -124,9 +129,7 @@ export async function listCards(baseDir?: string): Promise<Array<CardListItem>> 
 
   const cards: CardListItem[] = [];
   for (const filename of markdownFiles) {
-    const filePath = path.join(cardsDir, filename);
-    const markdown = await readFile(filePath, 'utf8');
-    const { id, name } = parseAndValidateCardMarkdown(markdown, elementIds);
+    const { id, name } = await readCardFromFile(cardsDir, filename, elementIds);
     cards.push({ id, name });
   }
 
@@ -139,18 +142,14 @@ export async function getCardById(
   baseDir?: string,
 ): Promise<Card | null> {
   const cardsDir = getCardsDir(baseDir);
-  const filePath = path.join(cardsDir, `${id}.md`);
   const elementIds = await listElementIds(baseDir);
 
-  let markdown: string;
   try {
-    markdown = await readFile(filePath, 'utf8');
+    return await readCardFromFile(cardsDir, `${id}.md`, elementIds);
   } catch (error: unknown) {
     if (isEnoentError(error)) {
       return null;
     }
     throw error;
   }
-
-  return parseAndValidateCardMarkdown(markdown, elementIds);
 }
