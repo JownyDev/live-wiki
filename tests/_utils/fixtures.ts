@@ -29,6 +29,18 @@ export const getElementsFixtureBaseDir = (): string => {
   return path.resolve(import.meta.dirname, '..', 'fixtures', 'elements');
 };
 
+export type MechanicFixtureName =
+  | 'chrono-loop.md'
+  | 'drift-gate.md'
+  | 'invalid-missing-id.md'
+  | 'invalid-missing-name.md'
+  | 'invalid-missing-type.md'
+  | 'invalid-wrong-type.md';
+
+export const getMechanicsFixtureBaseDir = (): string => {
+  return path.resolve(import.meta.dirname, '..', 'fixtures', 'mechanics');
+};
+
 export type CardFixtureName =
   | 'ember-echo.md'
   | 'invalid-elements-length.md'
@@ -146,6 +158,24 @@ export const createTempBaseDirWithElementFixtures = async (
   for (const fixtureName of fixtureNames) {
     const sourcePath = path.join(fixtureBaseDir, 'elements', fixtureName);
     const destPath = path.join(elementsDir, fixtureName);
+    const contents = await readFile(sourcePath, 'utf8');
+    await writeFile(destPath, contents, 'utf8');
+  }
+
+  return tempBaseDir;
+};
+
+export const createTempBaseDirWithMechanicFixtures = async (
+  fixtureNames: readonly MechanicFixtureName[],
+): Promise<string> => {
+  const tempBaseDir = await mkdtemp(path.join(os.tmpdir(), 'live-wiki-'));
+  const mechanicsDir = path.join(tempBaseDir, 'mechanics');
+  await mkdir(mechanicsDir, { recursive: true });
+
+  const fixtureBaseDir = getMechanicsFixtureBaseDir();
+  for (const fixtureName of fixtureNames) {
+    const sourcePath = path.join(fixtureBaseDir, 'mechanics', fixtureName);
+    const destPath = path.join(mechanicsDir, fixtureName);
     const contents = await readFile(sourcePath, 'utf8');
     await writeFile(destPath, contents, 'utf8');
   }
