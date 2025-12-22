@@ -3,5 +3,10 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts", "astro.config.ts"]
+  "include": [
+    "src/**/*.ts",
+    "tests/**/*.ts",
+    "packages/**/*.ts",
+    "astro.config.ts"
+  ]
 }
