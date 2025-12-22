@@ -29,6 +29,23 @@ export const getElementsFixtureBaseDir = (): string => {
   return path.resolve(import.meta.dirname, '..', 'fixtures', 'elements');
 };
 
+export type CardFixtureName =
+  | 'ember-echo.md'
+  | 'invalid-elements-length.md'
+  | 'invalid-elements-missing-ref.md'
+  | 'invalid-missing-elements.md'
+  | 'invalid-missing-id.md'
+  | 'invalid-missing-name.md'
+  | 'invalid-represents-element.md'
+  | 'invalid-represents-prefix.md'
+  | 'invalid-wrong-type.md'
+  | 'prism-ward.md'
+  | 'silent-crest.md';
+
+export const getCardsFixtureBaseDir = (): string => {
+  return path.resolve(import.meta.dirname, '..', 'fixtures', 'cards');
+};
+
 export type EventFixtureName =
   | 'first-contact.md'
   | 'signal-rift.md'
@@ -128,6 +145,35 @@ export const createTempBaseDirWithElementFixtures = async (
   const fixtureBaseDir = getElementsFixtureBaseDir();
   for (const fixtureName of fixtureNames) {
     const sourcePath = path.join(fixtureBaseDir, 'elements', fixtureName);
+    const destPath = path.join(elementsDir, fixtureName);
+    const contents = await readFile(sourcePath, 'utf8');
+    await writeFile(destPath, contents, 'utf8');
+  }
+
+  return tempBaseDir;
+};
+
+export const createTempBaseDirWithCardFixtures = async (
+  cardFixtures: readonly CardFixtureName[],
+  elementFixtures: readonly ElementFixtureName[],
+): Promise<string> => {
+  const tempBaseDir = await mkdtemp(path.join(os.tmpdir(), 'live-wiki-'));
+  const cardsDir = path.join(tempBaseDir, 'cards');
+  const elementsDir = path.join(tempBaseDir, 'elements');
+  await mkdir(cardsDir, { recursive: true });
+  await mkdir(elementsDir, { recursive: true });
+
+  const cardsFixtureBaseDir = getCardsFixtureBaseDir();
+  for (const fixtureName of cardFixtures) {
+    const sourcePath = path.join(cardsFixtureBaseDir, 'cards', fixtureName);
+    const destPath = path.join(cardsDir, fixtureName);
+    const contents = await readFile(sourcePath, 'utf8');
+    await writeFile(destPath, contents, 'utf8');
+  }
+
+  const elementsFixtureBaseDir = getElementsFixtureBaseDir();
+  for (const fixtureName of elementFixtures) {
+    const sourcePath = path.join(elementsFixtureBaseDir, 'elements', fixtureName);
     const destPath = path.join(elementsDir, fixtureName);
     const contents = await readFile(sourcePath, 'utf8');
     await writeFile(destPath, contents, 'utf8');
