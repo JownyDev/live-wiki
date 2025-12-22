@@ -1,6 +1,15 @@
 import path from 'node:path';
-import { scanLoreDirectory, type LintReport } from '../../../lore-linter/src/index';
 import { errorResult, failResult, okResult, type CommandResult } from './result';
+
+type LintReport = {
+  duplicateIds: unknown[];
+  brokenReferences: unknown[];
+  schemaErrors: unknown[];
+};
+
+type LoreLinterModule = {
+  scanLoreDirectory: (baseDir: string) => Promise<LintReport>;
+};
 
 type CheckOptions = {
   contentDir?: string;
@@ -17,6 +26,44 @@ const countLintErrors = (report: LintReport): number => {
   );
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const getLoreLinterModule = (
+  value: unknown,
+): LoreLinterModule | null => {
+  if (isRecord(value) && typeof value.scanLoreDirectory === 'function') {
+    return value as LoreLinterModule;
+  }
+  if (isRecord(value) && isRecord(value.default)) {
+    const defaultExport = value.default;
+    if (typeof defaultExport.scanLoreDirectory === 'function') {
+      return defaultExport as LoreLinterModule;
+    }
+  }
+  return null;
+};
+
+const loadLoreLinter = async (): Promise<LoreLinterModule> => {
+  const distModulePath = '../../../lore-linter/dist/index.js';
+  const srcModulePath = '../../../lore-linter/src/index';
+  const modulePaths = [distModulePath, srcModulePath];
+
+  for (const modulePath of modulePaths) {
+    try {
+      const moduleExports = (await import(modulePath)) as unknown;
+      const resolved = getLoreLinterModule(moduleExports);
+      if (resolved) {
+        return resolved;
+      }
+    } catch {
+      // Ignora fallos para intentar el siguiente fallback.
+    }
+  }
+
+  throw new Error('Unable to load lore-linter module');
+};
+
 /**
  * Ejecuta el lore-linter y devuelve exit code + salida resumida.
  * @param options Directorio de contenido a revisar.
@@ -28,6 +75,7 @@ export const runCheckCommand = async (
   const contentDir = options.contentDir ?? getDefaultContentDir();
 
   try {
+    const { scanLoreDirectory } = await loadLoreLinter();
     const report = await scanLoreDirectory(contentDir);
     const errorCount = countLintErrors(report);
 

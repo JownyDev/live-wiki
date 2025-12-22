@@ -1,0 +1,12 @@
+{
+  "name": "wiki-cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "bin": {
+    "wiki": "dist/index.js"
+  },
+  "scripts": {
+    "build": "pnpm -C ../lore-linter build && tsc -p tsconfig.json"
+  }
+}

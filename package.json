@@ -12,7 +12,10 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "verify": "pnpm quality && pnpm build"
+    "verify": "pnpm quality && pnpm build",
+    "wiki:check": "pnpm -C packages/wiki-cli build && pnpm exec wiki check",
+    "wiki:build": "pnpm -C packages/wiki-cli build && pnpm exec wiki build",
+    "wiki:new": "pnpm -C packages/wiki-cli build && pnpm exec wiki new"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
@@ -26,7 +29,8 @@
     "eslint-plugin-astro": "^1.5.0",
     "prettier": "^3.7.0",
     "typescript": "^5.5.4",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "wiki-cli": "workspace:*"
   },
   "dependencies": {
     "gray-matter": "^4.0.3"

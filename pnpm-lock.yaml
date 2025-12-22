@@ -48,6 +48,13 @@ importers:
       vitest:
         specifier: ^3.2.4
         version: 3.2.4(@types/debug@4.1.12)(@types/node@25.0.3)(yaml@2.8.2)
+      wiki-cli:
+        specifier: workspace:*
+        version: link:packages/wiki-cli
+
+  packages/lore-linter: {}
+
+  packages/wiki-cli: {}
 
 packages:
 
