@@ -1,24 +1,34 @@
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-type DuplicateId = {
-  type: string;
-  id: string;
-  paths: string[];
-};
+type DuplicateId = import('../packages/lore-linter/src/duplicates').DuplicateId;
+type LoreLinter = typeof import('../packages/lore-linter/src/index');
 
-type LintReport = {
-  duplicateIds: DuplicateId[];
-};
-
-const loadLoreLinter = async (): Promise<{
-  scanLoreDirectory: (baseDir: string) => Promise<LintReport>;
-}> => {
+const loadLoreLinter = async (): Promise<LoreLinter> => {
   return await import('../packages/lore-linter/src/index');
 };
 
 describe('lore-linter duplicate ids', () => {
-  it('reports a single duplicate character id with both paths', async () => {
+  const getDuplicateMessage = (duplicate: DuplicateId): string | null => {
+    const value = (duplicate as Record<string, unknown>).message;
+    return typeof value === 'string' ? value : null;
+  };
+
+  const expectDuplicate = (
+    duplicates: Map<string, DuplicateId>,
+    key: string,
+    expectedPaths: string[],
+  ): void => {
+    const duplicate = duplicates.get(key);
+    if (!duplicate) {
+      throw new Error(`Missing duplicate entry for ${key}`);
+    }
+    expect(getDuplicateMessage(duplicate)).toBe('Duplicate id');
+    expect(duplicate.paths).toHaveLength(2);
+    expect([...duplicate.paths].sort()).toEqual([...expectedPaths].sort());
+  };
+
+  it('reports duplicate ids per type with message and paths', async () => {
     const fixturesDir = path.resolve(
       import.meta.dirname,
       '..',
@@ -32,16 +42,38 @@ describe('lore-linter duplicate ids', () => {
 
     const report = await scanLoreDirectory(fixturesDir);
 
-    expect(report.duplicateIds).toHaveLength(1);
-    const [duplicate] = report.duplicateIds;
-    expect(duplicate.type).toBe('character');
-    expect(duplicate.id).toBe('kael-nyx');
-    expect(Array.isArray(duplicate.paths)).toBe(true);
-    expect(duplicate.paths).toHaveLength(2);
-    const expectedPaths = [
+    expect(report.duplicateIds).toHaveLength(2);
+    const duplicates = new Map(
+      report.duplicateIds.map((duplicate) => [
+        `${duplicate.type}:${duplicate.id}`,
+        duplicate,
+      ]),
+    );
+
+    expectDuplicate(duplicates, 'character:kael-nyx', [
       path.join(fixturesDir, 'characters', 'kael-nyx.md'),
       path.join(fixturesDir, 'characters', 'kael-nyx-duplicate.md'),
-    ].sort();
-    expect([...duplicate.paths].sort()).toEqual(expectedPaths);
+    ]);
+    expectDuplicate(duplicates, 'place:echo-station', [
+      path.join(fixturesDir, 'places', 'echo-station.md'),
+      path.join(fixturesDir, 'places', 'echo-station-duplicate.md'),
+    ]);
+  });
+
+  it('ignores ids that are unique within each type', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'unique-ids',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    expect(report.duplicateIds).toEqual([]);
   });
 });

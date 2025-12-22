@@ -1,27 +1,10 @@
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-type DuplicateId = {
-  type: string;
-  id: string;
-  paths: string[];
-};
+type BrokenReference = import('../packages/lore-linter/src/broken-references').BrokenReference;
+type LoreLinter = typeof import('../packages/lore-linter/src/index');
 
-type BrokenReference = {
-  type: string;
-  id: string;
-  field: 'who' | 'locations' | 'origin' | 'planetId';
-  reference: string;
-};
-
-type LintReport = {
-  duplicateIds: DuplicateId[];
-  brokenReferences: BrokenReference[];
-};
-
-const loadLoreLinter = async (): Promise<{
-  scanLoreDirectory: (baseDir: string) => Promise<LintReport>;
-}> => {
+const loadLoreLinter = async (): Promise<LoreLinter> => {
   return await import('../packages/lore-linter/src/index');
 };
 
