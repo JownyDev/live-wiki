@@ -18,6 +18,17 @@ export const getCharactersFixtureBaseDir = (): string => {
   return path.resolve(import.meta.dirname, '..', 'fixtures', 'characters');
 };
 
+export type ElementFixtureName =
+  | 'amber-shard.md'
+  | 'flux-core.md'
+  | 'invalid-missing-id.md'
+  | 'invalid-missing-name.md'
+  | 'invalid-wrong-type.md';
+
+export const getElementsFixtureBaseDir = (): string => {
+  return path.resolve(import.meta.dirname, '..', 'fixtures', 'elements');
+};
+
 export type EventFixtureName =
   | 'first-contact.md'
   | 'signal-rift.md'
@@ -100,6 +111,24 @@ export const createTempBaseDirWithCharacterFixtures = async (
   for (const fixtureName of fixtureNames) {
     const sourcePath = path.join(fixtureBaseDir, 'characters', fixtureName);
     const destPath = path.join(charactersDir, fixtureName);
+    const contents = await readFile(sourcePath, 'utf8');
+    await writeFile(destPath, contents, 'utf8');
+  }
+
+  return tempBaseDir;
+};
+
+export const createTempBaseDirWithElementFixtures = async (
+  fixtureNames: readonly ElementFixtureName[],
+): Promise<string> => {
+  const tempBaseDir = await mkdtemp(path.join(os.tmpdir(), 'live-wiki-'));
+  const elementsDir = path.join(tempBaseDir, 'elements');
+  await mkdir(elementsDir, { recursive: true });
+
+  const fixtureBaseDir = getElementsFixtureBaseDir();
+  for (const fixtureName of fixtureNames) {
+    const sourcePath = path.join(fixtureBaseDir, 'elements', fixtureName);
+    const destPath = path.join(elementsDir, fixtureName);
     const contents = await readFile(sourcePath, 'utf8');
     await writeFile(destPath, contents, 'utf8');
   }
