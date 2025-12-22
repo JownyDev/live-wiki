@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process';
 import path from 'node:path';
-import { runCheckCommand, type CommandResult } from './check';
+import { runCheckCommand } from './check';
+import { errorResult, type CommandResult } from './result';
 
 type RunCheckCommand = (options: { contentDir: string }) => Promise<CommandResult>;
 
@@ -34,7 +35,7 @@ const runPnpmBuild = async (options: {
       output += chunk.toString();
     });
     child.on('error', (error: Error) => {
-      resolve({ exitCode: 1, output: `Error: ${error.message}` });
+      resolve(errorResult(error));
     });
     child.on('close', (code: number | null) => {
       resolve({ exitCode: code ?? 1, output });

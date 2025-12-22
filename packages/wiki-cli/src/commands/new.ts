@@ -1,7 +1,13 @@
 import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import matter from 'gray-matter';
-import type { CommandResult } from './check';
+import {
+  errorResult,
+  failResult,
+  formatErrorOutput,
+  okResult,
+  type CommandResult,
+} from './result';
 
 type NewOptions = {
   type: string;
@@ -36,6 +42,22 @@ const getErrorCode = (error: unknown): string | null => {
   }
   const code = error.code;
   return typeof code === 'string' ? code : null;
+};
+
+const resolveTargetDir = (type: string): string | null => {
+  return CONTENT_DIR_BY_TYPE[type] ?? null;
+};
+
+const getTargetPath = (
+  contentDir: string,
+  targetDir: string,
+  id: string,
+): string => {
+  return path.join(contentDir, targetDir, `${id}.md`);
+};
+
+const getTemplatePath = (templatesDir: string, type: string): string => {
+  return path.join(templatesDir, `${type}.md`);
 };
 
 const buildTemplate = (
@@ -77,6 +99,39 @@ const buildTemplate = (
   return matter.stringify(parsed.content, data);
 };
 
+const ensureTargetAvailable = async (
+  targetPath: string,
+): Promise<CommandResult | null> => {
+  try {
+    await access(targetPath);
+    return failResult(formatErrorOutput(`${targetPath} already exists`));
+  } catch (error: unknown) {
+    const code = getErrorCode(error);
+    if (code !== 'ENOENT') {
+      return errorResult(error);
+    }
+  }
+
+  return null;
+};
+
+const createFromTemplate = async (options: {
+  templatePath: string;
+  targetPath: string;
+  type: string;
+  id: string;
+}): Promise<CommandResult> => {
+  try {
+    const template = await readFile(options.templatePath, 'utf8');
+    const output = buildTemplate(template, options.type, options.id);
+    await mkdir(path.dirname(options.targetPath), { recursive: true });
+    await writeFile(options.targetPath, output, 'utf8');
+    return okResult(`Created ${options.targetPath}`);
+  } catch (error: unknown) {
+    return errorResult(error);
+  }
+};
+
 /**
  * Crea un archivo nuevo desde plantilla sin sobrescribir contenido existente.
  * @param options Tipo, id y rutas de contenido/plantillas.
@@ -85,57 +140,22 @@ const buildTemplate = (
 export const runNewCommand = async (
   options: NewOptions,
 ): Promise<CommandResult> => {
-  const targetDir = CONTENT_DIR_BY_TYPE[options.type];
+  const targetDir = resolveTargetDir(options.type);
   if (!targetDir) {
-    return {
-      exitCode: 1,
-      output: `Error: unknown type ${options.type}`,
-    };
+    return failResult(formatErrorOutput(`unknown type ${options.type}`));
   }
 
-  const targetPath = path.join(
-    options.contentDir,
-    targetDir,
-    `${options.id}.md`,
-  );
-
-  try {
-    await access(targetPath);
-    return {
-      exitCode: 1,
-      output: `Error: ${targetPath} already exists`,
-    };
-  } catch (error: unknown) {
-    const code = getErrorCode(error);
-    if (code !== 'ENOENT') {
-      const message =
-        error instanceof Error ? error.message : 'Unknown error';
-      return {
-        exitCode: 1,
-        output: `Error: ${message}`,
-      };
-    }
+  const targetPath = getTargetPath(options.contentDir, targetDir, options.id);
+  const availability = await ensureTargetAvailable(targetPath);
+  if (availability) {
+    return availability;
   }
 
-  const templatePath = path.join(
-    options.templatesDir,
-    `${options.type}.md`,
-  );
-
-  try {
-    const template = await readFile(templatePath, 'utf8');
-    const output = buildTemplate(template, options.type, options.id);
-    await mkdir(path.dirname(targetPath), { recursive: true });
-    await writeFile(targetPath, output, 'utf8');
-    return {
-      exitCode: 0,
-      output: `Created ${targetPath}`,
-    };
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return {
-      exitCode: 1,
-      output: `Error: ${message}`,
-    };
-  }
+  const templatePath = getTemplatePath(options.templatesDir, options.type);
+  return await createFromTemplate({
+    templatePath,
+    targetPath,
+    type: options.type,
+    id: options.id,
+  });
 };

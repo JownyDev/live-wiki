@@ -1,20 +1,20 @@
 import path from 'node:path';
-import { scanLoreDirectory } from '../../../lore-linter/src/index';
-
-/**
- * Resultado estandar de un comando del CLI.
- */
-export type CommandResult = {
-  exitCode: number;
-  output: string;
-};
+import { scanLoreDirectory, type LintReport } from '../../../lore-linter/src/index';
+import { errorResult, failResult, okResult, type CommandResult } from './result';
 
 type CheckOptions = {
   contentDir?: string;
 };
 
-const getDefaultContentDir = (): string => {
-  return path.resolve(process.cwd(), 'content');
+const getDefaultContentDir = (): string =>
+  path.resolve(process.cwd(), 'content');
+
+const countLintErrors = (report: LintReport): number => {
+  return (
+    report.duplicateIds.length +
+    report.brokenReferences.length +
+    report.schemaErrors.length
+  );
 };
 
 /**
@@ -29,28 +29,14 @@ export const runCheckCommand = async (
 
   try {
     const report = await scanLoreDirectory(contentDir);
-    const errorCount =
-      report.duplicateIds.length +
-      report.brokenReferences.length +
-      report.schemaErrors.length;
+    const errorCount = countLintErrors(report);
 
     if (errorCount > 0) {
-      return {
-        exitCode: 1,
-        output: `Found ${String(errorCount)} errors.`,
-      };
+      return failResult(`Found ${String(errorCount)} errors.`);
     }
 
-    return {
-      exitCode: 0,
-      output: 'No errors.',
-    };
+    return okResult('No errors.');
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : 'Unknown error';
-    return {
-      exitCode: 1,
-      output: `Error: ${message}`,
-    };
+    return errorResult(error);
   }
 };
