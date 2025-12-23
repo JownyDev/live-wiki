@@ -1,0 +1,40 @@
+---
+import { getMechanicById, listMechanics } from '../../lib/content/mechanics';
+
+export async function getStaticPaths() {
+  const mechanics = await listMechanics();
+  return mechanics.map((mechanic) => ({
+    params: { id: mechanic.id },
+  }));
+}
+
+const id = Astro.params.id;
+const mechanic = typeof id === 'string' ? await getMechanicById(id) : null;
+const title = mechanic ? mechanic.name : 'Mecanica no encontrada';
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <main>
+      {mechanic ? (
+        <>
+          <h1>{mechanic.name}</h1>
+          <div style="white-space: pre-wrap;">{mechanic.body}</div>
+        </>
+      ) : (
+        <>
+          <h1>Mecanica no encontrada</h1>
+          <p>La mecanica solicitada no existe.</p>
+          <p>
+            <a href="/mechanics">Volver a mecanicas</a>
+          </p>
+        </>
+      )}
+    </main>
+  </body>
+</html>

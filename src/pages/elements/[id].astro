@@ -1,0 +1,40 @@
+---
+import { getElementById, listElements } from '../../lib/content/elements';
+
+export async function getStaticPaths() {
+  const elements = await listElements();
+  return elements.map((element) => ({
+    params: { id: element.id },
+  }));
+}
+
+const id = Astro.params.id;
+const element = typeof id === 'string' ? await getElementById(id) : null;
+const title = element ? element.name : 'Elemento no encontrado';
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <main>
+      {element ? (
+        <>
+          <h1>{element.name}</h1>
+          <div style="white-space: pre-wrap;">{element.body}</div>
+        </>
+      ) : (
+        <>
+          <h1>Elemento no encontrado</h1>
+          <p>El elemento solicitado no existe.</p>
+          <p>
+            <a href="/elements">Volver a elementos</a>
+          </p>
+        </>
+      )}
+    </main>
+  </body>
+</html>

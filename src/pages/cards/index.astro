@@ -1,0 +1,30 @@
+---
+import { listCards } from '../../lib/content/cards';
+
+const title = 'Cartas';
+const cards = await listCards();
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <main>
+      <h1>{title}</h1>
+      {cards.length === 0 ? (
+        <p>No hay cartas todavía.</p>
+      ) : (
+        <ul>
+          {cards.map((card) => (
+            <li>
+              <a href={`/cards/${card.id}`}>{card.name}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
+  </body>
+</html>

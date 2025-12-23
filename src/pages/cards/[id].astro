@@ -1,0 +1,150 @@
+---
+import { getCardById, listCards } from '../../lib/content/cards';
+import { getElementById } from '../../lib/content/elements';
+import { getCharacterById } from '../../lib/content/characters';
+import { getEventById } from '../../lib/content/events';
+import { getPlaceById } from '../../lib/content/places';
+import { getPlanetById } from '../../lib/content/planets';
+
+export async function getStaticPaths() {
+  const cards = await listCards();
+  return cards.map((card) => ({
+    params: { id: card.id },
+  }));
+}
+
+const id = Astro.params.id;
+const card = typeof id === 'string' ? await getCardById(id) : null;
+const title = card ? card.name : 'Carta no encontrada';
+
+type LinkView = { text: string; href?: string };
+
+const parseWithPrefix = (value: string, prefix: string): string | null => {
+  if (!value.startsWith(prefix)) {
+    return null;
+  }
+  const idValue = value.slice(prefix.length);
+  return idValue.length > 0 ? idValue : null;
+};
+
+const elements: LinkView[] = card
+  ? await Promise.all(
+      card.elements.map(async (entry) => {
+        const elementId = parseWithPrefix(entry, 'element:');
+        if (!elementId) {
+          return { text: entry };
+        }
+        const element = await getElementById(elementId);
+        if (!element) {
+          return { text: `${elementId} (no encontrado)` };
+        }
+        return { text: element.name, href: `/elements/${element.id}` };
+      }),
+    )
+  : [];
+
+const represents: LinkView[] =
+  card && card.represents.length > 0
+    ? await Promise.all(
+        card.represents.map(async (entry) => {
+          const characterId = parseWithPrefix(entry, 'character:');
+          if (characterId) {
+            const character = await getCharacterById(characterId);
+            if (!character) {
+              return { text: `${characterId} (no encontrado)` };
+            }
+            return { text: character.name, href: `/characters/${character.id}` };
+          }
+
+          const eventId = parseWithPrefix(entry, 'event:');
+          if (eventId) {
+            const event = await getEventById(eventId);
+            if (!event) {
+              return { text: `${eventId} (no encontrado)` };
+            }
+            return { text: event.title, href: `/events/${event.id}` };
+          }
+
+          const placeId = parseWithPrefix(entry, 'place:');
+          if (placeId) {
+            const place = await getPlaceById(placeId);
+            if (!place) {
+              return { text: `${placeId} (no encontrado)` };
+            }
+            return { text: place.name, href: `/places/${place.id}` };
+          }
+
+          const planetId = parseWithPrefix(entry, 'planet:');
+          if (planetId) {
+            const planet = await getPlanetById(planetId);
+            if (!planet) {
+              return { text: `${planetId} (no encontrado)` };
+            }
+            return { text: planet.name, href: `/planets/${planet.id}` };
+          }
+
+          return { text: entry };
+        }),
+      )
+    : [];
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <main>
+      {card ? (
+        <>
+          <h1>{card.name}</h1>
+          <section>
+            <h2>Elementos</h2>
+            {elements.length === 0 ? (
+              <p>Sin elementos.</p>
+            ) : (
+              <ul>
+                {elements.map((element) => (
+                  <li>
+                    {element.href ? (
+                      <a href={element.href}>{element.text}</a>
+                    ) : (
+                      <span>{element.text}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+          {represents.length > 0 ? (
+            <section>
+              <h2>Representa</h2>
+              <ul>
+                {represents.map((entry) => (
+                  <li>
+                    {entry.href ? (
+                      <a href={entry.href}>{entry.text}</a>
+                    ) : (
+                      <span>{entry.text}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+          <div style="white-space: pre-wrap;">{card.body}</div>
+        </>
+      ) : (
+        <>
+          <h1>Carta no encontrada</h1>
+          <p>La carta solicitada no existe.</p>
+          <p>
+            <a href="/cards">Volver a cartas</a>
+          </p>
+        </>
+      )}
+    </main>
+  </body>
+</html>
