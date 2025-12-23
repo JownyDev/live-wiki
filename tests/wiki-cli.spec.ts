@@ -69,6 +69,22 @@ const parseFrontmatter = (contents: string): Record<string, unknown> => {
   return data;
 };
 
+const parseTemplate = (contents: string): { data: Record<string, unknown>; body: string } => {
+  const parsed = matter(contents);
+  const data = parsed.data as unknown;
+  if (!isRecord(data)) {
+    throw new Error('Expected frontmatter data');
+  }
+  return { data, body: parsed.content };
+};
+
+const assertMarkdownTemplate = (contents: string): void => {
+  expect(contents.startsWith('---')).toBe(true);
+  expect(contents).toContain('\n---\n\n');
+  const parsed = parseTemplate(contents);
+  expect(parsed.body.trim().length).toBeGreaterThan(0);
+};
+
 const createTempContentDir = async (): Promise<string> => {
   const tempBaseDir = await mkdtemp(path.join(os.tmpdir(), 'live-wiki-cli-'));
   const contentDir = path.join(tempBaseDir, 'content');
@@ -254,6 +270,138 @@ describe('wiki new command', () => {
     expect(data.locations).toHaveLength(0);
   });
 
+  it('creates an element file with minimal frontmatter', async () => {
+    const runNewCommand = await loadCommand<RunNewCommand>(
+      'packages/wiki-cli/src/commands/new.ts',
+      'runNewCommand',
+    );
+    const contentDir = await createTempContentDir();
+    const templatesDir = getTemplatesDir();
+
+    const result = assertCommandResult(
+      await runNewCommand({
+        type: 'element',
+        id: 'ember-spark',
+        contentDir,
+        templatesDir,
+      }),
+    );
+
+    expect(result.exitCode).toBe(0);
+    const filePath = path.join(contentDir, 'elements', 'ember-spark.md');
+    const contents = await readFile(filePath, 'utf8');
+    assertMarkdownTemplate(contents);
+    const data = parseFrontmatter(contents);
+
+    expect(data.type).toBe('element');
+    expect(data.id).toBe('ember-spark');
+    const name = data.name;
+    expect(typeof name).toBe('string');
+    if (typeof name !== 'string') {
+      throw new Error('Expected element name');
+    }
+    expect(name.length).toBeGreaterThan(0);
+  });
+
+  it('creates a mechanic file with minimal frontmatter', async () => {
+    const runNewCommand = await loadCommand<RunNewCommand>(
+      'packages/wiki-cli/src/commands/new.ts',
+      'runNewCommand',
+    );
+    const contentDir = await createTempContentDir();
+    const templatesDir = getTemplatesDir();
+
+    const result = assertCommandResult(
+      await runNewCommand({
+        type: 'mechanic',
+        id: 'chrono-loop',
+        contentDir,
+        templatesDir,
+      }),
+    );
+
+    expect(result.exitCode).toBe(0);
+    const filePath = path.join(contentDir, 'mechanics', 'chrono-loop.md');
+    const contents = await readFile(filePath, 'utf8');
+    assertMarkdownTemplate(contents);
+    const data = parseFrontmatter(contents);
+
+    expect(data.type).toBe('mechanic');
+    expect(data.id).toBe('chrono-loop');
+    const name = data.name;
+    expect(typeof name).toBe('string');
+    if (typeof name !== 'string') {
+      throw new Error('Expected mechanic name');
+    }
+    expect(name.length).toBeGreaterThan(0);
+  });
+
+  it('creates a card file with elements placeholders', async () => {
+    const runNewCommand = await loadCommand<RunNewCommand>(
+      'packages/wiki-cli/src/commands/new.ts',
+      'runNewCommand',
+    );
+    const contentDir = await createTempContentDir();
+    const templatesDir = getTemplatesDir();
+
+    const result = assertCommandResult(
+      await runNewCommand({
+        type: 'card',
+        id: 'sparked-ward',
+        contentDir,
+        templatesDir,
+      }),
+    );
+
+    expect(result.exitCode).toBe(0);
+    const filePath = path.join(contentDir, 'cards', 'sparked-ward.md');
+    const contents = await readFile(filePath, 'utf8');
+    assertMarkdownTemplate(contents);
+    const data = parseFrontmatter(contents);
+
+    expect(data.type).toBe('card');
+    expect(data.id).toBe('sparked-ward');
+    const name = data.name;
+    expect(typeof name).toBe('string');
+    if (typeof name !== 'string') {
+      throw new Error('Expected card name');
+    }
+    expect(name.length).toBeGreaterThan(0);
+
+    expect(Array.isArray(data.elements)).toBe(true);
+    expect(data.elements).toHaveLength(2);
+    expect(
+      (data.elements as unknown[]).every(
+        (entry) => typeof entry === 'string' && entry.startsWith('element:'),
+      ),
+    ).toBe(true);
+
+    if (typeof data.represents !== 'undefined') {
+      expect(Array.isArray(data.represents)).toBe(true);
+    }
+  });
+
+  it('fails when type is unknown', async () => {
+    const runNewCommand = await loadCommand<RunNewCommand>(
+      'packages/wiki-cli/src/commands/new.ts',
+      'runNewCommand',
+    );
+    const contentDir = await createTempContentDir();
+    const templatesDir = getTemplatesDir();
+
+    const result = assertCommandResult(
+      await runNewCommand({
+        type: 'unknown',
+        id: 'cualquiera',
+        contentDir,
+        templatesDir,
+      }),
+    );
+
+    expect(result.exitCode).toBe(1);
+    expect(result.output.toLowerCase()).toContain('unknown type');
+  });
+
   it('fails when the target file already exists', async () => {
     const runNewCommand = await loadCommand<RunNewCommand>(
       'packages/wiki-cli/src/commands/new.ts',
@@ -269,6 +417,29 @@ describe('wiki new command', () => {
       await runNewCommand({
         type: 'character',
         id: 'kael-nyx',
+        contentDir,
+        templatesDir,
+      }),
+    );
+
+    expect(result.exitCode).toBe(1);
+  });
+
+  it('fails when the target card already exists', async () => {
+    const runNewCommand = await loadCommand<RunNewCommand>(
+      'packages/wiki-cli/src/commands/new.ts',
+      'runNewCommand',
+    );
+    const contentDir = await createTempContentDir();
+    const templatesDir = getTemplatesDir();
+    const targetPath = path.join(contentDir, 'cards', 'sparked-ward.md');
+    await mkdir(path.dirname(targetPath), { recursive: true });
+    await writeFile(targetPath, '---\n---\n', 'utf8');
+
+    const result = assertCommandResult(
+      await runNewCommand({
+        type: 'card',
+        id: 'sparked-ward',
         contentDir,
         templatesDir,
       }),
