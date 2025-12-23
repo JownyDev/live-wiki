@@ -16,12 +16,17 @@ type NewOptions = {
   templatesDir: string;
 };
 
-const CONTENT_DIR_BY_TYPE: Record<string, string> = {
+const CONTENT_DIR_BY_TYPE = {
   character: 'characters',
   event: 'events',
   place: 'places',
   planet: 'planets',
-};
+  element: 'elements',
+  mechanic: 'mechanics',
+  card: 'cards',
+} as const;
+
+type ContentType = keyof typeof CONTENT_DIR_BY_TYPE;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
@@ -44,8 +49,11 @@ const getErrorCode = (error: unknown): string | null => {
   return typeof code === 'string' ? code : null;
 };
 
+const isContentType = (value: string): value is ContentType =>
+  value in CONTENT_DIR_BY_TYPE;
+
 const resolveTargetDir = (type: string): string | null => {
-  return CONTENT_DIR_BY_TYPE[type] ?? null;
+  return isContentType(type) ? CONTENT_DIR_BY_TYPE[type] : null;
 };
 
 const getTargetPath = (
