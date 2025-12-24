@@ -1,0 +1,12 @@
+---
+type Props = {
+  title?: string;
+};
+
+const { title } = Astro.props;
+---
+
+<section>
+  {title ? <h2>{title}</h2> : null}
+  <slot />
+</section>

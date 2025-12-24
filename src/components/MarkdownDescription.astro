@@ -1,0 +1,15 @@
+---
+type Props = {
+  content: string;
+};
+
+const { content } = Astro.props;
+---
+
+<div class="prose">{content}</div>
+
+<style>
+  :global(.prose) {
+    white-space: pre-wrap;
+  }
+</style>
