@@ -29,6 +29,42 @@ const countLintErrors = (report: LintReport): number => {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 
+type SchemaError = {
+  type: string;
+  id: string | null;
+  field: string;
+  reason: string;
+};
+
+const isSchemaError = (value: unknown): value is SchemaError => {
+  if (!isRecord(value)) {
+    return false;
+  }
+  const id = value.id;
+  return (
+    typeof value.type === 'string' &&
+    (typeof id === 'string' || id === null) &&
+    typeof value.field === 'string' &&
+    typeof value.reason === 'string'
+  );
+};
+
+const formatSchemaError = (error: SchemaError): string => {
+  const id = error.id ?? 'none';
+  return `${error.type}:${id}:${error.field}:${error.reason}`;
+};
+
+const formatCheckOutput = (report: LintReport): string => {
+  const errorCount = countLintErrors(report);
+  const schemaLines = report.schemaErrors
+    .filter(isSchemaError)
+    .map(formatSchemaError);
+  if (schemaLines.length === 0) {
+    return `Found ${String(errorCount)} errors.`;
+  }
+  return `Found ${String(errorCount)} errors.\n${schemaLines.join('\n')}`;
+};
+
 const getLoreLinterModule = (
   value: unknown,
 ): LoreLinterModule | null => {
@@ -80,7 +116,7 @@ export const runCheckCommand = async (
     const errorCount = countLintErrors(report);
 
     if (errorCount > 0) {
-      return failResult(`Found ${String(errorCount)} errors.`);
+      return failResult(formatCheckOutput(report));
     }
 
     return okResult('No errors.');

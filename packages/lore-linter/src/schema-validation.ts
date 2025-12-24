@@ -1,3 +1,5 @@
+import { parseLocationRef } from './location-refs';
+
 export type SchemaError = {
   type: string;
   id: string | null;
@@ -122,6 +124,77 @@ const validateEventWho = (context: SchemaContext): void => {
   }
 };
 
+const parseWithPrefix = (value: string, prefix: string): string | null => {
+  if (!value.startsWith(prefix)) {
+    return null;
+  }
+  const id = value.slice(prefix.length);
+  return id.length > 0 ? id : null;
+};
+
+const isAllowedRepresentsRef = (value: string): boolean => {
+  if (parseWithPrefix(value, 'character:')) {
+    return true;
+  }
+  if (parseWithPrefix(value, 'event:')) {
+    return true;
+  }
+  const location = parseLocationRef(value);
+  return location ? location.kind === 'place' || location.kind === 'planet' : false;
+};
+
+const isElementRef = (value: string): boolean => {
+  return parseWithPrefix(value, 'element:') !== null;
+};
+
+const validateCardElements = (context: SchemaContext): void => {
+  const elements = context.data.elements;
+  if (typeof elements === 'undefined') {
+    context.errors.push({
+      type: context.type,
+      id: context.id,
+      field: 'elements',
+      reason: 'required',
+    });
+    return;
+  }
+  if (!Array.isArray(elements) || elements.length !== 2) {
+    context.errors.push({
+      type: context.type,
+      id: context.id,
+      field: 'elements',
+      reason: 'invalid-length',
+    });
+  }
+};
+
+const validateCardRepresents = (context: SchemaContext): void => {
+  const represents = context.data.represents;
+  if (typeof represents === 'undefined') {
+    return;
+  }
+  if (!Array.isArray(represents)) {
+    context.errors.push({
+      type: context.type,
+      id: context.id,
+      field: 'represents',
+      reason: 'invalid-reference',
+    });
+    return;
+  }
+  for (const entry of represents) {
+    if (!isString(entry) || isElementRef(entry) || !isAllowedRepresentsRef(entry)) {
+      context.errors.push({
+        type: context.type,
+        id: context.id,
+        field: 'represents',
+        reason: 'invalid-reference',
+      });
+      return;
+    }
+  }
+};
+
 /**
  * Valida schema minimo por tipo y fechas ISO en events.
  * @param docs Documentos con frontmatter parseado.
@@ -152,6 +225,11 @@ export const collectSchemaErrors = (docs: RawDoc[]): SchemaError[] => {
     if (type === 'event') {
       validateEventDate(context);
       validateEventWho(context);
+    }
+
+    if (type === 'card') {
+      validateCardElements(context);
+      validateCardRepresents(context);
     }
   }
 
