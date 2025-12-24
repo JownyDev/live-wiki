@@ -17,7 +17,7 @@ const sortSchemaErrors = (errors: SchemaError[]): SchemaError[] => {
 };
 
 describe('lore-linter schema minimum', () => {
-  it('reports missing required fields per type', async () => {
+  it('reports missing required fields and invalid shapes per type', async () => {
     const fixturesDir = path.resolve(
       import.meta.dirname,
       '..',
@@ -39,7 +39,25 @@ describe('lore-linter schema minimum', () => {
         reason: 'required',
       },
       {
+        type: 'character',
+        id: 'invalid-related-shape',
+        field: 'related_mystery',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'element',
+        id: 'element-missing-name',
+        field: 'name',
+        reason: 'required',
+      },
+      {
         type: 'place',
+        id: null,
+        field: 'id',
+        reason: 'required',
+      },
+      {
+        type: 'mechanic',
         id: null,
         field: 'id',
         reason: 'required',
@@ -67,6 +85,12 @@ describe('lore-linter schema minimum', () => {
         id: 'invalid-who-shape',
         field: 'who',
         reason: 'invalid-shape',
+      },
+      {
+        type: 'card',
+        id: 'missing-card-name',
+        field: 'name',
+        reason: 'required',
       },
     ];
 

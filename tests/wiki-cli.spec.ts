@@ -154,6 +154,21 @@ describe('wiki check command', () => {
     expect(result.exitCode).toBe(1);
     expect(result.output).toContain('card:one-element:elements:invalid-length');
   });
+
+  it('returns exit 1 and prints schema errors for invalid element fixtures', async () => {
+    const runCheckCommand = await loadCommand<RunCheckCommand>(
+      'packages/wiki-cli/src/commands/check.ts',
+      'runCheckCommand',
+    );
+    const fixturesDir = getFixturesDir('content-schema-invalid');
+
+    const result = assertCommandResult(
+      await runCheckCommand({ contentDir: fixturesDir }),
+    );
+
+    expect(result.exitCode).toBe(1);
+    expect(result.output).toContain('element:element-missing-name:name:required');
+  });
 });
 
 describe('wiki build command', () => {

@@ -17,6 +17,9 @@ const isString = (value: unknown): value is string => typeof value === 'string';
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 
+const isStringArray = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every(isString);
+
 const isIsoDate = (value: string): boolean => /^\d{4}-\d{2}-\d{2}$/.test(value);
 
 const isValidIsoDate = (value: string): boolean => {
@@ -57,9 +60,12 @@ const isValidWho = (value: unknown): boolean => {
 
 const requiredStringFieldsByType: Partial<Record<string, string[]>> = {
   character: ['id', 'name'],
+  element: ['id', 'name'],
   place: ['id', 'name'],
   planet: ['id', 'name'],
   event: ['id', 'title'],
+  mechanic: ['id', 'name'],
+  card: ['id', 'name'],
 };
 
 type SchemaContext = {
@@ -89,6 +95,14 @@ const addRequiredStringFields = (context: SchemaContext, fields: string[]): void
       addSchemaError(context, field, 'required');
     }
   }
+};
+
+const validateRequiredFields = (context: SchemaContext): void => {
+  const requiredFields = requiredStringFieldsByType[context.type];
+  if (!requiredFields) {
+    return;
+  }
+  addRequiredStringFields(context, requiredFields);
 };
 
 const validateEventDate = (context: SchemaContext): void => {
@@ -183,6 +197,33 @@ const validateCardRepresents = (context: SchemaContext): void => {
   }
 };
 
+const validateEventFields = (context: SchemaContext): void => {
+  validateEventDate(context);
+  validateEventWho(context);
+};
+
+const validateCardFields = (context: SchemaContext): void => {
+  validateCardElements(context);
+  validateCardRepresents(context);
+};
+
+const validateRelatedFields = (context: SchemaContext): void => {
+  for (const [field, value] of Object.entries(context.data)) {
+    if (!field.startsWith('related_')) {
+      continue;
+    }
+    if (isString(value) || isStringArray(value)) {
+      continue;
+    }
+    addSchemaError(context, field, 'invalid-shape');
+  }
+};
+
+const typeValidators: Partial<Record<string, (context: SchemaContext) => void>> = {
+  event: validateEventFields,
+  card: validateCardFields,
+};
+
 /**
  * Valida schema minimo por tipo y fechas ISO en events.
  * @param docs Documentos con frontmatter parseado.
@@ -205,20 +246,14 @@ export const collectSchemaErrors = (docs: RawDoc[]): SchemaError[] => {
       errors,
     };
 
-    const requiredFields = requiredStringFieldsByType[type];
-    if (requiredFields) {
-      addRequiredStringFields(context, requiredFields);
+    validateRequiredFields(context);
+
+    const validator = typeValidators[type];
+    if (validator) {
+      validator(context);
     }
 
-    if (type === 'event') {
-      validateEventDate(context);
-      validateEventWho(context);
-    }
-
-    if (type === 'card') {
-      validateCardElements(context);
-      validateCardRepresents(context);
-    }
+    validateRelatedFields(context);
   }
 
   return errors;

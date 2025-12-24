@@ -45,6 +45,24 @@ describe('lore-linter broken references', () => {
         reference: 'planet:missing-planet',
       },
       {
+        type: 'character',
+        id: 'broken-related-event',
+        field: 'related_events',
+        reference: 'event:missing-event',
+      },
+      {
+        type: 'card',
+        id: 'broken-elements',
+        field: 'elements',
+        reference: 'element:missing-element',
+      },
+      {
+        type: 'card',
+        id: 'broken-represents',
+        field: 'represents',
+        reference: 'event:missing-event',
+      },
+      {
         type: 'event',
         id: 'broken-place',
         field: 'locations',
@@ -61,6 +79,12 @@ describe('lore-linter broken references', () => {
         id: 'broken-who',
         field: 'who',
         reference: 'ghost',
+      },
+      {
+        type: 'mechanic',
+        id: 'broken-related-card',
+        field: 'related_cards',
+        reference: 'card:missing-card',
       },
       {
         type: 'place',
