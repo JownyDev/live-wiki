@@ -1,7 +1,10 @@
 ---
+import EntityLink from './EntityLink.astro';
+
 export type RelationItem = {
   text: string;
   href?: string;
+  missing?: boolean;
 };
 
 type Props = {
@@ -22,11 +25,7 @@ const shouldRender = hasItems || typeof emptyText === 'string';
       <ul>
         {items.map((item) => (
           <li>
-            {item.href ? (
-              <a href={item.href}>{item.text}</a>
-            ) : (
-              <span class="relation-list__missing">{item.text}</span>
-            )}
+            <EntityLink label={item.text} href={item.href} missing={item.missing} />
           </li>
         ))}
       </ul>
@@ -37,10 +36,6 @@ const shouldRender = hasItems || typeof emptyText === 'string';
 ) : null}
 
 <style>
-  .relation-list__missing {
-    opacity: 0.7;
-  }
-
   .relation-list__empty {
     opacity: 0.7;
   }

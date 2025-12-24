@@ -1,0 +1,82 @@
+---
+import Badge, { type BadgeVariant } from './Badge.astro';
+
+type MetaItem = {
+  label: string;
+  value: string;
+  variant?: BadgeVariant;
+};
+
+type Props = {
+  title: string;
+  meta?: MetaItem[];
+};
+
+const { title, meta = [] } = Astro.props;
+const hasMeta = meta.length > 0;
+const hasActions = Astro.slots.has('actions');
+---
+
+<header class="page-header">
+  <div class="page-header__title-row">
+    <h1>{title}</h1>
+    {hasActions ? <div class="page-header__actions"><slot name="actions" /></div> : null}
+  </div>
+  {hasMeta ? (
+    <dl class="page-header__meta">
+      {meta.map((item) => (
+        <div class="page-header__meta-item">
+          <dt class="page-header__meta-label">{item.label}</dt>
+          <dd class="page-header__meta-value">
+            <Badge label={item.value} variant={item.variant} />
+          </dd>
+        </div>
+      ))}
+    </dl>
+  ) : null}
+</header>
+
+<style>
+  .page-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .page-header__title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .page-header__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    margin: 0;
+  }
+
+  .page-header__meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+  }
+
+  .page-header__meta-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    opacity: 0.6;
+  }
+
+  .page-header__meta-value {
+    margin: 0;
+  }
+
+  .page-header__actions {
+    display: inline-flex;
+    gap: 0.5rem;
+  }
+</style>

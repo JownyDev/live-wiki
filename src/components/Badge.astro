@@ -1,0 +1,38 @@
+---
+export type BadgeVariant = 'default' | 'muted' | 'missing';
+
+type Props = {
+  label: string;
+  variant?: BadgeVariant;
+};
+
+const { label, variant = 'default' } = Astro.props;
+const className = `badge badge--${variant}`;
+---
+
+<span class={className}>{label}</span>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    line-height: 1;
+    border: 1px solid currentColor;
+  }
+
+  .badge--default {
+    opacity: 0.9;
+  }
+
+  .badge--muted {
+    opacity: 0.6;
+  }
+
+  .badge--missing {
+    opacity: 0.6;
+    text-decoration: line-through;
+  }
+</style>

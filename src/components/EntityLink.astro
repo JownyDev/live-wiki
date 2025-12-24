@@ -1,0 +1,23 @@
+---
+export type EntityLinkProps = {
+  label: string;
+  href?: string;
+  missing?: boolean;
+};
+
+const { label, href, missing = false } = Astro.props;
+const isMissing = missing || !href;
+const className = isMissing ? 'entity-link entity-link--missing' : 'entity-link';
+---
+
+{isMissing ? (
+  <span class={className} aria-disabled="true">{label}</span>
+) : (
+  <a class={className} href={href}>{label}</a>
+)}
+
+<style>
+  .entity-link--missing {
+    opacity: 0.7;
+  }
+</style>

@@ -4,6 +4,7 @@ import { getCharacterById } from '../../lib/content/characters';
 import { getPlaceById } from '../../lib/content/places';
 import { getPlanetById } from '../../lib/content/planets';
 import { parseLocationRef } from '../../lib/content/location-refs';
+import Header from '../../components/Header.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
 import RelationList, { type RelationItem } from '../../components/RelationList.astro';
 import Section from '../../components/Section.astro';
@@ -18,6 +19,13 @@ export async function getStaticPaths() {
 const id = Astro.params.id;
 const event = typeof id === 'string' ? await getEventById(id) : null;
 const title = event ? event.title : 'Evento no encontrado';
+const meta = event
+  ? [
+      { label: 'Type', value: 'event', variant: 'muted' },
+      { label: 'Id', value: event.id },
+      { label: 'Date', value: event.date },
+    ]
+  : [];
 
 type Participant = { id: string; name: string | null };
 
@@ -91,8 +99,7 @@ const locations: LocationView[] = event
     <main>
       {event ? (
         <>
-          <h1>{event.title}</h1>
-          <p>{event.date}</p>
+          <Header title={event.title} meta={meta} />
           <MarkdownDescription content={event.body} />
           <Section>
             <RelationList
