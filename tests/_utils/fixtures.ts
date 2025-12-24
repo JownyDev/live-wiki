@@ -123,6 +123,24 @@ export const getPlanetsFixtureBaseDir = (): string => {
   return path.resolve(import.meta.dirname, '..', 'fixtures', 'planets');
 };
 
+export type SearchCharacterFixtureName = 'lira-vox.md' | 'tovin-ash.md';
+
+export type SearchEventFixtureName = 'glow-harvest.md';
+
+export type SearchPlaceFixtureName = 'cinder-dock.md';
+
+export type SearchPlanetFixtureName = 'varda-prime.md';
+
+export type SearchElementFixtureName = 'ember-shard.md';
+
+export type SearchMechanicFixtureName = 'flux-weave.md';
+
+export type SearchCardFixtureName = 'prism-ward.md';
+
+export const getSearchFixtureBaseDir = (): string => {
+  return path.resolve(import.meta.dirname, '..', 'fixtures', 'search');
+};
+
 export type PlanetByLocationFixtureName = 'aurora.md' | 'borealis.md' | 'cinder.md';
 
 export const getPlanetsByLocationFixtureBaseDir = (): string => {
@@ -318,6 +336,68 @@ export const createTempBaseDirWithPlanetFixtures = async (
     const contents = await readFile(sourcePath, 'utf8');
     await writeFile(destPath, contents, 'utf8');
   }
+
+  return tempBaseDir;
+};
+
+export type SearchFixtures = {
+  characters: readonly SearchCharacterFixtureName[];
+  events: readonly SearchEventFixtureName[];
+  places: readonly SearchPlaceFixtureName[];
+  planets: readonly SearchPlanetFixtureName[];
+  elements: readonly SearchElementFixtureName[];
+  mechanics: readonly SearchMechanicFixtureName[];
+  cards: readonly SearchCardFixtureName[];
+};
+
+const copySearchFixtures = async (
+  tempBaseDir: string,
+  fixtureBaseDir: string,
+  subdir: string,
+  fixtureNames: readonly string[],
+): Promise<void> => {
+  if (fixtureNames.length === 0) {
+    return;
+  }
+  const destDir = path.join(tempBaseDir, subdir);
+  await mkdir(destDir, { recursive: true });
+
+  for (const fixtureName of fixtureNames) {
+    const sourcePath = path.join(fixtureBaseDir, subdir, fixtureName);
+    const destPath = path.join(destDir, fixtureName);
+    const contents = await readFile(sourcePath, 'utf8');
+    await writeFile(destPath, contents, 'utf8');
+  }
+};
+
+export const createTempBaseDirWithSearchFixtures = async (
+  fixtures: SearchFixtures,
+): Promise<string> => {
+  const tempBaseDir = await mkdtemp(path.join(os.tmpdir(), 'live-wiki-'));
+  const fixtureBaseDir = getSearchFixtureBaseDir();
+
+  await copySearchFixtures(
+    tempBaseDir,
+    fixtureBaseDir,
+    'characters',
+    fixtures.characters,
+  );
+  await copySearchFixtures(tempBaseDir, fixtureBaseDir, 'events', fixtures.events);
+  await copySearchFixtures(tempBaseDir, fixtureBaseDir, 'places', fixtures.places);
+  await copySearchFixtures(tempBaseDir, fixtureBaseDir, 'planets', fixtures.planets);
+  await copySearchFixtures(
+    tempBaseDir,
+    fixtureBaseDir,
+    'elements',
+    fixtures.elements,
+  );
+  await copySearchFixtures(
+    tempBaseDir,
+    fixtureBaseDir,
+    'mechanics',
+    fixtures.mechanics,
+  );
+  await copySearchFixtures(tempBaseDir, fixtureBaseDir, 'cards', fixtures.cards);
 
   return tempBaseDir;
 };
