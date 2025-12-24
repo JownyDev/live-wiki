@@ -75,6 +75,25 @@ Aplicar **SOLID + KISS + DRY**:
 
 ---
 
+## Frontend / Astro UI
+
+Objetivo UI: **wiki compacta, legible y escaneable**.
+
+- **Pages finas**: cargar datos y pasar props; evitar duplicar markup entre páginas.
+- **Separación clara**:
+  - Layouts = estructura de página (container/nav/spacing).
+  - Componentes presentacionales = sin JS cliente por defecto.
+  - Islands = solo para interactividad real (búsqueda en vivo, filtros client-side, timeline, grafo).
+- **Componentes por intención**: preferir genéricos reutilizables (ej. `RelationList`) en vez de uno por tipo.
+  - Qué hacer: `RelationList` con label + items.
+  - Qué no hacer: `EventParticipants` si solo cambia el label.
+- **Estilos**: base + markdown/prose + tokens; evita estilos ad-hoc repetidos por página.
+- **Comentarios**: explicar el **por qué** (trade-offs, compatibilidad, edge cases), no lo obvio.
+
+Doc de diseño UI: `docs/design/004-frontend-ui.md`.
+
+---
+
 ## Manejo de errores
 
 - CLI/Linter **no deben crashear** por contenido inválido:
