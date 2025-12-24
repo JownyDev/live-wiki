@@ -70,10 +70,23 @@ type SchemaContext = {
   errors: SchemaError[];
 };
 
+const addSchemaError = (
+  context: SchemaContext,
+  field: string,
+  reason: string,
+): void => {
+  context.errors.push({
+    type: context.type,
+    id: context.id,
+    field,
+    reason,
+  });
+};
+
 const addRequiredStringFields = (context: SchemaContext, fields: string[]): void => {
   for (const field of fields) {
     if (!isString(context.data[field])) {
-      context.errors.push({ type: context.type, id: context.id, field, reason: 'required' });
+      addSchemaError(context, field, 'required');
     }
   }
 };
@@ -83,44 +96,29 @@ const validateEventDate = (context: SchemaContext): void => {
   const parsedDate = context.data.date;
 
   if (rawDate === null && typeof parsedDate === 'undefined') {
-    context.errors.push({ type: context.type, id: context.id, field: 'date', reason: 'required' });
+    addSchemaError(context, 'date', 'required');
     return;
   }
 
   // Usa el raw para evitar que YAML normalice fechas invalidas.
   if (rawDate !== null) {
     if (!isValidIsoDate(rawDate)) {
-      context.errors.push({
-        type: context.type,
-        id: context.id,
-        field: 'date',
-        reason: 'invalid-date',
-      });
+      addSchemaError(context, 'date', 'invalid-date');
     }
     return;
   }
 
   if (!isString(parsedDate) || !isValidIsoDate(parsedDate)) {
-    context.errors.push({
-      type: context.type,
-      id: context.id,
-      field: 'date',
-      reason: 'invalid-date',
-    });
+    addSchemaError(context, 'date', 'invalid-date');
   }
 };
 
 const validateEventWho = (context: SchemaContext): void => {
   const who = context.data.who;
   if (typeof who === 'undefined') {
-    context.errors.push({ type: context.type, id: context.id, field: 'who', reason: 'required' });
+    addSchemaError(context, 'who', 'required');
   } else if (!isValidWho(who)) {
-    context.errors.push({
-      type: context.type,
-      id: context.id,
-      field: 'who',
-      reason: 'invalid-shape',
-    });
+    addSchemaError(context, 'who', 'invalid-shape');
   }
 };
 
@@ -132,11 +130,14 @@ const parseWithPrefix = (value: string, prefix: string): string | null => {
   return id.length > 0 ? id : null;
 };
 
+const hasPrefix = (value: string, prefix: string): boolean =>
+  parseWithPrefix(value, prefix) !== null;
+
 const isAllowedRepresentsRef = (value: string): boolean => {
-  if (parseWithPrefix(value, 'character:')) {
+  if (hasPrefix(value, 'character:')) {
     return true;
   }
-  if (parseWithPrefix(value, 'event:')) {
+  if (hasPrefix(value, 'event:')) {
     return true;
   }
   const location = parseLocationRef(value);
@@ -144,27 +145,24 @@ const isAllowedRepresentsRef = (value: string): boolean => {
 };
 
 const isElementRef = (value: string): boolean => {
-  return parseWithPrefix(value, 'element:') !== null;
+  return hasPrefix(value, 'element:');
+};
+
+const isValidCardRepresentsEntry = (value: unknown): boolean => {
+  if (!isString(value)) {
+    return false;
+  }
+  return !isElementRef(value) && isAllowedRepresentsRef(value);
 };
 
 const validateCardElements = (context: SchemaContext): void => {
   const elements = context.data.elements;
   if (typeof elements === 'undefined') {
-    context.errors.push({
-      type: context.type,
-      id: context.id,
-      field: 'elements',
-      reason: 'required',
-    });
+    addSchemaError(context, 'elements', 'required');
     return;
   }
   if (!Array.isArray(elements) || elements.length !== 2) {
-    context.errors.push({
-      type: context.type,
-      id: context.id,
-      field: 'elements',
-      reason: 'invalid-length',
-    });
+    addSchemaError(context, 'elements', 'invalid-length');
   }
 };
 
@@ -174,24 +172,14 @@ const validateCardRepresents = (context: SchemaContext): void => {
     return;
   }
   if (!Array.isArray(represents)) {
-    context.errors.push({
-      type: context.type,
-      id: context.id,
-      field: 'represents',
-      reason: 'invalid-reference',
-    });
+    addSchemaError(context, 'represents', 'invalid-reference');
     return;
   }
-  for (const entry of represents) {
-    if (!isString(entry) || isElementRef(entry) || !isAllowedRepresentsRef(entry)) {
-      context.errors.push({
-        type: context.type,
-        id: context.id,
-        field: 'represents',
-        reason: 'invalid-reference',
-      });
-      return;
-    }
+  const hasInvalidEntry = represents.some(
+    (entry) => !isValidCardRepresentsEntry(entry),
+  );
+  if (hasInvalidEntry) {
+    addSchemaError(context, 'represents', 'invalid-reference');
   }
 };
 
