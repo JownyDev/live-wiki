@@ -139,6 +139,21 @@ describe('wiki check command', () => {
     expect(result.exitCode).toBe(1);
     expect(result.output.toLowerCase()).toContain('error');
   });
+
+  it('returns exit 1 and prints card lint errors for invalid card fixtures', async () => {
+    const runCheckCommand = await loadCommand<RunCheckCommand>(
+      'packages/wiki-cli/src/commands/check.ts',
+      'runCheckCommand',
+    );
+    const fixturesDir = getFixturesDir('content-cards-invalid');
+
+    const result = assertCommandResult(
+      await runCheckCommand({ contentDir: fixturesDir }),
+    );
+
+    expect(result.exitCode).toBe(1);
+    expect(result.output).toContain('card:one-element:elements:invalid-length');
+  });
 });
 
 describe('wiki build command', () => {

@@ -56,15 +56,7 @@ Necesitamos ejecutar el CLI (`wiki`) **sin instalación global**, y asegurar que
 
 ---
 
-## 6) Conflictos / estado del working tree (para revisión)
-
-- `content/places/glass-market.md` tiene cambios no relacionados.
-- `docs/design/002-life-wiki.md` tiene cambios no relacionados.
-- `content/characters/kael-nyx.md` aparece eliminado respecto a HEAD (verificar si se debe restaurar).
-
----
-
-## 7) Verificación
+## 6) Verificación
 
 - `pnpm wiki:check`
 - `pnpm wiki:build`

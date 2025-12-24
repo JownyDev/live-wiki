@@ -128,3 +128,66 @@ describe('lore-linter schema minimum', () => {
     expect(report.schemaErrors).toEqual([]);
   });
 });
+
+describe('lore-linter card schema', () => {
+  it('reports card elements and represents validation errors', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'cards-invalid',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    const expected: SchemaError[] = [
+      {
+        type: 'card',
+        id: 'missing-elements',
+        field: 'elements',
+        reason: 'required',
+      },
+      {
+        type: 'card',
+        id: 'one-element',
+        field: 'elements',
+        reason: 'invalid-length',
+      },
+      {
+        type: 'card',
+        id: 'three-elements',
+        field: 'elements',
+        reason: 'invalid-length',
+      },
+      {
+        type: 'card',
+        id: 'represents-element',
+        field: 'represents',
+        reason: 'invalid-reference',
+      },
+    ];
+
+    expect(sortSchemaErrors(report.schemaErrors)).toEqual(sortSchemaErrors(expected));
+  });
+
+  it('accepts valid cards with duplicate elements and optional represents', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'cards-valid',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    expect(report.schemaErrors).toEqual([]);
+  });
+});
