@@ -1,4 +1,9 @@
 ---
+import Header from '../../components/Header.astro';
+import MarkdownDescription from '../../components/MarkdownDescription.astro';
+import RelationList, { type RelationItem } from '../../components/RelationList.astro';
+import Section from '../../components/Section.astro';
+import EntityLink from '../../components/EntityLink.astro';
 import { getPlaceById, listPlaces } from '../../lib/content/places';
 import { listEventsByPlaceId } from '../../lib/content/events';
 
@@ -13,6 +18,10 @@ const id = Astro.params.id;
 const place = typeof id === 'string' ? await getPlaceById(id) : null;
 const events =
   place && typeof id === 'string' ? await listEventsByPlaceId(id) : [];
+const eventItems: RelationItem[] = events.map((event) => ({
+  text: `${event.title} (${event.date})`,
+  href: `/events/${event.id}`,
+}));
 const title = place ? place.name : 'Lugar no encontrado';
 const planetLabel = (() => {
   if (!place) {
@@ -44,39 +53,28 @@ const planetLabel = (() => {
     <main>
       {place ? (
         <>
-          <h1>{place.name}</h1>
-          <section>
-            <h2>Planeta</h2>
+          <Header title={place.name} />
+          <Section title="Planeta">
             {typeof planetLabel === 'string' ? (
               <p>{planetLabel}</p>
             ) : (
-              <a href={planetLabel.href}>{planetLabel.text}</a>
+              <EntityLink href={planetLabel.href} label={planetLabel.text} />
             )}
-          </section>
-          <section>
-            <h2>Eventos aquí</h2>
-            {events.length === 0 ? (
-              <p>Sin eventos.</p>
-            ) : (
-              <ul>
-                {events.map((event) => (
-                  <li>
-                    <a href={`/events/${event.id}`}>{event.title}</a>
-                    <span> ({event.date})</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-          <div style="white-space: pre-wrap;">{place.body}</div>
+          </Section>
+          <Section>
+            <RelationList label="Eventos aqui" items={eventItems} emptyText="Sin eventos." />
+          </Section>
+          <MarkdownDescription content={place.body} />
         </>
       ) : (
         <>
-          <h1>Lugar no encontrado</h1>
-          <p>El lugar solicitado no existe.</p>
-          <p>
-            <a href="/places">Volver a lugares</a>
-          </p>
+          <Header title="Lugar no encontrado" />
+          <Section>
+            <p>El lugar solicitado no existe.</p>
+            <p>
+              <a href="/places">Volver a lugares</a>
+            </p>
+          </Section>
         </>
       )}
     </main>

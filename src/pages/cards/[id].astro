@@ -1,4 +1,8 @@
 ---
+import Header from '../../components/Header.astro';
+import MarkdownDescription from '../../components/MarkdownDescription.astro';
+import RelationList, { type RelationItem } from '../../components/RelationList.astro';
+import Section from '../../components/Section.astro';
 import { getCardById, listCards } from '../../lib/content/cards';
 import { getElementById } from '../../lib/content/elements';
 import { getCharacterById } from '../../lib/content/characters';
@@ -87,6 +91,14 @@ const represents: LinkView[] =
         }),
       )
     : [];
+const elementItems: RelationItem[] = elements.map((element) => ({
+  text: element.text,
+  href: element.href,
+}));
+const representsItems: RelationItem[] = represents.map((entry) => ({
+  text: entry.text,
+  href: entry.href,
+}));
 ---
 
 <html lang="es">
@@ -99,50 +111,26 @@ const represents: LinkView[] =
     <main>
       {card ? (
         <>
-          <h1>{card.name}</h1>
-          <section>
-            <h2>Elementos</h2>
-            {elements.length === 0 ? (
-              <p>Sin elementos.</p>
-            ) : (
-              <ul>
-                {elements.map((element) => (
-                  <li>
-                    {element.href ? (
-                      <a href={element.href}>{element.text}</a>
-                    ) : (
-                      <span>{element.text}</span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-          {represents.length > 0 ? (
-            <section>
-              <h2>Representa</h2>
-              <ul>
-                {represents.map((entry) => (
-                  <li>
-                    {entry.href ? (
-                      <a href={entry.href}>{entry.text}</a>
-                    ) : (
-                      <span>{entry.text}</span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </section>
+          <Header title={card.name} />
+          <Section>
+            <RelationList label="Elementos" items={elementItems} emptyText="Sin elementos." />
+          </Section>
+          {representsItems.length > 0 ? (
+            <Section>
+              <RelationList label="Representa" items={representsItems} />
+            </Section>
           ) : null}
-          <div style="white-space: pre-wrap;">{card.body}</div>
+          <MarkdownDescription content={card.body} />
         </>
       ) : (
         <>
-          <h1>Carta no encontrada</h1>
-          <p>La carta solicitada no existe.</p>
-          <p>
-            <a href="/cards">Volver a cartas</a>
-          </p>
+          <Header title="Carta no encontrada" />
+          <Section>
+            <p>La carta solicitada no existe.</p>
+            <p>
+              <a href="/cards">Volver a cartas</a>
+            </p>
+          </Section>
         </>
       )}
     </main>

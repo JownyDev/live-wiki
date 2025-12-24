@@ -1,4 +1,7 @@
 ---
+import Header from '../../components/Header.astro';
+import EntityLink from '../../components/EntityLink.astro';
+import Section from '../../components/Section.astro';
 import { listEvents } from '../../lib/content/events';
 
 const title = 'Eventos';
@@ -13,19 +16,21 @@ const events = await listEvents();
   </head>
   <body>
     <main>
-      <h1>{title}</h1>
-      {events.length === 0 ? (
-        <p>No hay eventos todavía.</p>
-      ) : (
-        <ul>
-          {events.map((event) => (
-            <li>
-              <a href={`/events/${event.id}`}>{event.title}</a>
-              <span> ({event.date})</span>
-            </li>
-          ))}
-        </ul>
-      )}
+      <Header title={title} />
+      <Section>
+        {events.length === 0 ? (
+          <p>No hay eventos todavía.</p>
+        ) : (
+          <ul>
+            {events.map((event) => (
+              <li>
+                <EntityLink href={`/events/${event.id}`} label={event.title} />
+                <span> ({event.date})</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Section>
     </main>
   </body>
 </html>

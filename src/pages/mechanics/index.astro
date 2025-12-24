@@ -1,4 +1,7 @@
 ---
+import Header from '../../components/Header.astro';
+import EntityLink from '../../components/EntityLink.astro';
+import Section from '../../components/Section.astro';
 import { listMechanics } from '../../lib/content/mechanics';
 
 const title = 'Mecanicas';
@@ -13,18 +16,20 @@ const mechanics = await listMechanics();
   </head>
   <body>
     <main>
-      <h1>{title}</h1>
-      {mechanics.length === 0 ? (
-        <p>No hay mecanicas todavía.</p>
-      ) : (
-        <ul>
-          {mechanics.map((mechanic) => (
-            <li>
-              <a href={`/mechanics/${mechanic.id}`}>{mechanic.name}</a>
-            </li>
-          ))}
-        </ul>
-      )}
+      <Header title={title} />
+      <Section>
+        {mechanics.length === 0 ? (
+          <p>No hay mecanicas todavía.</p>
+        ) : (
+          <ul>
+            {mechanics.map((mechanic) => (
+              <li>
+                <EntityLink href={`/mechanics/${mechanic.id}`} label={mechanic.name} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </Section>
     </main>
   </body>
 </html>

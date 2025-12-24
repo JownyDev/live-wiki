@@ -1,4 +1,9 @@
 ---
+import Header from '../../components/Header.astro';
+import MarkdownDescription from '../../components/MarkdownDescription.astro';
+import RelationList, { type RelationItem } from '../../components/RelationList.astro';
+import Section from '../../components/Section.astro';
+import EntityLink from '../../components/EntityLink.astro';
 import { getCharacterById, listCharacters } from '../../lib/content/characters';
 import { listEventsByCharacterId } from '../../lib/content/events';
 import { parseLocationRef } from '../../lib/content/location-refs';
@@ -14,6 +19,10 @@ const id = Astro.params.id;
 const character = typeof id === 'string' ? await getCharacterById(id) : null;
 const events =
   character && typeof id === 'string' ? await listEventsByCharacterId(id) : [];
+const eventItems: RelationItem[] = events.map((event) => ({
+  text: `${event.title} (${event.date})`,
+  href: `/events/${event.id}`,
+}));
 const title = character ? character.name : 'Personaje no encontrado';
 const originView = (() => {
   if (!character?.origin) {
@@ -46,39 +55,28 @@ const originView = (() => {
     <main>
       {character ? (
         <>
-          <h1>{character.name}</h1>
-          <section>
-            <h2>Origen</h2>
+          <Header title={character.name} />
+          <Section title="Origen">
             {originView.href ? (
-              <a href={originView.href}>{originView.text}</a>
+              <EntityLink href={originView.href} label={originView.text} />
             ) : (
               <p>{originView.text}</p>
             )}
-          </section>
-          <div style="white-space: pre-wrap;">{character.body}</div>
-          <section>
-            <h2>Eventos</h2>
-            {events.length === 0 ? (
-              <p>Sin eventos.</p>
-            ) : (
-              <ul>
-                {events.map((event) => (
-                  <li>
-                    <a href={`/events/${event.id}`}>{event.title}</a>
-                    <span> ({event.date})</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
+          </Section>
+          <MarkdownDescription content={character.body} />
+          <Section>
+            <RelationList label="Eventos" items={eventItems} emptyText="Sin eventos." />
+          </Section>
         </>
       ) : (
         <>
-          <h1>Personaje no encontrado</h1>
-          <p>El personaje solicitado no existe.</p>
-          <p>
-            <a href="/characters">Volver a personajes</a>
-          </p>
+          <Header title="Personaje no encontrado" />
+          <Section>
+            <p>El personaje solicitado no existe.</p>
+            <p>
+              <a href="/characters">Volver a personajes</a>
+            </p>
+          </Section>
         </>
       )}
     </main>

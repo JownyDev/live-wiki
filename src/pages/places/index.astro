@@ -1,4 +1,7 @@
 ---
+import Header from '../../components/Header.astro';
+import EntityLink from '../../components/EntityLink.astro';
+import Section from '../../components/Section.astro';
 import { listPlaces } from '../../lib/content/places';
 
 const title = 'Lugares';
@@ -13,18 +16,20 @@ const places = await listPlaces();
   </head>
   <body>
     <main>
-      <h1>{title}</h1>
-      {places.length === 0 ? (
-        <p>No hay lugares todavía.</p>
-      ) : (
-        <ul>
-          {places.map((place) => (
-            <li>
-              <a href={`/places/${place.id}`}>{place.name}</a>
-            </li>
-          ))}
-        </ul>
-      )}
+      <Header title={title} />
+      <Section>
+        {places.length === 0 ? (
+          <p>No hay lugares todavía.</p>
+        ) : (
+          <ul>
+            {places.map((place) => (
+              <li>
+                <EntityLink href={`/places/${place.id}`} label={place.name} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </Section>
     </main>
   </body>
 </html>

@@ -1,4 +1,7 @@
 ---
+import Header from '../../components/Header.astro';
+import EntityLink from '../../components/EntityLink.astro';
+import Section from '../../components/Section.astro';
 import { listCharacters } from '../../lib/content/characters';
 
 const title = 'Personajes';
@@ -13,18 +16,20 @@ const characters = await listCharacters();
   </head>
   <body>
     <main>
-      <h1>{title}</h1>
-      {characters.length === 0 ? (
-        <p>No hay personajes todavía.</p>
-      ) : (
-        <ul>
-          {characters.map((character) => (
-            <li>
-              <a href={`/characters/${character.id}`}>{character.name}</a>
-            </li>
-          ))}
-        </ul>
-      )}
+      <Header title={title} />
+      <Section>
+        {characters.length === 0 ? (
+          <p>No hay personajes todavía.</p>
+        ) : (
+          <ul>
+            {characters.map((character) => (
+              <li>
+                <EntityLink href={`/characters/${character.id}`} label={character.name} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </Section>
     </main>
   </body>
 </html>

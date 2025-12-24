@@ -1,4 +1,7 @@
 ---
+import Header from '../../components/Header.astro';
+import EntityLink from '../../components/EntityLink.astro';
+import Section from '../../components/Section.astro';
 import { listElements } from '../../lib/content/elements';
 
 const title = 'Elementos';
@@ -13,18 +16,20 @@ const elements = await listElements();
   </head>
   <body>
     <main>
-      <h1>{title}</h1>
-      {elements.length === 0 ? (
-        <p>No hay elementos todavía.</p>
-      ) : (
-        <ul>
-          {elements.map((element) => (
-            <li>
-              <a href={`/elements/${element.id}`}>{element.name}</a>
-            </li>
-          ))}
-        </ul>
-      )}
+      <Header title={title} />
+      <Section>
+        {elements.length === 0 ? (
+          <p>No hay elementos todavía.</p>
+        ) : (
+          <ul>
+            {elements.map((element) => (
+              <li>
+                <EntityLink href={`/elements/${element.id}`} label={element.name} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </Section>
     </main>
   </body>
 </html>

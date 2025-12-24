@@ -1,6 +1,10 @@
 ---
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
+import Header from '../../components/Header.astro';
+import MarkdownDescription from '../../components/MarkdownDescription.astro';
+import RelationList, { type RelationItem } from '../../components/RelationList.astro';
+import Section from '../../components/Section.astro';
 import { getPlanetById, listPlanets } from '../../lib/content/planets';
 import { listEventsByPlanetId } from '../../lib/content/events';
 import { parseFrontmatter, getStringField } from '../../lib/content/frontmatter';
@@ -51,6 +55,14 @@ const places = await (async () => {
   return result;
 })();
 const title = planet ? planet.name : 'Planeta no encontrado';
+const placeItems: RelationItem[] = places.map((place) => ({
+  text: place.name,
+  href: `/places/${place.id}`,
+}));
+const eventItems: RelationItem[] = events.map((event) => ({
+  text: `${event.title} (${event.date})`,
+  href: `/events/${event.id}`,
+}));
 ---
 
 <html lang="es">
@@ -63,45 +75,28 @@ const title = planet ? planet.name : 'Planeta no encontrado';
     <main>
       {planet ? (
         <>
-          <h1>{planet.name}</h1>
-          <section>
-            <h2>Lugares</h2>
-            {places.length === 0 ? (
-              <p>Sin lugares.</p>
-            ) : (
-              <ul>
-                {places.map((place) => (
-                  <li>
-                    <a href={`/places/${place.id}`}>{place.name}</a>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-          <section>
-            <h2>Eventos en el planeta</h2>
-            {events.length === 0 ? (
-              <p>Sin eventos.</p>
-            ) : (
-              <ul>
-                {events.map((event) => (
-                  <li>
-                    <a href={`/events/${event.id}`}>{event.title}</a>
-                    <span> ({event.date})</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-          <div style="white-space: pre-wrap;">{planet.body}</div>
+          <Header title={planet.name} />
+          <Section>
+            <RelationList label="Lugares" items={placeItems} emptyText="Sin lugares." />
+          </Section>
+          <Section>
+            <RelationList
+              label="Eventos en el planeta"
+              items={eventItems}
+              emptyText="Sin eventos."
+            />
+          </Section>
+          <MarkdownDescription content={planet.body} />
         </>
       ) : (
         <>
-          <h1>Planeta no encontrado</h1>
-          <p>El planeta solicitado no existe.</p>
-          <p>
-            <a href="/planets">Volver a planetas</a>
-          </p>
+          <Header title="Planeta no encontrado" />
+          <Section>
+            <p>El planeta solicitado no existe.</p>
+            <p>
+              <a href="/planets">Volver a planetas</a>
+            </p>
+          </Section>
         </>
       )}
     </main>

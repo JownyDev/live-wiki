@@ -1,4 +1,7 @@
 ---
+import Header from '../../components/Header.astro';
+import MarkdownDescription from '../../components/MarkdownDescription.astro';
+import Section from '../../components/Section.astro';
 import { getElementById, listElements } from '../../lib/content/elements';
 
 export async function getStaticPaths() {
@@ -23,16 +26,18 @@ const title = element ? element.name : 'Elemento no encontrado';
     <main>
       {element ? (
         <>
-          <h1>{element.name}</h1>
-          <div style="white-space: pre-wrap;">{element.body}</div>
+          <Header title={element.name} />
+          <MarkdownDescription content={element.body} />
         </>
       ) : (
         <>
-          <h1>Elemento no encontrado</h1>
-          <p>El elemento solicitado no existe.</p>
-          <p>
-            <a href="/elements">Volver a elementos</a>
-          </p>
+          <Header title="Elemento no encontrado" />
+          <Section>
+            <p>El elemento solicitado no existe.</p>
+            <p>
+              <a href="/elements">Volver a elementos</a>
+            </p>
+          </Section>
         </>
       )}
     </main>

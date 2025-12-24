@@ -118,11 +118,13 @@ const locations: LocationView[] = event
         </>
       ) : (
         <>
-          <h1>Evento no encontrado</h1>
-          <p>El evento solicitado no existe.</p>
-          <p>
-            <a href="/events">Volver a eventos</a>
-          </p>
+          <Header title="Evento no encontrado" />
+          <Section>
+            <p>El evento solicitado no existe.</p>
+            <p>
+              <a href="/events">Volver a eventos</a>
+            </p>
+          </Section>
         </>
       )}
     </main>

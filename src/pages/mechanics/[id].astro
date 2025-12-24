@@ -1,4 +1,7 @@
 ---
+import Header from '../../components/Header.astro';
+import MarkdownDescription from '../../components/MarkdownDescription.astro';
+import Section from '../../components/Section.astro';
 import { getMechanicById, listMechanics } from '../../lib/content/mechanics';
 
 export async function getStaticPaths() {
@@ -23,16 +26,18 @@ const title = mechanic ? mechanic.name : 'Mecanica no encontrada';
     <main>
       {mechanic ? (
         <>
-          <h1>{mechanic.name}</h1>
-          <div style="white-space: pre-wrap;">{mechanic.body}</div>
+          <Header title={mechanic.name} />
+          <MarkdownDescription content={mechanic.body} />
         </>
       ) : (
         <>
-          <h1>Mecanica no encontrada</h1>
-          <p>La mecanica solicitada no existe.</p>
-          <p>
-            <a href="/mechanics">Volver a mecanicas</a>
-          </p>
+          <Header title="Mecanica no encontrada" />
+          <Section>
+            <p>La mecanica solicitada no existe.</p>
+            <p>
+              <a href="/mechanics">Volver a mecanicas</a>
+            </p>
+          </Section>
         </>
       )}
     </main>

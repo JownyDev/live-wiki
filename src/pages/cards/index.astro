@@ -1,4 +1,7 @@
 ---
+import Header from '../../components/Header.astro';
+import EntityLink from '../../components/EntityLink.astro';
+import Section from '../../components/Section.astro';
 import { listCards } from '../../lib/content/cards';
 
 const title = 'Cartas';
@@ -13,18 +16,20 @@ const cards = await listCards();
   </head>
   <body>
     <main>
-      <h1>{title}</h1>
-      {cards.length === 0 ? (
-        <p>No hay cartas todavía.</p>
-      ) : (
-        <ul>
-          {cards.map((card) => (
-            <li>
-              <a href={`/cards/${card.id}`}>{card.name}</a>
-            </li>
-          ))}
-        </ul>
-      )}
+      <Header title={title} />
+      <Section>
+        {cards.length === 0 ? (
+          <p>No hay cartas todavía.</p>
+        ) : (
+          <ul>
+            {cards.map((card) => (
+              <li>
+                <EntityLink href={`/cards/${card.id}`} label={card.name} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </Section>
     </main>
   </body>
 </html>

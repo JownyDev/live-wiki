@@ -1,4 +1,8 @@
 ---
+import Header from '../components/Header.astro';
+import EntityLink from '../components/EntityLink.astro';
+import Section from '../components/Section.astro';
+
 const title = 'Live-Wiki';
 ---
 
@@ -10,19 +14,21 @@ const title = 'Live-Wiki';
   </head>
   <body>
     <main>
-      <h1>Live-Wiki</h1>
+      <Header title={title} />
       <p>Explora el archivo vivo del universo: personajes, eventos y lugares conectados.</p>
-      <nav aria-label="Secciones principales">
-        <ul>
-          <li><a href="/characters">Characters</a></li>
-          <li><a href="/events">Events</a></li>
-          <li><a href="/places">Places</a></li>
-          <li><a href="/planets">Planets</a></li>
-          <li><a href="/elements">Elements</a></li>
-          <li><a href="/cards">Cards</a></li>
-          <li><a href="/mechanics">Mechanics</a></li>
-        </ul>
-      </nav>
+      <Section title="Secciones principales">
+        <nav aria-label="Secciones principales">
+          <ul>
+            <li><EntityLink href="/characters" label="Characters" /></li>
+            <li><EntityLink href="/events" label="Events" /></li>
+            <li><EntityLink href="/places" label="Places" /></li>
+            <li><EntityLink href="/planets" label="Planets" /></li>
+            <li><EntityLink href="/elements" label="Elements" /></li>
+            <li><EntityLink href="/cards" label="Cards" /></li>
+            <li><EntityLink href="/mechanics" label="Mechanics" /></li>
+          </ul>
+        </nav>
+      </Section>
     </main>
   </body>
 </html>
