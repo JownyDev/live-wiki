@@ -1,0 +1,232 @@
+---
+const searchEndpoint = '/search.json';
+const resultLimit = 12;
+---
+
+<div id="search" class="search" data-search>
+  <label class="search__label" for="search-input">Buscar</label>
+  <div class="search__control">
+    <input
+      id="search-input"
+      class="search__input"
+      type="search"
+      name="q"
+      placeholder="Buscar por nombre, id o texto..."
+      autocomplete="off"
+      aria-controls="search-results"
+    />
+  </div>
+  <div class="search__meta">
+    <span class="search__status" data-search-status role="status" aria-live="polite">
+      Escribe para buscar.
+    </span>
+  </div>
+  <ul id="search-results" class="search__results" data-search-results hidden></ul>
+</div>
+
+<script type="module" define:vars={{ searchEndpoint, resultLimit }}>
+  import { searchIndex } from '../lib/content/search-core';
+
+  const root = document.getElementById('search');
+  if (!root) {
+    return;
+  }
+
+  const input = root.querySelector('.search__input');
+  const status = root.querySelector('[data-search-status]');
+  const results = root.querySelector('[data-search-results]');
+
+  if (!input || !status || !results) {
+    return;
+  }
+
+  const typeLabels = {
+    card: 'Carta',
+    character: 'Personaje',
+    element: 'Elemento',
+    event: 'Evento',
+    mechanic: 'Mecanica',
+    place: 'Lugar',
+    planet: 'Planeta',
+  };
+
+  let index = [];
+  let loadPromise = null;
+
+  const setStatus = (message) => {
+    status.textContent = message;
+  };
+
+  const renderResults = (entries) => {
+    results.innerHTML = '';
+    if (entries.length === 0) {
+      results.hidden = true;
+      return;
+    }
+
+    results.hidden = false;
+    for (const entry of entries) {
+      const item = document.createElement('li');
+      item.className = 'search__result';
+
+      const link = document.createElement('a');
+      link.className = 'search__result-link';
+      link.href = entry.href;
+      link.textContent = entry.title;
+
+      const meta = document.createElement('span');
+      meta.className = 'search__result-meta';
+      meta.textContent = typeLabels[entry.type] ?? entry.type;
+
+      item.append(link, meta);
+      results.append(item);
+    }
+  };
+
+  const loadIndex = async () => {
+    if (loadPromise) {
+      return loadPromise;
+    }
+
+    setStatus('Cargando indice...');
+    loadPromise = fetch(searchEndpoint)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Search index fetch failed');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        index = Array.isArray(data) ? data : [];
+        if (!input.value.trim()) {
+          setStatus('Escribe para buscar.');
+        }
+        return true;
+      })
+      .catch(() => {
+        setStatus('No se pudo cargar el indice.');
+        return false;
+      });
+
+    return loadPromise;
+  };
+
+  const updateResults = async () => {
+    const query = input.value;
+    if (!query.trim()) {
+      results.hidden = true;
+      setStatus('Escribe para buscar.');
+      return;
+    }
+
+    const loaded = await loadIndex();
+    if (!loaded) {
+      results.hidden = true;
+      return;
+    }
+
+    const matches = searchIndex(query, index).slice(0, resultLimit);
+    renderResults(matches);
+
+    if (matches.length === 0) {
+      setStatus('Sin resultados.');
+      return;
+    }
+
+    const count = matches.length;
+    setStatus(`${count} resultado${count === 1 ? '' : 's'}.`);
+  };
+
+  input.addEventListener('input', updateResults);
+  input.addEventListener('focus', loadIndex);
+</script>
+
+<style>
+  .search {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .search__label {
+    display: inline-block;
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-muted);
+    margin-bottom: var(--space-2);
+  }
+
+  .search__control {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .search__input {
+    flex: 1;
+    padding: 0.6rem 0.8rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    font-size: 1rem;
+    font-family: var(--font-sans);
+    background: #fffdf9;
+    color: var(--color-text);
+  }
+
+  .search__input:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .search__meta {
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+
+  .search__results {
+    list-style: none;
+    margin: var(--space-4) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .search__result {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    background: #ffffff;
+  }
+
+  .search__result-link {
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .search__result-link:hover {
+    color: var(--color-accent);
+  }
+
+  .search__result-meta {
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-muted);
+  }
+
+  @media (min-width: 900px) {
+    .search {
+      padding: var(--space-5);
+    }
+  }
+</style>

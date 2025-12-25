@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import PrimaryNav from '../components/PrimaryNav.astro';
+import SearchIsland from '../components/SearchIsland.astro';
 
 type Props = {
   title: string;
@@ -25,6 +26,7 @@ const { title, lang = 'es' } = Astro.props as Props;
           <a href="/">Live-Wiki</a>
         </div>
         <PrimaryNav />
+        <SearchIsland />
       </header>
       <main id="content" class="layout__main">
         <slot />

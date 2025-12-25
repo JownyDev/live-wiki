@@ -2,14 +2,10 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { getStringField, parseFrontmatter } from './frontmatter';
 import { listMarkdownFiles } from './markdown-files';
+import { normalizeWhitespace, type SearchIndexEntry } from './search-core';
 
-export type SearchIndexEntry = {
-  type: string;
-  id: string;
-  title: string;
-  href: string;
-  text: string;
-};
+export { searchIndex } from './search-core';
+export type { SearchIndexEntry } from './search-core';
 
 type SearchTypeConfig = {
   type: string;
@@ -27,12 +23,6 @@ const searchTypes: SearchTypeConfig[] = [
   { type: 'place', dir: 'places', titleField: 'name', hrefPrefix: '/places/' },
   { type: 'planet', dir: 'planets', titleField: 'name', hrefPrefix: '/planets/' },
 ];
-
-const normalizeWhitespace = (value: string): string =>
-  value.replace(/\s+/g, ' ').trim();
-
-const normalizeForSearch = (value: string): string =>
-  normalizeWhitespace(value).toLowerCase();
 
 const stripMarkdown = (value: string): string => {
   const withoutHeadings = value.replace(/^#+\s*.*$/gm, '');
@@ -91,18 +81,4 @@ export const buildSearchIndex = async (
   });
 
   return entries;
-};
-
-export const searchIndex = (
-  query: string,
-  index: SearchIndexEntry[],
-): SearchIndexEntry[] => {
-  const normalizedQuery = normalizeForSearch(query);
-  if (!normalizedQuery) {
-    return [];
-  }
-
-  return index.filter((entry) =>
-    normalizeForSearch(entry.text).includes(normalizedQuery),
-  );
 };
