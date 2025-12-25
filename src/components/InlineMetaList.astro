@@ -27,3 +27,36 @@ const showSeparator = separator.length > 0;
     ))}
   </dl>
 ) : null}
+
+<style>
+  .inline-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-3);
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--color-muted);
+  }
+
+  .inline-meta__item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-1);
+    margin: 0;
+  }
+
+  .inline-meta__label {
+    font-weight: 600;
+    text-transform: none;
+  }
+
+  .inline-meta__value {
+    margin: 0;
+  }
+
+  .inline-meta__separator {
+    margin-left: var(--space-1);
+    color: inherit;
+  }
+</style>

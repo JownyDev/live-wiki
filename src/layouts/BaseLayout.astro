@@ -6,9 +6,11 @@ import SearchIsland from '../components/SearchIsland.astro';
 type Props = {
   title: string;
   lang?: string;
+  pageClass?: string;
 };
 
-const { title, lang = 'es' } = Astro.props as Props;
+const { title, lang = 'es', pageClass } = Astro.props as Props;
+const layoutClass = pageClass ? `layout ${pageClass}` : 'layout';
 ---
 
 <!doctype html>
@@ -20,7 +22,7 @@ const { title, lang = 'es' } = Astro.props as Props;
   </head>
   <body>
     <a class="skip-link" href="#content">Saltar al contenido</a>
-    <div class="layout">
+    <div class={layoutClass}>
       <header class="layout__header">
         <div class="layout__brand">
           <a href="/">Live-Wiki</a>

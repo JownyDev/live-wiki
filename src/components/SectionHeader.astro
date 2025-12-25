@@ -21,3 +21,46 @@ const hasAction = Astro.slots.has('action');
     </div>
   ) : null}
 </header>
+
+<style>
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .section-header__main {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex: 1;
+  }
+
+  .section-header__title {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .section-header__divider {
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
+    border-radius: var(--radius-pill);
+  }
+
+  .section-header__action a {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .section-header__action a:hover {
+    color: var(--color-accent-strong);
+    text-decoration: underline;
+  }
+</style>

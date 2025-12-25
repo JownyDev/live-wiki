@@ -39,3 +39,72 @@ const shouldRender = hasItems || typeof emptyText === 'string';
     )}
   </section>
 ) : null}
+
+<style>
+  .data-panel {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    overflow: hidden;
+  }
+
+  .data-panel__title {
+    margin: 0;
+    padding: var(--space-3) var(--space-4);
+    font-size: 1rem;
+    font-weight: 700;
+    background: var(--color-surface-muted, rgba(255, 255, 255, 0.04));
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .data-panel__list {
+    margin: 0;
+    padding: var(--space-4);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .data-panel__item {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .data-panel__label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+    font-weight: 600;
+  }
+
+  .data-panel__value {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--color-text);
+  }
+
+  .data-panel__icon {
+    font-size: 0.9rem;
+    color: var(--color-accent);
+  }
+
+  .data-panel__empty {
+    margin: 0;
+    padding: var(--space-4);
+    color: var(--color-muted);
+    font-size: 0.9rem;
+  }
+
+  .data-panel a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .data-panel a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+</style>

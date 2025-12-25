@@ -1,10 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/Header.astro';
+import Breadcrumbs, { type BreadcrumbItem } from '../../components/Breadcrumbs.astro';
+import CharacterHero from '../../components/CharacterHero.astro';
+import DataPanel, { type DataPanelItem } from '../../components/DataPanel.astro';
+import EventSummaryCard from '../../components/EventSummaryCard.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
-import RelationList, { type RelationItem } from '../../components/RelationList.astro';
 import Section from '../../components/Section.astro';
-import EntityLink from '../../components/EntityLink.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import { type InlineMetaItem } from '../../components/InlineMetaList.astro';
 import { getCharacterById, listCharacters } from '../../lib/content/characters';
 import { listEventsByCharacterId } from '../../lib/content/events';
 import { parseLocationRef } from '../../lib/content/location-refs';
@@ -20,10 +23,6 @@ const id = Astro.params.id;
 const character = typeof id === 'string' ? await getCharacterById(id) : null;
 const events =
   character && typeof id === 'string' ? await listEventsByCharacterId(id) : [];
-const eventItems: RelationItem[] = events.map((event) => ({
-  text: `${event.title} (${event.date})`,
-  href: `/events/${event.id}`,
-}));
 const title = character ? character.name : 'Personaje no encontrado';
 const originView = (() => {
   if (!character?.origin) {
@@ -44,33 +43,78 @@ const originView = (() => {
       return { text: 'Desconocido' };
   }
 })();
+const breadcrumbs: BreadcrumbItem[] = character
+  ? [
+      { label: 'Inicio', href: '/' },
+      { label: 'Personajes', href: '/characters' },
+      { label: character.name, current: true },
+    ]
+  : [
+      { label: 'Inicio', href: '/' },
+      { label: 'Personajes', href: '/characters' },
+      { label: 'Personaje no encontrado', current: true },
+    ];
+const characterMeta: InlineMetaItem[] = character
+  ? [{ label: 'ID', value: `#${character.id}` }]
+  : [];
+const dataItems: DataPanelItem[] = character
+  ? [
+      {
+        label: 'Origen',
+        value: originView.text,
+        href: originView.href,
+      },
+    ]
+  : [];
 ---
 
-<BaseLayout title={title} lang="en">
+<BaseLayout title={title} lang="en" pageClass="page--character">
   {character ? (
-    <>
-      <Header title={character.name} />
-      <Section title="Origen">
-        {originView.href ? (
-          <EntityLink href={originView.href} label={originView.text} />
-        ) : (
-          <p>{originView.text}</p>
-        )}
-      </Section>
-      <MarkdownDescription content={character.body} />
-      <Section>
-        <RelationList label="Eventos" items={eventItems} emptyText="Sin eventos." />
-      </Section>
-    </>
+    <div class="character-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero name={character.name} meta={characterMeta} />
+      <div class="character-page__grid">
+        <aside class="character-page__sidebar">
+          <DataPanel title="Datos del personaje" items={dataItems} />
+        </aside>
+        <div class="character-page__content">
+          <Section>
+            <SectionHeader title="Biografía" showDivider />
+            <MarkdownDescription content={character.body} />
+          </Section>
+          <Section>
+            <SectionHeader title="Eventos relacionados" showDivider>
+              <a slot="action" href="/events">
+                Ver timeline
+              </a>
+            </SectionHeader>
+            {events.length === 0 ? (
+              <p>Sin eventos.</p>
+            ) : (
+              <div class="character-page__events">
+                {events.map((event) => (
+                  <EventSummaryCard
+                    title={event.title}
+                    date={event.date}
+                    href={`/events/${event.id}`}
+                  />
+                ))}
+              </div>
+            )}
+          </Section>
+        </div>
+      </div>
+    </div>
   ) : (
-    <>
-      <Header title="Personaje no encontrado" />
+    <div class="character-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero name="Personaje no encontrado" />
       <Section>
         <p>El personaje solicitado no existe.</p>
         <p>
           <a href="/characters">Volver a personajes</a>
         </p>
       </Section>
-    </>
+    </div>
   )}
 </BaseLayout>

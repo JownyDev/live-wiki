@@ -36,11 +36,11 @@ const scriptSrc = searchScript;
 
 <style>
   .search {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
+    background: var(--search-bg, var(--color-surface));
+    border: 1px solid var(--search-border, var(--color-border));
     border-radius: var(--radius-md);
-    padding: var(--space-4);
-    box-shadow: var(--shadow-soft);
+    padding: var(--search-padding, var(--space-4));
+    box-shadow: var(--search-shadow, var(--shadow-soft));
   }
 
   .search__label {
@@ -48,7 +48,7 @@ const scriptSrc = searchScript;
     font-size: var(--text-sm);
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: var(--color-muted);
+    color: var(--search-label-color, var(--color-muted));
     margin-bottom: var(--space-2);
   }
 
@@ -62,11 +62,11 @@ const scriptSrc = searchScript;
     flex: 1;
     padding: 0.6rem 0.8rem;
     border-radius: var(--radius-sm);
-    border: 1px solid var(--color-border);
-    font-size: 1rem;
+    border: 1px solid var(--search-input-border, var(--color-border));
+    font-size: var(--search-input-size, 1rem);
     font-family: var(--font-sans);
-    background: #fffdf9;
-    color: var(--color-text);
+    background: var(--search-input-bg, #fffdf9);
+    color: var(--search-input-color, var(--color-text));
   }
 
   .search__input:focus {
@@ -77,7 +77,7 @@ const scriptSrc = searchScript;
   .search__meta {
     margin-top: var(--space-2);
     font-size: var(--text-sm);
-    color: var(--color-muted);
+    color: var(--search-meta-color, var(--color-muted));
   }
 
   :global(.search__results) {
@@ -99,26 +99,26 @@ const scriptSrc = searchScript;
     gap: var(--space-3);
     padding: 0.6rem 0.75rem;
     border-radius: var(--radius-sm);
-    border: 1px solid var(--color-border);
-    background: #ffffff;
+    border: 1px solid var(--search-result-border, var(--color-border));
+    background: var(--search-result-bg, #ffffff);
   }
 
   :global(.search__result-link) {
     font-family: var(--font-serif);
     font-size: var(--text-lg);
-    color: var(--color-text);
+    color: var(--search-result-link, var(--color-text));
     text-decoration: none;
   }
 
   :global(.search__result-link:hover) {
-    color: var(--color-accent);
+    color: var(--search-result-link-hover, var(--color-accent));
   }
 
   :global(.search__result-meta) {
     font-size: var(--text-sm);
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: var(--color-muted);
+    color: var(--search-result-meta, var(--color-muted));
   }
 
   @media (min-width: 900px) {
