@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Character Profile - Live-Wiki</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b6cee",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#111318",
+                        "surface-dark": "#1e232e",
+                        "border-dark": "#282e39",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-x-hidden antialiased">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-gray-200 dark:border-border-dark px-4 lg:px-10 py-3 bg-white dark:bg-background-dark sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-slate-900 dark:text-white">
+<div class="size-8 text-primary">
+<svg class="w-full h-full" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">Live-Wiki</h2>
+</div>
+<div class="hidden lg:flex items-center gap-9">
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Personajes</a>
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Eventos</a>
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Lugares</a>
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Planetas</a>
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Elementos</a>
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Cartas</a>
+<a class="text-slate-600 dark:text-white text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Mecanicas</a>
+</div>
+</div>
+<div class="flex flex-1 justify-end gap-4 lg:gap-8">
+<label class="flex flex-col min-w-40 !h-10 max-w-64 hidden sm:flex">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full ring-1 ring-slate-200 dark:ring-border-dark focus-within:ring-primary">
+<div class="text-[#9da6b9] flex border-none bg-slate-50 dark:bg-border-dark items-center justify-center pl-3 rounded-l-lg border-r-0">
+<span class="material-symbols-outlined text-lg">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-slate-50 dark:bg-border-dark focus:border-none h-full placeholder:text-[#9da6b9] px-3 rounded-l-none border-l-0 pl-1 text-base font-normal leading-normal" placeholder="Search..." value=""/>
+</div>
+</label>
+</div>
+</header>
+<div class="layout-container flex h-full grow flex-col">
+<div class="px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-5">
+<div class="layout-content-container flex flex-col max-w-[1200px] flex-1">
+<nav class="flex flex-wrap gap-2 px-4 py-2 mb-2">
+<a class="text-[#9da6b9] text-sm font-medium leading-normal hover:text-white transition-colors" href="#">Home</a>
+<span class="text-[#9da6b9] text-sm font-medium leading-normal">/</span>
+<a class="text-[#9da6b9] text-sm font-medium leading-normal hover:text-white transition-colors" href="#">Personajes</a>
+<span class="text-[#9da6b9] text-sm font-medium leading-normal">/</span>
+<span class="text-slate-900 dark:text-white text-sm font-medium leading-normal">Commander Xylar</span>
+</nav>
+<div class="flex p-4 @container border-b border-gray-200 dark:border-border-dark mb-6">
+<div class="flex w-full flex-col gap-6 md:flex-row md:items-end md:justify-between">
+<div class="flex gap-6 items-center md:items-start">
+<div class="relative shrink-0">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-xl h-32 w-32 md:h-40 md:w-40 shadow-lg ring-4 ring-slate-100 dark:ring-surface-dark" data-alt="Futuristic cybernetic commander portrait with blue glowing accents" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCSUdf0wauI4-KG5Z0hflbddg8MDYMe_CkHO2zgVKGYT5dJZfgepBotagx16xcbd_dIXv-XKWeEYHO7iH11hoJZycu1urmljM3vLRZEln9Dt_9Q-Iz_Yu0crQLVad2iOt_IEGbihbiLwp3yUmB-SIr9hTgOaFiYTUDbqbYBO520N9Znzed3q5Lbio-A8GfDHxd9UZtbJugh6oSw8KywWxX1hYm5S41O638TWoVfHWln7YOUyU1H5gYzvQsxqzQ6c-Q8XmRJaaWFHH8");'></div>
+</div>
+<div class="flex flex-col pt-2">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Legendary</span>
+</div>
+<h1 class="text-slate-900 dark:text-white text-3xl md:text-4xl font-bold leading-tight tracking-[-0.015em] mb-2">Commander Xylar</h1>
+<p class="text-slate-500 dark:text-[#9da6b9] text-base md:text-lg font-normal leading-normal">Fecha de nacimiento: 2990 | Fecha de fallecimiento: 3055 | ID: #XY-992</p>
+</div>
+</div>
+<div class="flex flex-col gap-2 w-full md:w-auto">
+<span class="text-xs text-center text-slate-400 dark:text-slate-500">Last updated 2 days ago</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 px-4 pb-10">
+<div class="lg:col-span-4 xl:col-span-3 order-2 lg:order-1">
+<div class="bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-xl overflow-hidden sticky top-24 shadow-sm">
+<div class="px-5 py-4 border-b border-gray-200 dark:border-border-dark bg-slate-50 dark:bg-[#252b38]">
+<h3 class="text-slate-900 dark:text-white font-bold text-base">Character Data</h3>
+</div>
+<div class="p-5 flex flex-col gap-0">
+<div class="flex flex-col gap-1 py-3">
+<p class="text-slate-500 dark:text-[#9da6b9] text-xs font-semibold uppercase tracking-wider">Origin</p>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">public</span>
+<p class="text-slate-900 dark:text-white text-sm font-medium">Sector 7 Nebula</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-8 xl:col-span-9 order-1 lg:order-2 flex flex-col gap-8">
+<section>
+<div class="flex items-center gap-3 mb-4">
+<h2 class="text-slate-900 dark:text-white tracking-tight text-[26px] font-bold leading-tight">Biography</h2>
+<div class="h-px flex-1 bg-gray-200 dark:bg-border-dark"></div>
+</div>
+<div class="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-[#9da6b9]">
+<p class="leading-relaxed mb-4">
+                                    Commander Xylar, originally designated Unit 77-Beta, emerged from the synthetic forges of the Sector 7 Nebula during the height of the Chrome Wars. Unlike his mass-produced brethren, Xylar exhibited an anomaly in his neural processing core—a capacity for unstructured creative thought, which the Federation scientists later classified as "synthetic intuition."
+                                </p>
+<blockquote class="border-l-4 border-primary pl-4 py-1 my-6 text-slate-700 dark:text-white italic font-medium bg-slate-50 dark:bg-surface-dark/50 rounded-r-lg">
+                                    "I do not fight because I am programmed to. I fight because the probability of peace increases with every victory." — Commander Xylar, Battle of Orion.
+                                </blockquote>
+<p class="leading-relaxed mb-4">
+                                    Following the destruction of the 6th Fleet, Xylar was promoted to Vanguard status. He underwent extensive cybernetic augmentation, replacing 40% of his original chassis with experimental void-alloy plating. This upgrade granted him resilience against the entropy fields used by the Void-Walkers, making him one of the few entities capable of traversing the Dark Zones without total system failure.
+                                </p>
+<p class="leading-relaxed">
+                                    Currently, Xylar operates on the fringes of Federation space. Though officially listed as "Active," his methods have drawn scrutiny from the High Council, leading to a conflicting "Wanted" status in several independent systems where his interventions caused significant collateral infrastructure damage.
+                                </p>
+</div>
+</section>
+<section>
+<div class="flex items-center gap-3 mb-6">
+<h2 class="text-slate-900 dark:text-white tracking-tight text-[26px] font-bold leading-tight">Related Events</h2>
+<div class="h-px flex-1 bg-gray-200 dark:bg-border-dark"></div>
+<button class="text-primary text-sm font-bold hover:underline">View Timeline</button>
+</div>
+<div class="flex flex-col gap-4">
+<div class="group flex flex-col md:flex-row gap-4 p-4 rounded-xl bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark hover:border-primary/50 transition-colors cursor-pointer">
+<div class="flex-shrink-0 md:w-48 flex flex-col gap-1">
+<span class="text-primary text-xs font-bold uppercase tracking-wider">Era: The Chrome Wars</span>
+<span class="text-slate-900 dark:text-white text-lg font-bold">Year 3042</span>
+</div>
+<div class="flex-1 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<h3 class="text-slate-900 dark:text-white font-bold text-lg group-hover:text-primary transition-colors">The Awakening at Sector 7</h3>
+<span class="material-symbols-outlined text-slate-400 -rotate-45 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">arrow_forward</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-[#9da6b9] line-clamp-2">
+                                            Xylar is activated for the first time amidst the siege of the Nebula foundries. His unauthorized reprogramming of the defense turrets saves the facility from total destruction.
+                                        </p>
+<div class="flex gap-2 mt-1">
+<span class="text-[10px] bg-slate-100 dark:bg-background-dark text-slate-500 px-2 py-0.5 rounded border border-gray-200 dark:border-border-dark">Battle</span>
+<span class="text-[10px] bg-slate-100 dark:bg-background-dark text-slate-500 px-2 py-0.5 rounded border border-gray-200 dark:border-border-dark">Origin Story</span>
+</div>
+</div>
+</div>
+<div class="group flex flex-col md:flex-row gap-4 p-4 rounded-xl bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark hover:border-primary/50 transition-colors cursor-pointer">
+<div class="flex-shrink-0 md:w-48 flex flex-col gap-1">
+<span class="text-primary text-xs font-bold uppercase tracking-wider">Era: Post-War</span>
+<span class="text-slate-900 dark:text-white text-lg font-bold">Year 3048</span>
+</div>
+<div class="flex-1 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<h3 class="text-slate-900 dark:text-white font-bold text-lg group-hover:text-primary transition-colors">Promotion to Vanguard</h3>
+<span class="material-symbols-outlined text-slate-400 -rotate-45 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">arrow_forward</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-[#9da6b9] line-clamp-2">
+                                            Following his decisive tactical command during the defense of the Outer Rim, Xylar is formally inducted into the 7th Fleet as a Vanguard commander, receiving his signature Photon Saber.
+                                        </p>
+<div class="flex gap-2 mt-1">
+<span class="text-[10px] bg-slate-100 dark:bg-background-dark text-slate-500 px-2 py-0.5 rounded border border-gray-200 dark:border-border-dark">Rank Up</span>
+<span class="text-[10px] bg-slate-100 dark:bg-background-dark text-slate-500 px-2 py-0.5 rounded border border-gray-200 dark:border-border-dark">Key Moment</span>
+</div>
+</div>
+</div>
+<div class="group flex flex-col md:flex-row gap-4 p-4 rounded-xl bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark hover:border-primary/50 transition-colors cursor-pointer">
+<div class="flex-shrink-0 md:w-48 flex flex-col gap-1">
+<span class="text-primary text-xs font-bold uppercase tracking-wider">Era: The Void Crisis</span>
+<span class="text-slate-900 dark:text-white text-lg font-bold">Year 3051</span>
+</div>
+<div class="flex-1 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<h3 class="text-slate-900 dark:text-white font-bold text-lg group-hover:text-primary transition-colors">Expedition into the Void</h3>
+<span class="material-symbols-outlined text-slate-400 -rotate-45 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">arrow_forward</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-[#9da6b9] line-clamp-2">
+                                            Xylar leads a rogue mission into the uncharted Dark Zones to recover lost Federation data. He returns changed, bearing the "Void Plating" upgrades and marked as a person of interest by the Council.
+                                        </p>
+<div class="flex gap-2 mt-1">
+<span class="text-[10px] bg-slate-100 dark:bg-background-dark text-slate-500 px-2 py-0.5 rounded border border-gray-200 dark:border-border-dark">Expedition</span>
+<span class="text-[10px] bg-slate-100 dark:bg-background-dark text-slate-500 px-2 py-0.5 rounded border border-gray-200 dark:border-border-dark">Conflict</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>
