@@ -28,21 +28,18 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Lint (develop)
-        if: github.ref == 'refs/heads/develop' || github.base_ref == 'develop'
+      - name: Lint (develop push)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
         run: pnpm lint
-      - name: Typecheck (develop)
-        if: github.ref == 'refs/heads/develop' || github.base_ref == 'develop'
+      - name: Typecheck (develop push)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
         run: pnpm typecheck
-      - name: Quality checks (main)
-        if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
-        run: pnpm lint && pnpm typecheck
-      - name: Tests (main)
-        if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
-        run: pnpm test --run
-      - name: Wiki check (main)
-        if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
+      - name: Quality checks (main + PRs)
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+        run: pnpm quality
+      - name: Wiki check (main + PRs)
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: pnpm wiki:check
-      - name: Build (main)
-        if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
+      - name: Build (main + PRs)
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: pnpm build
