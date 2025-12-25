@@ -1,9 +1,12 @@
 ---
+import { marked } from 'marked';
+
 type Props = {
   content: string;
 };
 
 const { content } = Astro.props as Props;
+const html = await marked.parse(content);
 ---
 
-<div class="prose">{content}</div>
+<div class="prose" set:html={html} />
