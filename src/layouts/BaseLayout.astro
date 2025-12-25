@@ -1,0 +1,93 @@
+---
+import PrimaryNav from '../components/PrimaryNav.astro';
+
+type Props = {
+  title: string;
+  lang?: string;
+};
+
+const { title, lang = 'es' } = Astro.props as Props;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Saltar al contenido</a>
+    <div class="layout">
+      <header class="layout__header">
+        <div class="layout__brand">
+          <a href="/">Live-Wiki</a>
+        </div>
+        <PrimaryNav />
+      </header>
+      <main id="content" class="layout__main">
+        <slot />
+      </main>
+    </div>
+  </body>
+</html>
+
+<style>
+  :global(body) {
+    margin: 0;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 1rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 999px;
+    background: #ffffff;
+    color: inherit;
+    text-decoration: none;
+    box-shadow: 0 0 0 2px #111111;
+    z-index: 10;
+  }
+
+  .skip-link:focus {
+    left: 1rem;
+  }
+
+  .layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .layout__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 60rem;
+    margin: 0 auto;
+  }
+
+  .layout__brand a {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .layout__main {
+    width: 100%;
+    max-width: 60rem;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 900px) {
+    .layout {
+      padding: 2rem 3rem;
+    }
+  }
+</style>

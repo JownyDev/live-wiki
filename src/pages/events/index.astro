@@ -1,4 +1,5 @@
 ---
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import EntityLink from '../../components/EntityLink.astro';
 import Section from '../../components/Section.astro';
@@ -8,29 +9,20 @@ const title = 'Eventos';
 const events = await listEvents();
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{title}</title>
-  </head>
-  <body>
-    <main>
-      <Header title={title} />
-      <Section>
-        {events.length === 0 ? (
-          <p>No hay eventos todavía.</p>
-        ) : (
-          <ul>
-            {events.map((event) => (
-              <li>
-                <EntityLink href={`/events/${event.id}`} label={event.title} />
-                <span> ({event.date})</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Section>
-    </main>
-  </body>
-</html>
+<BaseLayout title={title} lang="en">
+  <Header title={title} />
+  <Section>
+    {events.length === 0 ? (
+      <p>No hay eventos todavía.</p>
+    ) : (
+      <ul>
+        {events.map((event) => (
+          <li>
+            <EntityLink href={`/events/${event.id}`} label={event.title} />
+            <span> ({event.date})</span>
+          </li>
+        ))}
+      </ul>
+    )}
+  </Section>
+</BaseLayout>

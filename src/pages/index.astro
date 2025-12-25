@@ -1,34 +1,11 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
-import EntityLink from '../components/EntityLink.astro';
-import Section from '../components/Section.astro';
 
 const title = 'Live-Wiki';
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{title}</title>
-  </head>
-  <body>
-    <main>
-      <Header title={title} />
-      <p>Explora el archivo vivo del universo: personajes, eventos y lugares conectados.</p>
-      <Section title="Secciones principales">
-        <nav aria-label="Secciones principales">
-          <ul>
-            <li><EntityLink href="/characters" label="Characters" /></li>
-            <li><EntityLink href="/events" label="Events" /></li>
-            <li><EntityLink href="/places" label="Places" /></li>
-            <li><EntityLink href="/planets" label="Planets" /></li>
-            <li><EntityLink href="/elements" label="Elements" /></li>
-            <li><EntityLink href="/cards" label="Cards" /></li>
-            <li><EntityLink href="/mechanics" label="Mechanics" /></li>
-          </ul>
-        </nav>
-      </Section>
-    </main>
-  </body>
-</html>
+<BaseLayout title={title} lang="en">
+  <Header title={title} />
+  <p>Explora el archivo vivo del universo: personajes, eventos y lugares conectados.</p>
+</BaseLayout>

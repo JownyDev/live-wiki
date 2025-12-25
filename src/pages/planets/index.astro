@@ -1,4 +1,5 @@
 ---
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import EntityLink from '../../components/EntityLink.astro';
 import Section from '../../components/Section.astro';
@@ -8,28 +9,19 @@ const title = 'Planetas';
 const planets = await listPlanets();
 ---
 
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{title}</title>
-  </head>
-  <body>
-    <main>
-      <Header title={title} />
-      <Section>
-        {planets.length === 0 ? (
-          <p>No hay planetas todavía.</p>
-        ) : (
-          <ul>
-            {planets.map((planet) => (
-              <li>
-                <EntityLink href={`/planets/${planet.id}`} label={planet.name} />
-              </li>
-            ))}
-          </ul>
-        )}
-      </Section>
-    </main>
-  </body>
-</html>
+<BaseLayout title={title}>
+  <Header title={title} />
+  <Section>
+    {planets.length === 0 ? (
+      <p>No hay planetas todavía.</p>
+    ) : (
+      <ul>
+        {planets.map((planet) => (
+          <li>
+            <EntityLink href={`/planets/${planet.id}`} label={planet.name} />
+          </li>
+        ))}
+      </ul>
+    )}
+  </Section>
+</BaseLayout>

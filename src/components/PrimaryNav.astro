@@ -1,0 +1,39 @@
+---
+import EntityLink from './EntityLink.astro';
+
+type NavItem = {
+  href: string;
+  label: string;
+};
+
+const items: NavItem[] = [
+  { href: '/characters', label: 'Personajes' },
+  { href: '/events', label: 'Eventos' },
+  { href: '/places', label: 'Lugares' },
+  { href: '/planets', label: 'Planetas' },
+  { href: '/elements', label: 'Elementos' },
+  { href: '/cards', label: 'Cartas' },
+  { href: '/mechanics', label: 'Mecanicas' },
+];
+---
+
+<nav class="primary-nav" aria-label="Navegacion principal">
+  <ul class="primary-nav__list">
+    {items.map((item) => (
+      <li>
+        <EntityLink href={item.href} label={item.label} />
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .primary-nav__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+</style>

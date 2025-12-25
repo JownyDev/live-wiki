@@ -1,6 +1,7 @@
 ---
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
 import RelationList, { type RelationItem } from '../../components/RelationList.astro';
@@ -65,40 +66,31 @@ const eventItems: RelationItem[] = events.map((event) => ({
 }));
 ---
 
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{title}</title>
-  </head>
-  <body>
-    <main>
-      {planet ? (
-        <>
-          <Header title={planet.name} />
-          <Section>
-            <RelationList label="Lugares" items={placeItems} emptyText="Sin lugares." />
-          </Section>
-          <Section>
-            <RelationList
-              label="Eventos en el planeta"
-              items={eventItems}
-              emptyText="Sin eventos."
-            />
-          </Section>
-          <MarkdownDescription content={planet.body} />
-        </>
-      ) : (
-        <>
-          <Header title="Planeta no encontrado" />
-          <Section>
-            <p>El planeta solicitado no existe.</p>
-            <p>
-              <a href="/planets">Volver a planetas</a>
-            </p>
-          </Section>
-        </>
-      )}
-    </main>
-  </body>
-</html>
+<BaseLayout title={title}>
+  {planet ? (
+    <>
+      <Header title={planet.name} />
+      <Section>
+        <RelationList label="Lugares" items={placeItems} emptyText="Sin lugares." />
+      </Section>
+      <Section>
+        <RelationList
+          label="Eventos en el planeta"
+          items={eventItems}
+          emptyText="Sin eventos."
+        />
+      </Section>
+      <MarkdownDescription content={planet.body} />
+    </>
+  ) : (
+    <>
+      <Header title="Planeta no encontrado" />
+      <Section>
+        <p>El planeta solicitado no existe.</p>
+        <p>
+          <a href="/planets">Volver a planetas</a>
+        </p>
+      </Section>
+    </>
+  )}
+</BaseLayout>

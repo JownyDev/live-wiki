@@ -1,4 +1,5 @@
 ---
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getEventById, listEvents } from '../../lib/content/events';
 import { getCharacterById } from '../../lib/content/characters';
 import { getPlaceById } from '../../lib/content/places';
@@ -89,44 +90,31 @@ const locations: LocationView[] = event
   : [];
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{title}</title>
-  </head>
-  <body>
-    <main>
-      {event ? (
-        <>
-          <Header title={event.title} meta={meta} />
-          <MarkdownDescription content={event.body} />
-          <Section>
-            <RelationList
-              label="Participantes"
-              items={participants}
-              emptyText="Sin participantes."
-            />
-          </Section>
-          <Section>
-            <RelationList
-              label="Ubicaciones"
-              items={locations}
-              emptyText="Sin ubicaciones."
-            />
-          </Section>
-        </>
-      ) : (
-        <>
-          <Header title="Evento no encontrado" />
-          <Section>
-            <p>El evento solicitado no existe.</p>
-            <p>
-              <a href="/events">Volver a eventos</a>
-            </p>
-          </Section>
-        </>
-      )}
-    </main>
-  </body>
-</html>
+<BaseLayout title={title} lang="en">
+  {event ? (
+    <>
+      <Header title={event.title} meta={meta} />
+      <MarkdownDescription content={event.body} />
+      <Section>
+        <RelationList
+          label="Participantes"
+          items={participants}
+          emptyText="Sin participantes."
+        />
+      </Section>
+      <Section>
+        <RelationList label="Ubicaciones" items={locations} emptyText="Sin ubicaciones." />
+      </Section>
+    </>
+  ) : (
+    <>
+      <Header title="Evento no encontrado" />
+      <Section>
+        <p>El evento solicitado no existe.</p>
+        <p>
+          <a href="/events">Volver a eventos</a>
+        </p>
+      </Section>
+    </>
+  )}
+</BaseLayout>

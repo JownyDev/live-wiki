@@ -1,4 +1,5 @@
 ---
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
 import RelationList, { type RelationItem } from '../../components/RelationList.astro';
@@ -45,40 +46,31 @@ const originView = (() => {
 })();
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{title}</title>
-  </head>
-  <body>
-    <main>
-      {character ? (
-        <>
-          <Header title={character.name} />
-          <Section title="Origen">
-            {originView.href ? (
-              <EntityLink href={originView.href} label={originView.text} />
-            ) : (
-              <p>{originView.text}</p>
-            )}
-          </Section>
-          <MarkdownDescription content={character.body} />
-          <Section>
-            <RelationList label="Eventos" items={eventItems} emptyText="Sin eventos." />
-          </Section>
-        </>
-      ) : (
-        <>
-          <Header title="Personaje no encontrado" />
-          <Section>
-            <p>El personaje solicitado no existe.</p>
-            <p>
-              <a href="/characters">Volver a personajes</a>
-            </p>
-          </Section>
-        </>
-      )}
-    </main>
-  </body>
-</html>
+<BaseLayout title={title} lang="en">
+  {character ? (
+    <>
+      <Header title={character.name} />
+      <Section title="Origen">
+        {originView.href ? (
+          <EntityLink href={originView.href} label={originView.text} />
+        ) : (
+          <p>{originView.text}</p>
+        )}
+      </Section>
+      <MarkdownDescription content={character.body} />
+      <Section>
+        <RelationList label="Eventos" items={eventItems} emptyText="Sin eventos." />
+      </Section>
+    </>
+  ) : (
+    <>
+      <Header title="Personaje no encontrado" />
+      <Section>
+        <p>El personaje solicitado no existe.</p>
+        <p>
+          <a href="/characters">Volver a personajes</a>
+        </p>
+      </Section>
+    </>
+  )}
+</BaseLayout>
