@@ -1,0 +1,23 @@
+---
+type Props = {
+  title: string;
+  showDivider?: boolean;
+};
+
+const { title, showDivider = false } = Astro.props as Props;
+const hasAction = Astro.slots.has('action');
+---
+
+<header class="section-header">
+  <div class="section-header__main">
+    <h2 class="section-header__title">{title}</h2>
+    {showDivider ? (
+      <span class="section-header__divider" aria-hidden="true"></span>
+    ) : null}
+  </div>
+  {hasAction ? (
+    <div class="section-header__action">
+      <slot name="action" />
+    </div>
+  ) : null}
+</header>

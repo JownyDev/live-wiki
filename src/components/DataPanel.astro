@@ -1,0 +1,41 @@
+---
+export type DataPanelItem = {
+  label: string;
+  value: string;
+  href?: string;
+  icon?: string;
+};
+
+type Props = {
+  title: string;
+  items: DataPanelItem[];
+  emptyText?: string;
+};
+
+const { title, items, emptyText } = Astro.props as Props;
+const hasItems = items.length > 0;
+const shouldRender = hasItems || typeof emptyText === 'string';
+---
+
+{shouldRender ? (
+  <section class="data-panel">
+    <h3 class="data-panel__title">{title}</h3>
+    {hasItems ? (
+      <dl class="data-panel__list">
+        {items.map((item) => (
+          <div class="data-panel__item">
+            <dt class="data-panel__label">{item.label}</dt>
+            <dd class="data-panel__value">
+              {item.icon ? (
+                <span class="data-panel__icon" aria-hidden="true">{item.icon}</span>
+              ) : null}
+              {item.href ? <a href={item.href}>{item.value}</a> : <span>{item.value}</span>}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    ) : (
+      <p class="data-panel__empty">{emptyText}</p>
+    )}
+  </section>
+) : null}

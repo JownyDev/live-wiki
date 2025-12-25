@@ -1,0 +1,29 @@
+---
+export type InlineMetaItem = {
+  label: string;
+  value: string;
+};
+
+type Props = {
+  items: InlineMetaItem[];
+  separator?: string;
+};
+
+const { items, separator = '|' } = Astro.props as Props;
+const hasItems = items.length > 0;
+const showSeparator = separator.length > 0;
+---
+
+{hasItems ? (
+  <dl class="inline-meta">
+    {items.map((item, index) => (
+      <div class="inline-meta__item">
+        <dt class="inline-meta__label">{item.label}</dt>
+        <dd class="inline-meta__value">{item.value}</dd>
+        {showSeparator && index < items.length - 1 ? (
+          <span class="inline-meta__separator" aria-hidden="true">{separator}</span>
+        ) : null}
+      </div>
+    ))}
+  </dl>
+) : null}

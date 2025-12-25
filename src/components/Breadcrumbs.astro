@@ -1,0 +1,35 @@
+---
+export type BreadcrumbItem = {
+  label: string;
+  href?: string;
+  current?: boolean;
+};
+
+type Props = {
+  items: BreadcrumbItem[];
+  ariaLabel?: string;
+};
+
+const { items, ariaLabel = 'Breadcrumb' } = Astro.props as Props;
+const normalizedItems = items.map((item, index) => ({
+  ...item,
+  current: item.current ?? (!item.href && index === items.length - 1),
+}));
+---
+
+<nav class="breadcrumbs" aria-label={ariaLabel}>
+  <ol class="breadcrumbs__list">
+    {normalizedItems.map((item, index) => (
+      <li class="breadcrumbs__item">
+        {index > 0 ? (
+          <span class="breadcrumbs__separator" aria-hidden="true">/</span>
+        ) : null}
+        {item.href && !item.current ? (
+          <a href={item.href}>{item.label}</a>
+        ) : (
+          <span aria-current={item.current ? 'page' : undefined}>{item.label}</span>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>

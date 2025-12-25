@@ -1,0 +1,42 @@
+---
+import InlineMetaList, { type InlineMetaItem } from './InlineMetaList.astro';
+
+type Props = {
+  name: string;
+  imageUrl?: string;
+  imageAlt?: string;
+  meta?: InlineMetaItem[];
+  updatedAt?: string;
+};
+
+const { name, imageUrl, imageAlt, meta = [], updatedAt } = Astro.props as Props;
+const hasMeta = meta.length > 0;
+const hasBadges = Astro.slots.has('badges');
+const hasAside = Astro.slots.has('aside');
+const resolvedAlt = imageAlt ?? name;
+---
+
+<header class="character-hero">
+  <div class="character-hero__main">
+    {imageUrl ? (
+      <div class="character-hero__media">
+        <img src={imageUrl} alt={resolvedAlt} />
+      </div>
+    ) : null}
+    <div class="character-hero__content">
+      {hasBadges ? (
+        <div class="character-hero__badges">
+          <slot name="badges" />
+        </div>
+      ) : null}
+      <h1 class="character-hero__name">{name}</h1>
+      {hasMeta ? <InlineMetaList items={meta} /> : null}
+    </div>
+  </div>
+  {updatedAt || hasAside ? (
+    <div class="character-hero__aside">
+      {updatedAt ? <p class="character-hero__updated">{updatedAt}</p> : null}
+      {hasAside ? <slot name="aside" /> : null}
+    </div>
+  ) : null}
+</header>
