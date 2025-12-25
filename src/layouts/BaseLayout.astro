@@ -1,4 +1,5 @@
 ---
+import '../styles/global.css';
 import PrimaryNav from '../components/PrimaryNav.astro';
 
 type Props = {
@@ -33,20 +34,16 @@ const { title, lang = 'es' } = Astro.props as Props;
 </html>
 
 <style>
-  :global(body) {
-    margin: 0;
-  }
-
   .skip-link {
     position: absolute;
     left: -999px;
     top: 1rem;
     padding: 0.5rem 0.75rem;
-    border-radius: 999px;
-    background: #ffffff;
-    color: inherit;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    color: var(--color-text);
     text-decoration: none;
-    box-shadow: 0 0 0 2px #111111;
+    box-shadow: 0 0 0 2px var(--color-border);
     z-index: 10;
   }
 
@@ -58,16 +55,16 @@ const { title, lang = 'es' } = Astro.props as Props;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    padding: 1.5rem;
+    gap: var(--space-5);
+    padding: var(--space-5);
   }
 
   .layout__header {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: var(--space-3);
     width: 100%;
-    max-width: 60rem;
+    max-width: var(--max-width);
     margin: 0 auto;
   }
 
@@ -81,13 +78,13 @@ const { title, lang = 'es' } = Astro.props as Props;
 
   .layout__main {
     width: 100%;
-    max-width: 60rem;
+    max-width: var(--max-width);
     margin: 0 auto;
   }
 
   @media (min-width: 900px) {
     .layout {
-      padding: 2rem 3rem;
+      padding: var(--space-6) var(--space-7);
     }
   }
 </style>
