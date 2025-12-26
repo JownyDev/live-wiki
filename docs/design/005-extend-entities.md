@@ -15,25 +15,25 @@
   **Por qué:** habilita orden cronológico y timeline futura.
 - [ ] **Fecha de muerte (opcional)**  
   **Por qué:** coherencia temporal y soporte a arcos narrativos.
-- [ ] **Imagen (opcional)**  
+- [x] **Imagen (opcional)**  
   **Por qué:** mejora UX/escaneo visual y da identidad al personaje.
 
 ### Element
 - [ ] **Origen (relación a Place) (opcional)**  
   **Por qué:** ancla elementos al mundo y permite navegación “de dónde viene este elemento”.
-- [ ] **Imagen (opcional)**  
+- [x] **Imagen (opcional)**  
   **Por qué:** lectura visual rápida del elemento.
 
 ### Event
-- [ ] **Imagen (opcional)**  
+- [x] **Imagen (opcional)**  
   **Por qué:** lectura visual + “poster” de evento; útil en timeline.
 
 ### Place
-- [ ] **Imagen (opcional)**  
+- [x] **Imagen (opcional)**  
   **Por qué:** mejora UX en navegación de localizaciones.
 
 ### Planet
-- [ ] **Imagen (opcional)**  
+- [x] **Imagen (opcional)**  
   **Por qué:** mejora UX; ayuda a diferenciar mundos.
 
 ### Mechanics
@@ -77,19 +77,19 @@
 - [ ] `affinity`: referencia a `element:*`
 - [ ] `born`: fecha (formato consistente con el proyecto)
 - [ ] `died`: fecha (formato consistente con el proyecto)
-- [ ] `image`: string (ruta o identificador)
+- [ ] `image`: string (opcional, no vacío; ruta o identificador)
 
 ### Element — nuevos campos
 - [ ] `origin`: referencia a `place:*`
-- [ ] `image`: string
+- [ ] `image`: string (opcional, no vacío)
 
 ### Event / Place / Planet — nuevos campos
-- [ ] `image`: string
+- [ ] `image`: string (opcional, no vacío)
 
 ---
 
 ## 🔁 Orden recomendado de implementación
-- [ ] 1) Añadir `image` (opcional) a todos los tipos definidos (simple, desbloquea UI)
+- [x] 1) Añadir `image` (opcional) a todos los tipos definidos (simple, desbloquea UI)
 - [ ] 2) Character: `born`/`died` (formato + UI)
 - [ ] 3) Character: `affinity` → Element (refs + UI)
 - [ ] 4) Element: `origin` → Place (refs + UI)

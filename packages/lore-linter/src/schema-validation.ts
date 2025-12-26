@@ -68,6 +68,14 @@ const requiredStringFieldsByType: Partial<Record<string, string[]>> = {
   card: ['id', 'name'],
 };
 
+const optionalNonEmptyStringFieldsByType: Partial<Record<string, string[]>> = {
+  character: ['image'],
+  element: ['image'],
+  event: ['image'],
+  place: ['image'],
+  planet: ['image'],
+};
+
 type SchemaContext = {
   type: string;
   id: string | null;
@@ -219,6 +227,26 @@ const validateRelatedFields = (context: SchemaContext): void => {
   }
 };
 
+const validateOptionalNonEmptyStringFields = (context: SchemaContext): void => {
+  const fields = optionalNonEmptyStringFieldsByType[context.type];
+  if (!fields) {
+    return;
+  }
+  for (const field of fields) {
+    const value = context.data[field];
+    if (typeof value === 'undefined') {
+      continue;
+    }
+    if (!isString(value)) {
+      addSchemaError(context, field, 'invalid-shape');
+      continue;
+    }
+    if (value.length === 0) {
+      addSchemaError(context, field, 'invalid-value');
+    }
+  }
+};
+
 const typeValidators: Partial<Record<string, (context: SchemaContext) => void>> = {
   event: validateEventFields,
   card: validateCardFields,
@@ -253,6 +281,7 @@ export const collectSchemaErrors = (docs: RawDoc[]): SchemaError[] => {
       validator(context);
     }
 
+    validateOptionalNonEmptyStringFields(context);
     validateRelatedFields(context);
   }
 
