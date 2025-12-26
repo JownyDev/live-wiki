@@ -1,0 +1,96 @@
+# Roadmap de mejoras inmediatas (Post-MVP) — Live-Wiki
+
+> Objetivo: enriquecer las entidades existentes sin complicar el sistema ni romper el flujo Markdown+Git.
+> Enfoque: cambios incrementales al schema + linter + UI, manteniendo compatibilidad y dejando campos opcionales.
+
+## ✅ Mejoras que vamos a hacer ahora (con motivo)
+
+### Character
+- [ ] **Relaciones con otros characters (etiquetadas)**  
+  **Por qué:** permite mostrar redes sociales (amigos/enemigos/familia) y mejora la lectura del lore sin imponer un sistema rígido.  
+  **Modelo definido:** `related_characters` como lista de objetos con `type` (etiqueta) + ref a `character:*`.  
+- [ ] **Elemento afín (relación a Element)**  
+  **Por qué:** conecta lore/personajes con el “sistema elemental” y habilita UI de navegación por afinidades.
+- [ ] **Fecha de nacimiento (opcional)**  
+  **Por qué:** habilita orden cronológico y timeline futura.
+- [ ] **Fecha de muerte (opcional)**  
+  **Por qué:** coherencia temporal y soporte a arcos narrativos.
+- [ ] **Imagen (opcional)**  
+  **Por qué:** mejora UX/escaneo visual y da identidad al personaje.
+
+### Element
+- [ ] **Origen (relación a Place) (opcional)**  
+  **Por qué:** ancla elementos al mundo y permite navegación “de dónde viene este elemento”.
+- [ ] **Imagen (opcional)**  
+  **Por qué:** lectura visual rápida del elemento.
+
+### Event
+- [ ] **Imagen (opcional)**  
+  **Por qué:** lectura visual + “poster” de evento; útil en timeline.
+
+### Place
+- [ ] **Imagen (opcional)**  
+  **Por qué:** mejora UX en navegación de localizaciones.
+
+### Planet
+- [ ] **Imagen (opcional)**  
+  **Por qué:** mejora UX; ayuda a diferenciar mundos.
+
+### Mechanics
+- [x] **Sin cambios**  
+  **Por qué:** no aporta valor inmediato y ya cumple su rol en el MVP.
+
+### Cards
+- [x] **Sin cambios (por ahora)**  
+  **Por qué:** es la clase más compleja (subtipos/atributos) y no aporta valor inmediato al lore base.
+
+---
+
+## ✅ Qué implica “implementado” para cada mejora (Definition of Done)
+- [ ] **Schema**: campos añadidos como opcionales donde aplique (sin romper contenido existente).
+- [ ] **Lore-linter**: validación de formato y refs rotas para los nuevos campos.
+- [ ] **UI**: mostrar el campo en detail (y enlaces cuando sean refs).
+- [ ] **CLI `wiki new`**: actualizar plantillas para incluir placeholders (vacíos/omitidos) cuando tenga sentido.
+- [ ] **Ejemplos en content**: al menos 1 doc actualizado por tipo afectado para validar end-to-end.
+
+---
+
+## 📌 Detalle de campos propuestos (para implementación inmediata)
+
+### Character — nuevos campos (frontmatter)
+- [ ] `related_characters`: lista de relaciones etiquetadas (modelo definido)
+  - formato:
+    - lista de objetos
+    - cada objeto: `type` (string) + `character` (ref a `character:*`)
+  - reglas:
+    - `type` es libre, con **lista sugerida** (si no coincide → warning)
+    - **no** se permite repetir el mismo `character:*` más de una vez (aunque cambie `type`)
+    - no hay reciprocidad automática
+  - ejemplo:
+    ```yaml
+    related_characters:
+      - type: friend
+        character: character:kade-vox
+      - type: enemy
+        character: character:nyx-ashen
+    ```
+- [ ] `affinity`: referencia a `element:*`
+- [ ] `born`: fecha (formato consistente con el proyecto)
+- [ ] `died`: fecha (formato consistente con el proyecto)
+- [ ] `image`: string (ruta o identificador)
+
+### Element — nuevos campos
+- [ ] `origin`: referencia a `place:*`
+- [ ] `image`: string
+
+### Event / Place / Planet — nuevos campos
+- [ ] `image`: string
+
+---
+
+## 🔁 Orden recomendado de implementación
+- [ ] 1) Añadir `image` (opcional) a todos los tipos definidos (simple, desbloquea UI)
+- [ ] 2) Character: `born`/`died` (formato + UI)
+- [ ] 3) Character: `affinity` → Element (refs + UI)
+- [ ] 4) Element: `origin` → Place (refs + UI)
+- [ ] 5) Character: `related_characters` etiquetado (schema + linter + UI reusable)
