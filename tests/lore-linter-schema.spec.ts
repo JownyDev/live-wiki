@@ -153,6 +153,81 @@ describe('lore-linter schema minimum', () => {
   });
 });
 
+describe('lore-linter schema image', () => {
+  it('reports invalid image fields', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'schema-image-invalid',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    const expected: SchemaError[] = [
+      {
+        type: 'character',
+        id: 'character-image-empty',
+        field: 'image',
+        reason: 'invalid-value',
+      },
+      {
+        type: 'character',
+        id: 'character-image-not-string',
+        field: 'image',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'element',
+        id: 'element-image-not-string',
+        field: 'image',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'event',
+        id: 'event-image-not-string',
+        field: 'image',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'place',
+        id: 'place-image-not-string',
+        field: 'image',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'planet',
+        id: 'planet-image-not-string',
+        field: 'image',
+        reason: 'invalid-shape',
+      },
+    ];
+
+    expect(sortSchemaErrors(report.schemaErrors)).toEqual(sortSchemaErrors(expected));
+  });
+
+  it('accepts valid image fields per type', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'schema-image-valid',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    expect(report.schemaErrors).toEqual([]);
+  });
+});
+
 describe('lore-linter card schema', () => {
   it('reports card elements and represents validation errors', async () => {
     const fixturesDir = path.resolve(
