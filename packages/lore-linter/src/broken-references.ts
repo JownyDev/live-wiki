@@ -258,6 +258,13 @@ const collectRelatedCharactersCandidates = (
   }
 };
 
+const collectOriginCandidates = (
+  candidates: ReferenceCandidate[],
+  doc: LoreDoc,
+): void => {
+  collectLocationCandidates(candidates, doc, 'origin', doc.data.origin);
+};
+
 const collectReferenceCandidates = (doc: LoreDoc): ReferenceCandidate[] => {
   const candidates: ReferenceCandidate[] = [];
 
@@ -267,7 +274,7 @@ const collectReferenceCandidates = (doc: LoreDoc): ReferenceCandidate[] => {
   }
 
   if (doc.type === 'character') {
-    collectLocationCandidates(candidates, doc, 'origin', doc.data.origin);
+    collectOriginCandidates(candidates, doc);
     collectSingleTypedRefCandidate(
       candidates,
       doc,
@@ -279,7 +286,7 @@ const collectReferenceCandidates = (doc: LoreDoc): ReferenceCandidate[] => {
   }
 
   if (doc.type === 'element') {
-    collectLocationCandidates(candidates, doc, 'origin', doc.data.origin);
+    collectOriginCandidates(candidates, doc);
   }
 
   if (doc.type === 'place') {
