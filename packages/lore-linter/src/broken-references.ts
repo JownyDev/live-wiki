@@ -235,6 +235,37 @@ const collectRelatedCandidates = (
   }
 };
 
+const collectRelatedCharactersCandidates = (
+  candidates: ReferenceCandidate[],
+  doc: LoreDoc,
+): void => {
+  const related = doc.data.related_characters;
+  if (!Array.isArray(related)) {
+    return;
+  }
+  for (const entry of related) {
+    if (!isRecord(entry)) {
+      continue;
+    }
+    const character = entry.character;
+    if (!isString(character)) {
+      continue;
+    }
+    const parsed = parseTypedRef(character);
+    if (!parsed || parsed.type !== 'character') {
+      continue;
+    }
+    collectCandidate(
+      candidates,
+      doc,
+      'related_characters',
+      character,
+      parsed.type,
+      parsed.id,
+    );
+  }
+};
+
 const collectReferenceCandidates = (doc: LoreDoc): ReferenceCandidate[] => {
   const candidates: ReferenceCandidate[] = [];
 
@@ -252,6 +283,7 @@ const collectReferenceCandidates = (doc: LoreDoc): ReferenceCandidate[] => {
       doc.data.affinity,
       elementRefTypes,
     );
+    collectRelatedCharactersCandidates(candidates, doc);
   }
 
   if (doc.type === 'place') {

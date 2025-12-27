@@ -170,6 +170,10 @@ const parseWithPrefix = (value: string, prefix: string): string | null => {
   return id.length > 0 ? id : null;
 };
 
+const getCharacterRefId = (value: string): string | null => {
+  return parseWithPrefix(value, 'character:');
+};
+
 const hasPrefix = (value: string, prefix: string): boolean =>
   parseWithPrefix(value, prefix) !== null;
 
@@ -202,6 +206,48 @@ const validateOptionalElementRefField = (
   }
   if (!isElementRef(value)) {
     addSchemaError(context, field, 'invalid-reference');
+  }
+};
+
+const validateRelatedCharacters = (context: SchemaContext): void => {
+  const related = context.data.related_characters;
+  if (typeof related === 'undefined') {
+    return;
+  }
+  if (!Array.isArray(related)) {
+    addSchemaError(context, 'related_characters', 'invalid-shape');
+    return;
+  }
+  const seenCharacters = new Set<string>();
+  for (const entry of related) {
+    if (!isRecord(entry)) {
+      addSchemaError(context, 'related_characters', 'invalid-shape');
+      return;
+    }
+    const typeValue = entry.type;
+    if (!isString(typeValue)) {
+      addSchemaError(context, 'related_characters', 'invalid-shape');
+      return;
+    }
+    if (typeValue.length === 0) {
+      addSchemaError(context, 'related_characters', 'invalid-value');
+      return;
+    }
+    const characterValue = entry.character;
+    if (!isString(characterValue)) {
+      addSchemaError(context, 'related_characters', 'invalid-shape');
+      return;
+    }
+    const characterId = getCharacterRefId(characterValue);
+    if (!characterId) {
+      addSchemaError(context, 'related_characters', 'invalid-reference');
+      return;
+    }
+    if (seenCharacters.has(characterId)) {
+      addSchemaError(context, 'related_characters', 'invalid-value');
+      return;
+    }
+    seenCharacters.add(characterId);
   }
 };
 
@@ -252,6 +298,7 @@ const validateCharacterFields = (context: SchemaContext): void => {
     addSchemaError(context, 'died', 'invalid-date');
   }
   validateOptionalElementRefField(context, 'affinity', context.data.affinity);
+  validateRelatedCharacters(context);
 };
 
 const validateCardFields = (context: SchemaContext): void => {
@@ -262,6 +309,9 @@ const validateCardFields = (context: SchemaContext): void => {
 const validateRelatedFields = (context: SchemaContext): void => {
   for (const [field, value] of Object.entries(context.data)) {
     if (!field.startsWith('related_')) {
+      continue;
+    }
+    if (field === 'related_characters' && context.type === 'character') {
       continue;
     }
     if (isString(value) || isStringArray(value)) {
