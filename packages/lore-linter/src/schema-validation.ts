@@ -209,36 +209,51 @@ const validateOptionalElementRefField = (
   }
 };
 
-const validateRelatedCharacters = (context: SchemaContext): void => {
+type RelatedCharacterEntry = {
+  type: string;
+  character: string;
+};
+
+const getRelatedCharacterEntries = (
+  context: SchemaContext,
+): RelatedCharacterEntry[] | null => {
   const related = context.data.related_characters;
   if (typeof related === 'undefined') {
-    return;
+    return null;
   }
   if (!Array.isArray(related)) {
     addSchemaError(context, 'related_characters', 'invalid-shape');
-    return;
+    return null;
   }
-  const seenCharacters = new Set<string>();
+  const entries: RelatedCharacterEntry[] = [];
   for (const entry of related) {
     if (!isRecord(entry)) {
       addSchemaError(context, 'related_characters', 'invalid-shape');
-      return;
+      return null;
     }
     const typeValue = entry.type;
-    if (!isString(typeValue)) {
+    const characterValue = entry.character;
+    if (!isString(typeValue) || !isString(characterValue)) {
       addSchemaError(context, 'related_characters', 'invalid-shape');
-      return;
+      return null;
     }
-    if (typeValue.length === 0) {
+    entries.push({ type: typeValue, character: characterValue });
+  }
+  return entries;
+};
+
+const validateRelatedCharacters = (context: SchemaContext): void => {
+  const entries = getRelatedCharacterEntries(context);
+  if (!entries) {
+    return;
+  }
+  const seenCharacters = new Set<string>();
+  for (const entry of entries) {
+    if (entry.type.length === 0) {
       addSchemaError(context, 'related_characters', 'invalid-value');
       return;
     }
-    const characterValue = entry.character;
-    if (!isString(characterValue)) {
-      addSchemaError(context, 'related_characters', 'invalid-shape');
-      return;
-    }
-    const characterId = getCharacterRefId(characterValue);
+    const characterId = getCharacterRefId(entry.character);
     if (!characterId) {
       addSchemaError(context, 'related_characters', 'invalid-reference');
       return;

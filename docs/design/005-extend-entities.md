@@ -6,7 +6,7 @@
 ## ✅ Mejoras que vamos a hacer ahora (con motivo)
 
 ### Character
-- [ ] **Relaciones con otros characters (etiquetadas)**  
+- [ ] **Relaciones con otros characters (etiquetadas, en progreso)**  
   **Por qué:** permite mostrar redes sociales (amigos/enemigos/familia) y mejora la lectura del lore sin imponer un sistema rígido.  
   **Modelo definido:** `related_characters` como lista de objetos con `type` (etiqueta) + ref a `character:*`.  
 - [ ] **Elemento afín (relación a Element, en progreso)**  
@@ -66,6 +66,7 @@
     - `type` es libre, con **lista sugerida** (si no coincide → warning)
     - **no** se permite repetir el mismo `character:*` más de una vez (aunque cambie `type`)
     - no hay reciprocidad automática
+  - nota: se valida que `character` sea `character:*` y no haya duplicados; no se exige reciprocidad.
   - ejemplo:
     ```yaml
     related_characters:
@@ -95,4 +96,4 @@
 - [ ] 2) Character: `born`/`died` (formato + UI, en progreso: schema + linter)
 - [ ] 3) Character: `affinity` → Element (refs + UI, en progreso: schema + linter)
 - [ ] 4) Element: `origin` → Place (refs + UI)
-- [ ] 5) Character: `related_characters` etiquetado (schema + linter + UI reusable)
+- [ ] 5) Character: `related_characters` etiquetado (schema + linter + UI reusable, en progreso: schema + linter)

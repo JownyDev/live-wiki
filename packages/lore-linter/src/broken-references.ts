@@ -65,6 +65,7 @@ const getStringArrayEntries = (value: unknown): string[] | null => {
   return value.filter(isString);
 };
 
+const characterRefTypes = new Set(['character']);
 const elementRefTypes = new Set(['element']);
 const representsRefTypes = new Set(['character', 'event', 'place', 'planet']);
 
@@ -247,21 +248,12 @@ const collectRelatedCharactersCandidates = (
     if (!isRecord(entry)) {
       continue;
     }
-    const character = entry.character;
-    if (!isString(character)) {
-      continue;
-    }
-    const parsed = parseTypedRef(character);
-    if (!parsed || parsed.type !== 'character') {
-      continue;
-    }
-    collectCandidate(
+    collectSingleTypedRefCandidate(
       candidates,
       doc,
       'related_characters',
-      character,
-      parsed.type,
-      parsed.id,
+      entry.character,
+      characterRefTypes,
     );
   }
 };
