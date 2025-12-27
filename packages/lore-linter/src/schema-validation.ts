@@ -105,6 +105,42 @@ const addRequiredStringFields = (context: SchemaContext, fields: string[]): void
   }
 };
 
+type DateFieldOptions = {
+  required: boolean;
+};
+
+const validateDateField = (
+  context: SchemaContext,
+  field: string,
+  options: DateFieldOptions,
+): string | null => {
+  const rawValue = getRawField(context.raw, field);
+  const parsedValue = context.data[field];
+
+  if (rawValue === null && typeof parsedValue === 'undefined') {
+    if (options.required) {
+      addSchemaError(context, field, 'required');
+    }
+    return null;
+  }
+
+  // Usa el raw para evitar que YAML normalice fechas invalidas.
+  if (rawValue !== null) {
+    if (!isValidIsoDate(rawValue)) {
+      addSchemaError(context, field, 'invalid-date');
+      return null;
+    }
+    return rawValue;
+  }
+
+  if (!isString(parsedValue) || !isValidIsoDate(parsedValue)) {
+    addSchemaError(context, field, 'invalid-date');
+    return null;
+  }
+
+  return parsedValue;
+};
+
 const validateRequiredFields = (context: SchemaContext): void => {
   const requiredFields = requiredStringFieldsByType[context.type];
   if (!requiredFields) {
@@ -114,61 +150,7 @@ const validateRequiredFields = (context: SchemaContext): void => {
 };
 
 const validateEventDate = (context: SchemaContext): void => {
-  const rawDate = getRawField(context.raw, 'date');
-  const parsedDate = context.data.date;
-
-  if (rawDate === null && typeof parsedDate === 'undefined') {
-    addSchemaError(context, 'date', 'required');
-    return;
-  }
-
-  // Usa el raw para evitar que YAML normalice fechas invalidas.
-  if (rawDate !== null) {
-    if (!isValidIsoDate(rawDate)) {
-      addSchemaError(context, 'date', 'invalid-date');
-    }
-    return;
-  }
-
-  if (!isString(parsedDate) || !isValidIsoDate(parsedDate)) {
-    addSchemaError(context, 'date', 'invalid-date');
-  }
-};
-
-const validateOptionalDateField = (
-  context: SchemaContext,
-  field: string,
-): void => {
-  const rawValue = getRawField(context.raw, field);
-  const parsedValue = context.data[field];
-
-  if (rawValue === null && typeof parsedValue === 'undefined') {
-    return;
-  }
-
-  // Usa el raw para evitar que YAML normalice fechas invalidas.
-  if (rawValue !== null) {
-    if (!isValidIsoDate(rawValue)) {
-      addSchemaError(context, field, 'invalid-date');
-    }
-    return;
-  }
-
-  if (!isString(parsedValue) || !isValidIsoDate(parsedValue)) {
-    addSchemaError(context, field, 'invalid-date');
-  }
-};
-
-const getOptionalValidIsoDate = (
-  context: SchemaContext,
-  field: string,
-): string | null => {
-  const rawValue = getRawField(context.raw, field);
-  if (rawValue !== null) {
-    return isValidIsoDate(rawValue) ? rawValue : null;
-  }
-  const parsedValue = context.data[field];
-  return isString(parsedValue) && isValidIsoDate(parsedValue) ? parsedValue : null;
+  validateDateField(context, 'date', { required: true });
 };
 
 const validateEventWho = (context: SchemaContext): void => {
@@ -247,11 +229,8 @@ const validateEventFields = (context: SchemaContext): void => {
 };
 
 const validateCharacterFields = (context: SchemaContext): void => {
-  validateOptionalDateField(context, 'born');
-  validateOptionalDateField(context, 'died');
-
-  const born = getOptionalValidIsoDate(context, 'born');
-  const died = getOptionalValidIsoDate(context, 'died');
+  const born = validateDateField(context, 'born', { required: false });
+  const died = validateDateField(context, 'died', { required: false });
   if (born && died && died < born) {
     addSchemaError(context, 'died', 'invalid-date');
   }

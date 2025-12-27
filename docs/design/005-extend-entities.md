@@ -11,9 +11,9 @@
   **Modelo definido:** `related_characters` como lista de objetos con `type` (etiqueta) + ref a `character:*`.  
 - [ ] **Elemento afín (relación a Element)**  
   **Por qué:** conecta lore/personajes con el “sistema elemental” y habilita UI de navegación por afinidades.
-- [ ] **Fecha de nacimiento (opcional)**  
+- [ ] **Fecha de nacimiento (opcional, en progreso)**  
   **Por qué:** habilita orden cronológico y timeline futura.
-- [ ] **Fecha de muerte (opcional)**  
+- [ ] **Fecha de muerte (opcional, en progreso)**  
   **Por qué:** coherencia temporal y soporte a arcos narrativos.
 - [x] **Imagen (opcional)**  
   **Por qué:** mejora UX/escaneo visual y da identidad al personaje.
@@ -77,6 +77,7 @@
 - [ ] `affinity`: referencia a `element:*`
 - [ ] `born`: fecha (formato consistente con el proyecto)
 - [ ] `died`: fecha (formato consistente con el proyecto)
+- nota: formato validado `YYYY-MM-DD`; si ambos existen, `died >= born`.
 - [ ] `image`: string (opcional, no vacío; ruta o identificador)
 
 ### Element — nuevos campos
@@ -90,7 +91,7 @@
 
 ## 🔁 Orden recomendado de implementación
 - [x] 1) Añadir `image` (opcional) a todos los tipos definidos (simple, desbloquea UI)
-- [ ] 2) Character: `born`/`died` (formato + UI)
+- [ ] 2) Character: `born`/`died` (formato + UI, en progreso: schema + linter)
 - [ ] 3) Character: `affinity` → Element (refs + UI)
 - [ ] 4) Element: `origin` → Place (refs + UI)
 - [ ] 5) Character: `related_characters` etiquetado (schema + linter + UI reusable)
