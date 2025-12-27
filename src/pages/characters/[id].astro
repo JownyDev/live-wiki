@@ -5,10 +5,12 @@ import CharacterHero from '../../components/CharacterHero.astro';
 import DataPanel, { type DataPanelItem } from '../../components/DataPanel.astro';
 import EventSummaryCard from '../../components/EventSummaryCard.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
+import EntityLink from '../../components/EntityLink.astro';
 import Section from '../../components/Section.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import { type InlineMetaItem } from '../../components/InlineMetaList.astro';
 import { getCharacterById, listCharacters } from '../../lib/content/characters';
+import { getElementById } from '../../lib/content/elements';
 import { listEventsByCharacterId } from '../../lib/content/events';
 import { parseLocationRef } from '../../lib/content/location-refs';
 
@@ -26,11 +28,11 @@ const events =
 const title = character ? character.name : 'Personaje no encontrado';
 const originView = (() => {
   if (!character?.origin) {
-    return { text: 'Sin origen' };
+    return null;
   }
   const parsed = parseLocationRef(character.origin);
   if (!parsed) {
-    return { text: 'Sin origen' };
+    return null;
   }
   switch (parsed.kind) {
     case 'place':
@@ -43,6 +45,72 @@ const originView = (() => {
       return { text: 'Desconocido' };
   }
 })();
+
+type LinkView = { text: string; href?: string };
+type RelationView = LinkView & { missing?: boolean };
+type RelatedGroup = { label: string; items: RelationView[] };
+
+const parseWithPrefix = (value: string, prefix: string): string | null => {
+  if (!value.startsWith(prefix)) {
+    return null;
+  }
+  const parsedId = value.slice(prefix.length);
+  return parsedId.length > 0 ? parsedId : null;
+};
+
+const resolveAffinityView = async (value: string): Promise<LinkView> => {
+  const elementId = parseWithPrefix(value, 'element:');
+  if (!elementId) {
+    return { text: value };
+  }
+  const element = await getElementById(elementId);
+  return element
+    ? { text: element.name, href: `/elements/${element.id}` }
+    : { text: `${elementId} (no encontrado)` };
+};
+
+const buildRelatedGroups = async (
+  entries: Array<{ type: string; character: string }>,
+): Promise<RelatedGroup[]> => {
+  const groups: RelatedGroup[] = [];
+  const indexByLabel = new Map<string, number>();
+
+  for (const entry of entries) {
+    const label = entry.type;
+    const existingIndex = indexByLabel.get(label);
+    const groupIndex =
+      typeof existingIndex === 'number'
+        ? existingIndex
+        : (() => {
+            const nextIndex = groups.length;
+            groups.push({ label, items: [] });
+            indexByLabel.set(label, nextIndex);
+            return nextIndex;
+          })();
+
+    const characterId = parseWithPrefix(entry.character, 'character:');
+    if (!characterId) {
+      groups[groupIndex].items.push({ text: 'missing', missing: true });
+      continue;
+    }
+    const relatedCharacter = await getCharacterById(characterId);
+    if (!relatedCharacter) {
+      groups[groupIndex].items.push({ text: 'missing', missing: true });
+      continue;
+    }
+    groups[groupIndex].items.push({
+      text: relatedCharacter.name,
+      href: `/characters/${relatedCharacter.id}`,
+    });
+  }
+
+  return groups;
+};
+
+const affinityView = character?.affinity
+  ? await resolveAffinityView(character.affinity)
+  : null;
+const relatedGroups = character ? await buildRelatedGroups(character.relatedCharacters) : [];
 const breadcrumbs: BreadcrumbItem[] = character
   ? [
       { label: 'Inicio', href: '/' },
@@ -57,22 +125,38 @@ const breadcrumbs: BreadcrumbItem[] = character
 const characterMeta: InlineMetaItem[] = character
   ? [{ label: 'ID', value: `#${character.id}` }]
   : [];
-const dataItems: DataPanelItem[] = character
-  ? [
-      {
-        label: 'Origen',
-        value: originView.text,
-        href: originView.href,
-      },
-    ]
-  : [];
+const dataItems: DataPanelItem[] = [];
+
+if (character?.born) {
+  dataItems.push({ label: 'Nacimiento', value: character.born });
+}
+
+if (character?.died) {
+  dataItems.push({ label: 'Muerte', value: character.died });
+}
+
+if (originView) {
+  dataItems.push({ label: 'Origen', value: originView.text, href: originView.href });
+}
+
+if (affinityView) {
+  dataItems.push({
+    label: 'Afinidad',
+    value: affinityView.text,
+    href: affinityView.href,
+  });
+}
 ---
 
 <BaseLayout title={title} lang="en" pageClass="page--character">
   {character ? (
     <div class="character-page">
       <Breadcrumbs items={breadcrumbs} />
-      <CharacterHero name={character.name} meta={characterMeta} />
+      <CharacterHero
+        name={character.name}
+        meta={characterMeta}
+        imageUrl={character.image ?? undefined}
+      />
       <div class="character-page__grid">
         <aside class="character-page__sidebar">
           <DataPanel title="Datos del personaje" items={dataItems} />
@@ -82,6 +166,29 @@ const dataItems: DataPanelItem[] = character
             <SectionHeader title="Biografía" showDivider />
             <MarkdownDescription content={character.body} />
           </Section>
+          {relatedGroups.length > 0 ? (
+            <Section>
+              <SectionHeader title="Relaciones" showDivider />
+              <div class="character-page__relations">
+                {relatedGroups.map((group) => (
+                  <div class="character-page__relation-group">
+                    <h3 class="character-page__relation-title">{group.label}</h3>
+                    <ul class="character-page__relation-items">
+                      {group.items.map((item) => (
+                        <li>
+                          <EntityLink
+                            label={item.text}
+                            href={item.href}
+                            missing={item.missing}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </Section>
+          ) : null}
           <Section>
             <SectionHeader title="Eventos relacionados" showDivider>
               <a slot="action" href="/events">

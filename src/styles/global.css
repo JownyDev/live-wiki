@@ -220,6 +220,32 @@ h4 {
   gap: var(--space-3);
 }
 
+.character-page__relations {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.character-page__relation-group {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.character-page__relation-title {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.character-page__relation-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+}
+
 @media (min-width: 900px) {
   .character-page__grid {
     grid-template-columns: minmax(0, 17rem) minmax(0, 1fr);

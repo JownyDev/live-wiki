@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import {
+  getDateField,
   getOptionalLocationField,
   getStringField,
   parseFrontmatter,
@@ -11,7 +12,18 @@ import {
 } from './simple-entities';
 
 export type CharacterListItem = { id: string; name: string };
-export type Character = { id: string; name: string; origin: string | null; body: string };
+export type RelatedCharacter = { type: string; character: string };
+export type Character = {
+  id: string;
+  name: string;
+  origin: string | null;
+  image: string | null;
+  born: string | null;
+  died: string | null;
+  affinity: string | null;
+  relatedCharacters: RelatedCharacter[];
+  body: string;
+};
 
 type NodeErrorWithCode = Error & { code?: string };
 
@@ -25,6 +37,56 @@ const toCharacterListItem = (entity: SimpleEntityListItem): CharacterListItem =>
   name: entity.name,
 });
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const getOptionalStringField = (
+  record: Record<string, unknown>,
+  field: string,
+): string | null => {
+  const value = record[field];
+  if (typeof value === 'undefined') {
+    return null;
+  }
+  if (typeof value !== 'string' || value.length === 0) {
+    throw new Error(`Invalid ${field}`);
+  }
+  return value;
+};
+
+const getOptionalDateField = (
+  record: Record<string, unknown>,
+  field: string,
+): string | null => {
+  if (typeof record[field] === 'undefined') {
+    return null;
+  }
+  return getDateField(record, field);
+};
+
+const getRelatedCharactersField = (value: unknown): RelatedCharacter[] => {
+  if (typeof value === 'undefined') {
+    return [];
+  }
+  if (!Array.isArray(value)) {
+    throw new Error('Invalid related_characters');
+  }
+  return value.map((entry) => {
+    if (!isRecord(entry)) {
+      throw new Error('Invalid related_characters');
+    }
+    const typeValue = entry.type;
+    const characterValue = entry.character;
+    if (typeof typeValue !== 'string' || typeValue.length === 0) {
+      throw new Error('Invalid related_characters');
+    }
+    if (typeof characterValue !== 'string') {
+      throw new Error('Invalid related_characters');
+    }
+    return { type: typeValue, character: characterValue };
+  });
+};
+
 const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
   const { data, content } = parseFrontmatter(markdown);
   if (data.type !== 'character') {
@@ -34,8 +96,23 @@ const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
   const id = getStringField(data, 'id');
   const name = getStringField(data, 'name');
   const origin = getOptionalLocationField(data, 'origin');
+  const image = getOptionalStringField(data, 'image');
+  const born = getOptionalDateField(data, 'born');
+  const died = getOptionalDateField(data, 'died');
+  const affinity = getOptionalStringField(data, 'affinity');
+  const relatedCharacters = getRelatedCharactersField(data.related_characters);
 
-  return { id, name, origin, body: content };
+  return {
+    id,
+    name,
+    origin,
+    image,
+    born,
+    died,
+    affinity,
+    relatedCharacters,
+    body: content,
+  };
 };
 
 const isEnoentError = (error: unknown): error is NodeErrorWithCode =>

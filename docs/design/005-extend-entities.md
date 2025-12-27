@@ -96,4 +96,4 @@
 - [ ] 2) Character: `born`/`died` (formato + UI, en progreso: schema + linter)
 - [ ] 3) Character: `affinity` → Element (refs + UI, en progreso: schema + linter)
 - [ ] 4) Element: `origin` → Place (refs + UI)
-- [ ] 5) Character: `related_characters` etiquetado (schema + linter + UI reusable, en progreso: schema + linter)
+- [ ] 5) Character: `related_characters` etiquetado (schema + linter + UI reusable, en progreso: schema + linter + UI)

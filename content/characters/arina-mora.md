@@ -2,7 +2,16 @@
 type: character
 id: arina-mora
 name: Arina Mora
+image: /img/arina-mora.webp
+born: 2989-04-12
+died: 3058-01-07
 origin: place:haven-docks
+affinity: element:tide-mist
+related_characters:
+  - type: mentor
+    character: character:sonia-vale
+  - type: ally
+    character: character:maro-lyn
 ---
 
 Arina es una cartógrafa de campo que mapea pueblos fronterizos en constante cambio y conserva un atlas manuscrito de los cambios silenciosos de la frontera.

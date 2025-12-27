@@ -1,4 +1,5 @@
 ---
+import EntityImage from './EntityImage.astro';
 import InlineMetaList, { type InlineMetaItem } from './InlineMetaList.astro';
 
 type Props = {
@@ -18,11 +19,7 @@ const resolvedAlt = imageAlt ?? name;
 
 <header class="character-hero">
   <div class="character-hero__main">
-    {imageUrl ? (
-      <div class="character-hero__media">
-        <img src={imageUrl} alt={resolvedAlt} />
-      </div>
-    ) : null}
+    {imageUrl ? <EntityImage src={imageUrl} alt={resolvedAlt} variant="hero" /> : null}
     <div class="character-hero__content">
       {hasBadges ? (
         <div class="character-hero__badges">
@@ -46,7 +43,7 @@ const resolvedAlt = imageAlt ?? name;
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
-    padding: var(--space-4);
+    padding: var(--space-4) 0;
     border-bottom: 1px solid var(--color-border);
   }
 
@@ -57,27 +54,14 @@ const resolvedAlt = imageAlt ?? name;
     align-items: flex-start;
   }
 
-  .character-hero__media {
-    width: 8.5rem;
-    height: 8.5rem;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    border: 1px solid var(--color-border);
-    background: var(--color-surface);
-    box-shadow: var(--shadow-soft);
-  }
-
-  .character-hero__media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
   .character-hero__content {
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
+  }
+
+  .character-hero :global(.entity-image) {
+    --entity-image-size: 12rem;
   }
 
   .character-hero__badges {
@@ -107,7 +91,7 @@ const resolvedAlt = imageAlt ?? name;
 
   @media (min-width: 900px) {
     .character-hero {
-      padding: var(--space-4) var(--space-4) var(--space-5);
+      padding: var(--space-4) 0 var(--space-5);
     }
 
     .character-hero__main {
@@ -116,6 +100,10 @@ const resolvedAlt = imageAlt ?? name;
       justify-content: space-between;
       width: 100%;
       gap: var(--space-5);
+    }
+
+    .character-hero :global(.entity-image) {
+      --entity-image-size: 17rem;
     }
 
     .character-hero__content {

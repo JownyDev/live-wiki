@@ -1,0 +1,59 @@
+---
+type Props = {
+  src?: string | null;
+  alt: string;
+  caption?: string;
+  variant?: 'hero' | 'panel';
+};
+
+const { src, alt, caption, variant = 'hero' } = Astro.props as Props;
+const hasSource = typeof src === 'string' && src.length > 0;
+const className = `entity-image entity-image--${variant}`;
+---
+
+{hasSource ? (
+  <figure class={className}>
+    <div class="entity-image__frame">
+      <img src={src} alt={alt} loading="lazy" />
+    </div>
+    {caption ? <figcaption class="entity-image__caption">{caption}</figcaption> : null}
+  </figure>
+) : null}
+
+<style>
+  .entity-image {
+    margin: 0;
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    flex-shrink: 0;
+  }
+
+  .entity-image__frame {
+    width: var(--entity-image-size, 8.5rem);
+    height: var(--entity-image-size, 8.5rem);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .entity-image__frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .entity-image__caption {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    text-align: center;
+  }
+
+  .entity-image--panel {
+    --entity-image-size: 6.5rem;
+  }
+</style>
