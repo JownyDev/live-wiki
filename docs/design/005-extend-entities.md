@@ -27,6 +27,7 @@
 ### Event
 - [x] **Imagen (opcional)**  
   **Por qué:** lectura visual + “poster” de evento; útil en timeline.
+- Nota UI: en la ficha se muestra **Fecha** y **Origen** (derivado de `locations[0]` si existe).
 
 ### Place
 - [x] **Imagen (opcional)**  

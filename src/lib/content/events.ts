@@ -18,6 +18,7 @@ type Event = {
   date: string;
   who: EventParticipant[];
   locations: string[];
+  image: string | null;
   body: string;
 };
 
@@ -33,6 +34,20 @@ const getPlacesDir = (baseDir?: string): string => {
   return path.join(resolvedBaseDir, 'places');
 };
 
+const getOptionalStringField = (
+  record: Record<string, unknown>,
+  field: string,
+): string | null => {
+  const value = record[field];
+  if (typeof value === 'undefined') {
+    return null;
+  }
+  if (typeof value !== 'string' || value.length === 0) {
+    throw new Error(`Invalid ${field}`);
+  }
+  return value;
+};
+
 const parseAndValidateEventMarkdown = (markdown: string): Event => {
   const { data, content } = parseFrontmatter(markdown);
   if (data.type !== 'event') {
@@ -44,8 +59,9 @@ const parseAndValidateEventMarkdown = (markdown: string): Event => {
   const date = getDateField(data, 'date');
   const who = getEventParticipantsField(data, 'who');
   const locations = getLocationsField(data, 'locations');
+  const image = getOptionalStringField(data, 'image');
 
-  return { id, title, date, who, locations, body: content };
+  return { id, title, date, who, locations, image, body: content };
 };
 
 const isEnoentError = (error: unknown): error is NodeErrorWithCode =>

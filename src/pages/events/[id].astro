@@ -5,6 +5,8 @@ import { getCharacterById } from '../../lib/content/characters';
 import { getPlaceById } from '../../lib/content/places';
 import { getPlanetById } from '../../lib/content/planets';
 import { parseLocationRef } from '../../lib/content/location-refs';
+import DataPanel, { type DataPanelItem } from '../../components/DataPanel.astro';
+import EntityImage from '../../components/EntityImage.astro';
 import Header from '../../components/Header.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
 import RelationList, { type RelationItem } from '../../components/RelationList.astro';
@@ -24,11 +26,11 @@ const meta = event
   ? [
       { label: 'Type', value: 'event', variant: 'muted' },
       { label: 'Id', value: event.id },
-      { label: 'Date', value: event.date },
     ]
   : [];
 
 type Participant = { id: string; name: string | null };
+type LocationView = { text: string; href?: string; missing?: boolean };
 
 const participants: RelationItem[] = event
   ? (
@@ -54,58 +56,90 @@ const participants: RelationItem[] = event
       }))
   : [];
 
-type LocationView = { text: string; href?: string };
+const resolveLocationView = async (location: string): Promise<LocationView> => {
+  const parsed = parseLocationRef(location);
+  if (!parsed) {
+    return { text: 'Desconocido' };
+  }
+  switch (parsed.kind) {
+    case 'place': {
+      const place = await getPlaceById(parsed.id);
+      if (!place) {
+        return { text: `${parsed.id} (no encontrado)`, missing: true };
+      }
+      return { text: place.name, href: `/places/${place.id}` };
+    }
+    case 'planet': {
+      const planet = await getPlanetById(parsed.id);
+      if (!planet) {
+        return { text: `${parsed.id} (no encontrado)`, missing: true };
+      }
+      return { text: planet.name, href: `/planets/${planet.id}` };
+    }
+    case 'space':
+      return { text: parsed.id };
+    case 'unknown':
+      return { text: 'Desconocido' };
+  }
+};
 
-const locations: LocationView[] = event
-  ? (
-      await Promise.all(
-        event.locations.map(async (location) => {
-          const parsed = parseLocationRef(location);
-          if (!parsed) {
-            return { text: 'Desconocido' };
-          }
-          switch (parsed.kind) {
-            case 'place': {
-              const place = await getPlaceById(parsed.id);
-              if (!place) {
-                return { text: `${parsed.id} (no encontrado)` };
-              }
-              return { text: place.name, href: `/places/${place.id}` };
-            }
-            case 'planet': {
-              const planet = await getPlanetById(parsed.id);
-              if (!planet) {
-                return { text: `${parsed.id} (no encontrado)` };
-              }
-              return { text: planet.name, href: `/planets/${planet.id}` };
-            }
-            case 'space':
-              return { text: parsed.id };
-            case 'unknown':
-              return { text: 'Desconocido' };
-          }
-        }),
-      )
-    ).filter((entry): entry is LocationView => Boolean(entry))
+const locations: RelationItem[] = event
+  ? (await Promise.all(event.locations.map(resolveLocationView))).map((item) => ({
+      text: item.text,
+      href: item.href,
+      missing: item.missing,
+    }))
   : [];
+
+const originView =
+  event && event.locations.length > 0
+    ? await resolveLocationView(event.locations[0])
+    : null;
+const dataItems: DataPanelItem[] = [];
+
+if (event?.date) {
+  dataItems.push({ label: 'Fecha', value: event.date });
+}
+
+if (originView) {
+  dataItems.push({
+    label: 'Origen',
+    value: originView.text,
+    href: originView.href,
+  });
+}
 ---
 
 <BaseLayout title={title} lang="en">
   {event ? (
-    <>
-      <Header title={event.title} meta={meta} />
-      <MarkdownDescription content={event.body} />
-      <Section>
-        <RelationList
-          label="Participantes"
-          items={participants}
-          emptyText="Sin participantes."
-        />
-      </Section>
-      <Section>
-        <RelationList label="Ubicaciones" items={locations} emptyText="Sin ubicaciones." />
-      </Section>
-    </>
+    <div class="event-page">
+      <div class="event-page__grid">
+        <aside class="event-page__sidebar">
+          {event.image ? <EntityImage src={event.image} alt={event.title} /> : null}
+          <DataPanel title="Datos del evento" items={dataItems} />
+        </aside>
+        <div class="event-page__content">
+          <Header title={event.title} meta={meta} />
+          <Section>
+            <MarkdownDescription content={event.body} />
+          </Section>
+          <Section>
+            <RelationList
+              label="Participantes"
+              items={participants}
+              emptyText="Sin participantes."
+            />
+          </Section>
+          <Section>
+            <RelationList
+              label="Ubicaciones"
+              items={locations}
+              emptyText="Sin ubicaciones."
+            />
+          </Section>
+        </div>
+      </div>
+    </div>
   ) : (
     <>
       <Header title="Evento no encontrado" />
