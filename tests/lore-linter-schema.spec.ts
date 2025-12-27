@@ -239,6 +239,79 @@ describe('lore-linter schema minimum', () => {
     expect(report.schemaErrors).toEqual([]);
   });
 
+  it('reports invalid character related_characters', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'schema-character-related-invalid',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    const expected: SchemaError[] = [
+      {
+        type: 'character',
+        id: 'related-not-list',
+        field: 'related_characters',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'character',
+        id: 'related-missing-type',
+        field: 'related_characters',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'character',
+        id: 'related-empty-type',
+        field: 'related_characters',
+        reason: 'invalid-value',
+      },
+      {
+        type: 'character',
+        id: 'related-missing-character',
+        field: 'related_characters',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'character',
+        id: 'related-invalid-character',
+        field: 'related_characters',
+        reason: 'invalid-reference',
+      },
+      {
+        type: 'character',
+        id: 'related-duplicate-character',
+        field: 'related_characters',
+        reason: 'invalid-value',
+      },
+    ];
+
+    expect(sortSchemaErrors(report.schemaErrors)).toEqual(sortSchemaErrors(expected));
+  });
+
+  it('accepts optional character related_characters', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'schema-character-related-valid',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    expect(report.schemaErrors).toEqual([]);
+  });
+
   it('accepts valid minimum schemas', async () => {
     const fixturesDir = path.resolve(
       import.meta.dirname,

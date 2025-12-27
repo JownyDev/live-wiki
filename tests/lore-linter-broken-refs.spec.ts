@@ -57,6 +57,12 @@ describe('lore-linter broken references', () => {
         reference: 'event:missing-event',
       },
       {
+        type: 'character',
+        id: 'broken-related-characters',
+        field: 'related_characters',
+        reference: 'character:missing-character',
+      },
+      {
         type: 'card',
         id: 'broken-elements',
         field: 'elements',
