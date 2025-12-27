@@ -45,6 +45,7 @@ const resolvedAlt = imageAlt ?? name;
     gap: var(--space-4);
     padding: var(--space-4) 0;
     border-bottom: 1px solid var(--color-border);
+    --entity-image-size: 12rem;
   }
 
   .character-hero__main {
@@ -58,10 +59,6 @@ const resolvedAlt = imageAlt ?? name;
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
-  }
-
-  .character-hero :global(.entity-image) {
-    --entity-image-size: 12rem;
   }
 
   .character-hero__badges {
@@ -92,6 +89,7 @@ const resolvedAlt = imageAlt ?? name;
   @media (min-width: 900px) {
     .character-hero {
       padding: var(--space-4) 0 var(--space-5);
+      --entity-image-size: 17rem;
     }
 
     .character-hero__main {
@@ -100,10 +98,6 @@ const resolvedAlt = imageAlt ?? name;
       justify-content: space-between;
       width: 100%;
       gap: var(--space-5);
-    }
-
-    .character-hero :global(.entity-image) {
-      --entity-image-size: 17rem;
     }
 
     .character-hero__content {

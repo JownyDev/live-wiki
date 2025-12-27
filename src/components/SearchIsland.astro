@@ -87,15 +87,27 @@ const scriptSrc = searchScript;
     display: none;
   }
 
-  :global(.search__results) {
+  .search__results {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    right: 0;
+    z-index: 30;
     list-style: none;
-    margin: var(--space-4) 0 0;
+    margin: 0;
     padding: 0;
     display: grid;
     gap: var(--space-2);
+    width: min(90vw, 26rem);
+    max-height: 60vh;
+    overflow: auto;
+    box-shadow: var(--shadow-soft);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-2);
   }
 
-  :global(.search__results[hidden]) {
+  .search__results[hidden] {
     display: none;
   }
 
