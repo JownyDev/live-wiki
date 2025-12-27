@@ -50,7 +50,7 @@
 - [x] **Schema**: campos añadidos como opcionales donde aplique (sin romper contenido existente).
 - [x] **Lore-linter**: validación de formato y refs rotas para los nuevos campos.
 - [x] **UI**: mostrar el campo en detail (y enlaces cuando sean refs).
-- [ ] **CLI `wiki new`**: actualizar plantillas para incluir placeholders (vacíos/omitidos) cuando tenga sentido.
+- [x] **CLI `wiki new`**: actualizar plantillas para incluir placeholders (vacíos/omitidos) cuando tenga sentido.
 - [x] **Ejemplos en content**: al menos 1 doc actualizado por tipo afectado para validar end-to-end.
 
 ---
