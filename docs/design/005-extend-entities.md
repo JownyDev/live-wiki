@@ -83,12 +83,12 @@
 - [x] `image`: string (opcional, no vacío; ruta o identificador)
 
 ### Element — nuevos campos
-- [ ] `origin`: referencia a `place:*`
+- [ ] `origin`: referencia a `place:*` (en progreso: schema + linter)
 - nota: mismo formato y tipos permitidos que `origin` en Character.
-- [ ] `image`: string (opcional, no vacío)
+- [x] `image`: string (opcional, no vacío)
 
 ### Event / Place / Planet — nuevos campos
-- [ ] `image`: string (opcional, no vacío)
+- [x] `image`: string (opcional, no vacío)
 
 ---
 
