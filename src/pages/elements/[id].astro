@@ -1,9 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import DataPanel, { type DataPanelItem } from '../../components/DataPanel.astro';
+import EntityImage from '../../components/EntityImage.astro';
 import Header from '../../components/Header.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
 import Section from '../../components/Section.astro';
 import { getElementById, listElements } from '../../lib/content/elements';
+import { parseLocationRef } from '../../lib/content/location-refs';
 
 export async function getStaticPaths() {
   const elements = await listElements();
@@ -15,14 +18,50 @@ export async function getStaticPaths() {
 const id = Astro.params.id;
 const element = typeof id === 'string' ? await getElementById(id) : null;
 const title = element ? element.name : 'Elemento no encontrado';
+const originView = (() => {
+  if (!element?.origin) {
+    return null;
+  }
+  const parsed = parseLocationRef(element.origin);
+  if (!parsed) {
+    return null;
+  }
+  switch (parsed.kind) {
+    case 'place':
+      return { text: parsed.id, href: `/places/${parsed.id}` };
+    case 'planet':
+      return { text: parsed.id, href: `/planets/${parsed.id}` };
+    case 'space':
+      return { text: parsed.id };
+    case 'unknown':
+      return { text: 'Desconocido' };
+  }
+})();
+const dataItems: DataPanelItem[] = [];
+
+if (originView) {
+  dataItems.push({ label: 'Origen', value: originView.text, href: originView.href });
+}
 ---
 
 <BaseLayout title={title}>
   {element ? (
-    <>
-      <Header title={element.name} />
-      <MarkdownDescription content={element.body} />
-    </>
+    <div class="element-page">
+      <div class="element-page__grid">
+        <aside class="element-page__sidebar">
+          {element.image ? (
+            <EntityImage src={element.image} alt={element.name} />
+          ) : null}
+          <DataPanel title="Datos del elemento" items={dataItems} />
+        </aside>
+        <div class="element-page__content">
+          <Header title={element.name} />
+          <Section>
+            <MarkdownDescription content={element.body} />
+          </Section>
+        </div>
+      </div>
+    </div>
   ) : (
     <>
       <Header title="Elemento no encontrado" />

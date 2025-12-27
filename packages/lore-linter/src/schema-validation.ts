@@ -97,6 +97,21 @@ const addSchemaError = (
   });
 };
 
+const getOptionalStringValue = (
+  context: SchemaContext,
+  field: string,
+  value: unknown,
+): string | null => {
+  if (typeof value === 'undefined') {
+    return null;
+  }
+  if (!isString(value)) {
+    addSchemaError(context, field, 'invalid-shape');
+    return null;
+  }
+  return value;
+};
+
 const addRequiredStringFields = (context: SchemaContext, fields: string[]): void => {
   for (const field of fields) {
     if (!isString(context.data[field])) {
@@ -197,14 +212,11 @@ const validateOptionalElementRefField = (
   field: string,
   value: unknown,
 ): void => {
-  if (typeof value === 'undefined') {
+  const stringValue = getOptionalStringValue(context, field, value);
+  if (stringValue === null) {
     return;
   }
-  if (!isString(value)) {
-    addSchemaError(context, field, 'invalid-shape');
-    return;
-  }
-  if (!isElementRef(value)) {
+  if (!isElementRef(stringValue)) {
     addSchemaError(context, field, 'invalid-reference');
   }
 };
@@ -214,14 +226,11 @@ const validateOptionalOriginField = (
   field: string,
   value: unknown,
 ): void => {
-  if (typeof value === 'undefined') {
+  const stringValue = getOptionalStringValue(context, field, value);
+  if (stringValue === null) {
     return;
   }
-  if (!isString(value)) {
-    addSchemaError(context, field, 'invalid-shape');
-    return;
-  }
-  if (!parseLocationRef(value)) {
+  if (!parseLocationRef(stringValue)) {
     addSchemaError(context, field, 'invalid-reference');
   }
 };
