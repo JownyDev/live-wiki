@@ -8,6 +8,7 @@ export type BrokenReference = {
     | 'who'
     | 'locations'
     | 'origin'
+    | 'affinity'
     | 'planetId'
     | 'elements'
     | 'represents'
@@ -214,6 +215,21 @@ const collectRelatedCandidates = (
   }
 };
 
+const collectAffinityCandidates = (
+  candidates: ReferenceCandidate[],
+  doc: LoreDoc,
+): void => {
+  const affinity = doc.data.affinity;
+  if (!isString(affinity)) {
+    return;
+  }
+  const parsed = parseTypedRef(affinity);
+  if (!parsed || !elementRefTypes.has(parsed.type)) {
+    return;
+  }
+  collectCandidate(candidates, doc, 'affinity', affinity, parsed.type, parsed.id);
+};
+
 const collectReferenceCandidates = (doc: LoreDoc): ReferenceCandidate[] => {
   const candidates: ReferenceCandidate[] = [];
 
@@ -224,6 +240,7 @@ const collectReferenceCandidates = (doc: LoreDoc): ReferenceCandidate[] => {
 
   if (doc.type === 'character') {
     collectLocationCandidates(candidates, doc, 'origin', doc.data.origin);
+    collectAffinityCandidates(candidates, doc);
   }
 
   if (doc.type === 'place') {

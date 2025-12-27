@@ -234,6 +234,18 @@ const validateCharacterFields = (context: SchemaContext): void => {
   if (born && died && died < born) {
     addSchemaError(context, 'died', 'invalid-date');
   }
+
+  const affinity = context.data.affinity;
+  if (typeof affinity === 'undefined') {
+    return;
+  }
+  if (!isString(affinity)) {
+    addSchemaError(context, 'affinity', 'invalid-shape');
+    return;
+  }
+  if (!isElementRef(affinity)) {
+    addSchemaError(context, 'affinity', 'invalid-reference');
+  }
 };
 
 const validateCardFields = (context: SchemaContext): void => {
