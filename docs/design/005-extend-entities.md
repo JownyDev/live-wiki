@@ -19,7 +19,7 @@
   **Por qué:** mejora UX/escaneo visual y da identidad al personaje.
 
 ### Element
-- [ ] **Origen (relación a Place) (opcional, en progreso: schema + linter)**  
+- [x] **Origen (localización flexible, igual que Character)**  
   **Por qué:** ancla elementos al mundo y permite navegación “de dónde viene este elemento”.
 - [x] **Imagen (opcional)**  
   **Por qué:** lectura visual rápida del elemento.
@@ -84,8 +84,7 @@
 - [x] `image`: string (opcional, no vacío; ruta o identificador)
 
 ### Element — nuevos campos
-- [ ] `origin`: referencia a `place:*` (en progreso: schema + linter)
-- nota: mismo formato y tipos permitidos que `origin` en Character.
+- [x] `origin`: referencia tipada con el mismo formato y tipos permitidos que `origin` en Character.
 - [x] `image`: string (opcional, no vacío)
 
 ### Event / Place / Planet — nuevos campos
@@ -97,5 +96,5 @@
 - [x] 1) Añadir `image` (opcional) a todos los tipos definidos (simple, desbloquea UI)
 - [x] 2) Character: `born`/`died` (formato + UI)
 - [x] 3) Character: `affinity` → Element (refs + UI)
-- [ ] 4) Element: `origin` → Place (refs + UI, en progreso: schema + linter)
+- [x] 4) Element: `origin` (refs + UI)
 - [x] 5) Character: `related_characters` etiquetado (schema + linter + UI reusable)
