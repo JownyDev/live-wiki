@@ -188,6 +188,23 @@ const isElementRef = (value: string): boolean => {
   return hasPrefix(value, 'element:');
 };
 
+const validateOptionalElementRefField = (
+  context: SchemaContext,
+  field: string,
+  value: unknown,
+): void => {
+  if (typeof value === 'undefined') {
+    return;
+  }
+  if (!isString(value)) {
+    addSchemaError(context, field, 'invalid-shape');
+    return;
+  }
+  if (!isElementRef(value)) {
+    addSchemaError(context, field, 'invalid-reference');
+  }
+};
+
 const isValidCardRepresentsEntry = (value: unknown): boolean => {
   if (!isString(value)) {
     return false;
@@ -234,18 +251,7 @@ const validateCharacterFields = (context: SchemaContext): void => {
   if (born && died && died < born) {
     addSchemaError(context, 'died', 'invalid-date');
   }
-
-  const affinity = context.data.affinity;
-  if (typeof affinity === 'undefined') {
-    return;
-  }
-  if (!isString(affinity)) {
-    addSchemaError(context, 'affinity', 'invalid-shape');
-    return;
-  }
-  if (!isElementRef(affinity)) {
-    addSchemaError(context, 'affinity', 'invalid-reference');
-  }
+  validateOptionalElementRefField(context, 'affinity', context.data.affinity);
 };
 
 const validateCardFields = (context: SchemaContext): void => {

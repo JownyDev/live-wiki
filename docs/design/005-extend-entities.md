@@ -9,7 +9,7 @@
 - [ ] **Relaciones con otros characters (etiquetadas)**  
   **Por qué:** permite mostrar redes sociales (amigos/enemigos/familia) y mejora la lectura del lore sin imponer un sistema rígido.  
   **Modelo definido:** `related_characters` como lista de objetos con `type` (etiqueta) + ref a `character:*`.  
-- [ ] **Elemento afín (relación a Element)**  
+- [ ] **Elemento afín (relación a Element, en progreso)**  
   **Por qué:** conecta lore/personajes con el “sistema elemental” y habilita UI de navegación por afinidades.
 - [ ] **Fecha de nacimiento (opcional, en progreso)**  
   **Por qué:** habilita orden cronológico y timeline futura.
@@ -75,6 +75,7 @@
         character: character:nyx-ashen
     ```
 - [ ] `affinity`: referencia a `element:*`
+- nota: se valida como ref tipada (`element:*`), y refs inexistentes son reportadas como rotas.
 - [ ] `born`: fecha (formato consistente con el proyecto)
 - [ ] `died`: fecha (formato consistente con el proyecto)
 - nota: formato validado `YYYY-MM-DD`; si ambos existen, `died >= born`.
@@ -92,6 +93,6 @@
 ## 🔁 Orden recomendado de implementación
 - [x] 1) Añadir `image` (opcional) a todos los tipos definidos (simple, desbloquea UI)
 - [ ] 2) Character: `born`/`died` (formato + UI, en progreso: schema + linter)
-- [ ] 3) Character: `affinity` → Element (refs + UI)
+- [ ] 3) Character: `affinity` → Element (refs + UI, en progreso: schema + linter)
 - [ ] 4) Element: `origin` → Place (refs + UI)
 - [ ] 5) Character: `related_characters` etiquetado (schema + linter + UI reusable)

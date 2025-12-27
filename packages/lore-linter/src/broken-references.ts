@@ -186,6 +186,26 @@ const collectTypedRefCandidates = (
   }
 };
 
+const collectSingleTypedRefCandidate = (
+  candidates: ReferenceCandidate[],
+  doc: LoreDoc,
+  field: BrokenReference['field'],
+  value: unknown,
+  allowedTypes?: ReadonlySet<string>,
+): void => {
+  if (!isString(value)) {
+    return;
+  }
+  const parsed = parseTypedRef(value);
+  if (!parsed) {
+    return;
+  }
+  if (allowedTypes && !allowedTypes.has(parsed.type)) {
+    return;
+  }
+  collectCandidate(candidates, doc, field, value, parsed.type, parsed.id);
+};
+
 const collectRelatedCandidates = (
   candidates: ReferenceCandidate[],
   doc: LoreDoc,
@@ -215,21 +235,6 @@ const collectRelatedCandidates = (
   }
 };
 
-const collectAffinityCandidates = (
-  candidates: ReferenceCandidate[],
-  doc: LoreDoc,
-): void => {
-  const affinity = doc.data.affinity;
-  if (!isString(affinity)) {
-    return;
-  }
-  const parsed = parseTypedRef(affinity);
-  if (!parsed || !elementRefTypes.has(parsed.type)) {
-    return;
-  }
-  collectCandidate(candidates, doc, 'affinity', affinity, parsed.type, parsed.id);
-};
-
 const collectReferenceCandidates = (doc: LoreDoc): ReferenceCandidate[] => {
   const candidates: ReferenceCandidate[] = [];
 
@@ -240,7 +245,13 @@ const collectReferenceCandidates = (doc: LoreDoc): ReferenceCandidate[] => {
 
   if (doc.type === 'character') {
     collectLocationCandidates(candidates, doc, 'origin', doc.data.origin);
-    collectAffinityCandidates(candidates, doc);
+    collectSingleTypedRefCandidate(
+      candidates,
+      doc,
+      'affinity',
+      doc.data.affinity,
+      elementRefTypes,
+    );
   }
 
   if (doc.type === 'place') {
