@@ -278,6 +278,10 @@ const collectReferenceCandidates = (doc: LoreDoc): ReferenceCandidate[] => {
     collectRelatedCharactersCandidates(candidates, doc);
   }
 
+  if (doc.type === 'element') {
+    collectLocationCandidates(candidates, doc, 'origin', doc.data.origin);
+  }
+
   if (doc.type === 'place') {
     collectLocationCandidates(candidates, doc, 'planetId', doc.data.planetId);
   }

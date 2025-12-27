@@ -209,6 +209,23 @@ const validateOptionalElementRefField = (
   }
 };
 
+const validateOptionalOriginField = (
+  context: SchemaContext,
+  field: string,
+  value: unknown,
+): void => {
+  if (typeof value === 'undefined') {
+    return;
+  }
+  if (!isString(value)) {
+    addSchemaError(context, field, 'invalid-shape');
+    return;
+  }
+  if (!parseLocationRef(value)) {
+    addSchemaError(context, field, 'invalid-reference');
+  }
+};
+
 type RelatedCharacterEntry = {
   type: string;
   character: string;
@@ -321,6 +338,10 @@ const validateCardFields = (context: SchemaContext): void => {
   validateCardRepresents(context);
 };
 
+const validateElementFields = (context: SchemaContext): void => {
+  validateOptionalOriginField(context, 'origin', context.data.origin);
+};
+
 const validateRelatedFields = (context: SchemaContext): void => {
   for (const [field, value] of Object.entries(context.data)) {
     if (!field.startsWith('related_')) {
@@ -358,6 +379,7 @@ const validateOptionalNonEmptyStringFields = (context: SchemaContext): void => {
 
 const typeValidators: Partial<Record<string, (context: SchemaContext) => void>> = {
   character: validateCharacterFields,
+  element: validateElementFields,
   event: validateEventFields,
   card: validateCardFields,
 };

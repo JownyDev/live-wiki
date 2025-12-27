@@ -312,6 +312,55 @@ describe('lore-linter schema minimum', () => {
     expect(report.schemaErrors).toEqual([]);
   });
 
+  it('reports invalid element origin', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'schema-element-origin-invalid',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    const expected: SchemaError[] = [
+      {
+        type: 'element',
+        id: 'origin-invalid-shape',
+        field: 'origin',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'element',
+        id: 'origin-invalid-type',
+        field: 'origin',
+        reason: 'invalid-reference',
+      },
+    ];
+
+    expect(sortSchemaErrors(report.schemaErrors)).toEqual(sortSchemaErrors(expected));
+  });
+
+  it('accepts optional element origin', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'schema-element-origin-valid',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    expect(report.schemaErrors).toEqual([]);
+  });
+
   it('accepts valid minimum schemas', async () => {
     const fixturesDir = path.resolve(
       import.meta.dirname,
