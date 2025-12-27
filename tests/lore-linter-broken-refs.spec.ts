@@ -2,13 +2,16 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 type BrokenReference = import('../packages/lore-linter/src/broken-references').BrokenReference;
+type BrokenReferenceLike =
+  | BrokenReference
+  | { type: string; id: string; field: 'affinity'; reference: string };
 type LoreLinter = typeof import('../packages/lore-linter/src/index');
 
 const loadLoreLinter = async (): Promise<LoreLinter> => {
   return await import('../packages/lore-linter/src/index');
 };
 
-const sortBrokenRefs = (refs: BrokenReference[]): BrokenReference[] => {
+const sortBrokenRefs = (refs: BrokenReferenceLike[]): BrokenReferenceLike[] => {
   return [...refs].sort((a, b) => {
     const keyA = `${a.type}:${a.id}:${a.field}:${a.reference}`;
     const keyB = `${b.type}:${b.id}:${b.field}:${b.reference}`;
@@ -31,7 +34,13 @@ describe('lore-linter broken references', () => {
 
     const report = await scanLoreDirectory(fixturesDir);
 
-    const expected: BrokenReference[] = [
+    const expected: BrokenReferenceLike[] = [
+      {
+        type: 'character',
+        id: 'broken-affinity',
+        field: 'affinity',
+        reference: 'element:missing-element',
+      },
       {
         type: 'character',
         id: 'broken-origin-place',

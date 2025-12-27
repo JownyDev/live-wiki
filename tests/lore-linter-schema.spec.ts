@@ -190,6 +190,55 @@ describe('lore-linter schema minimum', () => {
     expect(report.schemaErrors).toEqual([]);
   });
 
+  it('reports invalid character affinity references', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'schema-character-affinity-invalid',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    const expected: SchemaError[] = [
+      {
+        type: 'character',
+        id: 'affinity-invalid-shape',
+        field: 'affinity',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'character',
+        id: 'affinity-invalid-type',
+        field: 'affinity',
+        reason: 'invalid-reference',
+      },
+    ];
+
+    expect(sortSchemaErrors(report.schemaErrors)).toEqual(sortSchemaErrors(expected));
+  });
+
+  it('accepts optional character affinity', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'schema-character-affinity-valid',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    expect(report.schemaErrors).toEqual([]);
+  });
+
   it('accepts valid minimum schemas', async () => {
     const fixturesDir = path.resolve(
       import.meta.dirname,
