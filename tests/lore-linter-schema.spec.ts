@@ -135,6 +135,55 @@ describe('lore-linter schema minimum', () => {
     expect(sortSchemaErrors(report.schemaErrors)).toEqual(sortSchemaErrors(expected));
   });
 
+  it('reports invalid character dates', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'schema-character-dates-invalid',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    const expected: SchemaError[] = [
+      {
+        type: 'character',
+        id: 'born-invalid-format',
+        field: 'born',
+        reason: 'invalid-date',
+      },
+      {
+        type: 'character',
+        id: 'died-invalid-format',
+        field: 'died',
+        reason: 'invalid-date',
+      },
+    ];
+
+    expect(sortSchemaErrors(report.schemaErrors)).toEqual(sortSchemaErrors(expected));
+  });
+
+  it('accepts valid character born/died dates', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'schema-character-dates-valid',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    expect(report.schemaErrors).toEqual([]);
+  });
+
   it('accepts valid minimum schemas', async () => {
     const fixturesDir = path.resolve(
       import.meta.dirname,
