@@ -135,6 +135,42 @@ const validateEventDate = (context: SchemaContext): void => {
   }
 };
 
+const validateOptionalDateField = (
+  context: SchemaContext,
+  field: string,
+): void => {
+  const rawValue = getRawField(context.raw, field);
+  const parsedValue = context.data[field];
+
+  if (rawValue === null && typeof parsedValue === 'undefined') {
+    return;
+  }
+
+  // Usa el raw para evitar que YAML normalice fechas invalidas.
+  if (rawValue !== null) {
+    if (!isValidIsoDate(rawValue)) {
+      addSchemaError(context, field, 'invalid-date');
+    }
+    return;
+  }
+
+  if (!isString(parsedValue) || !isValidIsoDate(parsedValue)) {
+    addSchemaError(context, field, 'invalid-date');
+  }
+};
+
+const getOptionalValidIsoDate = (
+  context: SchemaContext,
+  field: string,
+): string | null => {
+  const rawValue = getRawField(context.raw, field);
+  if (rawValue !== null) {
+    return isValidIsoDate(rawValue) ? rawValue : null;
+  }
+  const parsedValue = context.data[field];
+  return isString(parsedValue) && isValidIsoDate(parsedValue) ? parsedValue : null;
+};
+
 const validateEventWho = (context: SchemaContext): void => {
   const who = context.data.who;
   if (typeof who === 'undefined') {
@@ -210,6 +246,17 @@ const validateEventFields = (context: SchemaContext): void => {
   validateEventWho(context);
 };
 
+const validateCharacterFields = (context: SchemaContext): void => {
+  validateOptionalDateField(context, 'born');
+  validateOptionalDateField(context, 'died');
+
+  const born = getOptionalValidIsoDate(context, 'born');
+  const died = getOptionalValidIsoDate(context, 'died');
+  if (born && died && died < born) {
+    addSchemaError(context, 'died', 'invalid-date');
+  }
+};
+
 const validateCardFields = (context: SchemaContext): void => {
   validateCardElements(context);
   validateCardRepresents(context);
@@ -248,6 +295,7 @@ const validateOptionalNonEmptyStringFields = (context: SchemaContext): void => {
 };
 
 const typeValidators: Partial<Record<string, (context: SchemaContext) => void>> = {
+  character: validateCharacterFields,
   event: validateEventFields,
   card: validateCardFields,
 };

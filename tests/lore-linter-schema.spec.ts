@@ -162,6 +162,12 @@ describe('lore-linter schema minimum', () => {
         field: 'died',
         reason: 'invalid-date',
       },
+      {
+        type: 'character',
+        id: 'died-before-born',
+        field: 'died',
+        reason: 'invalid-date',
+      },
     ];
 
     expect(sortSchemaErrors(report.schemaErrors)).toEqual(sortSchemaErrors(expected));
