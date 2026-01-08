@@ -20,6 +20,9 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const isStringArray = (value: unknown): value is string[] =>
   Array.isArray(value) && value.every(isString);
 
+const isNumber = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isFinite(value);
+
 const isIsoDate = (value: string): boolean => /^\d{4}-\d{2}-\d{2}$/.test(value);
 
 const isValidIsoDate = (value: string): boolean => {
@@ -95,6 +98,21 @@ const addSchemaError = (
     field,
     reason,
   });
+};
+
+const getOptionalRecord = (
+  context: SchemaContext,
+  field: string,
+): Record<string, unknown> | null => {
+  const value = context.data[field];
+  if (typeof value === 'undefined') {
+    return null;
+  }
+  if (!isRecord(value)) {
+    addSchemaError(context, field, 'invalid-shape');
+    return null;
+  }
+  return value;
 };
 
 const getOptionalStringValue = (
@@ -235,6 +253,242 @@ const validateOptionalOriginField = (
   }
 };
 
+const validateCharacterPersona = (context: SchemaContext): void => {
+  const persona = getOptionalRecord(context, 'persona');
+  if (!persona) {
+    return;
+  }
+  if (
+    (typeof persona.archetype !== 'undefined' && !isString(persona.archetype)) ||
+    (typeof persona.traits !== 'undefined' && !isStringArray(persona.traits)) ||
+    (typeof persona.values !== 'undefined' && !isStringArray(persona.values)) ||
+    (typeof persona.taboos !== 'undefined' && !isStringArray(persona.taboos)) ||
+    (typeof persona.biography_bullets !== 'undefined' &&
+      !isStringArray(persona.biography_bullets))
+  ) {
+    addSchemaError(context, 'persona', 'invalid-shape');
+    return;
+  }
+  if (typeof persona.voice !== 'undefined') {
+    if (!isRecord(persona.voice)) {
+      addSchemaError(context, 'persona', 'invalid-shape');
+      return;
+    }
+    const voice = persona.voice;
+    if (
+      (typeof voice.tone !== 'undefined' && !isString(voice.tone)) ||
+      (typeof voice.style_notes !== 'undefined' &&
+        !isStringArray(voice.style_notes))
+    ) {
+      addSchemaError(context, 'persona', 'invalid-shape');
+      return;
+    }
+  }
+};
+
+const validateCharacterKnowledge = (context: SchemaContext): void => {
+  const knowledge = getOptionalRecord(context, 'knowledge');
+  if (!knowledge) {
+    return;
+  }
+  if (
+    (typeof knowledge.summary !== 'undefined' && !isString(knowledge.summary)) ||
+    (typeof knowledge.knows_about !== 'undefined' &&
+      !isStringArray(knowledge.knows_about)) ||
+    (typeof knowledge.blindspots !== 'undefined' &&
+      !isStringArray(knowledge.blindspots)) ||
+    (typeof knowledge.can_reveal !== 'undefined' &&
+      !isStringArray(knowledge.can_reveal))
+  ) {
+    addSchemaError(context, 'knowledge', 'invalid-shape');
+  }
+};
+
+const validateCharacterMemoryProfile = (context: SchemaContext): void => {
+  const memoryProfile = getOptionalRecord(context, 'memory_profile');
+  if (!memoryProfile) {
+    return;
+  }
+  if (
+    (typeof memoryProfile.interest_tags !== 'undefined' &&
+      !isStringArray(memoryProfile.interest_tags)) ||
+    (typeof memoryProfile.relationship_tags !== 'undefined' &&
+      !isStringArray(memoryProfile.relationship_tags)) ||
+    (typeof memoryProfile.allowed_tags !== 'undefined' &&
+      !isStringArray(memoryProfile.allowed_tags)) ||
+    (typeof memoryProfile.blocked_tags !== 'undefined' &&
+      !isStringArray(memoryProfile.blocked_tags))
+  ) {
+    addSchemaError(context, 'memory_profile', 'invalid-shape');
+    return;
+  }
+  if (typeof memoryProfile.provenance_policy !== 'undefined') {
+    if (!isRecord(memoryProfile.provenance_policy)) {
+      addSchemaError(context, 'memory_profile', 'invalid-shape');
+      return;
+    }
+    const policy = memoryProfile.provenance_policy;
+    if (
+      (typeof policy.allowed !== 'undefined' && !isStringArray(policy.allowed)) ||
+      (typeof policy.default !== 'undefined' && !isString(policy.default))
+    ) {
+      addSchemaError(context, 'memory_profile', 'invalid-shape');
+      return;
+    }
+  }
+  if (typeof memoryProfile.retrieval_limits !== 'undefined') {
+    if (!isRecord(memoryProfile.retrieval_limits)) {
+      addSchemaError(context, 'memory_profile', 'invalid-shape');
+      return;
+    }
+    const limits = memoryProfile.retrieval_limits;
+    if (
+      (typeof limits.max_items !== 'undefined' && !isNumber(limits.max_items)) ||
+      (typeof limits.max_tokens_summary !== 'undefined' &&
+        !isNumber(limits.max_tokens_summary))
+    ) {
+      addSchemaError(context, 'memory_profile', 'invalid-shape');
+    }
+  }
+};
+
+const validateCharacterEmotionsProfile = (context: SchemaContext): void => {
+  const emotionsProfile = getOptionalRecord(context, 'emotions_profile');
+  if (!emotionsProfile) {
+    return;
+  }
+  if (typeof emotionsProfile.baseline_mood !== 'undefined') {
+    if (!isRecord(emotionsProfile.baseline_mood)) {
+      addSchemaError(context, 'emotions_profile', 'invalid-shape');
+      return;
+    }
+    const values = Object.values(emotionsProfile.baseline_mood);
+    if (values.some((value) => !isNumber(value))) {
+      addSchemaError(context, 'emotions_profile', 'invalid-shape');
+      return;
+    }
+  }
+  if (typeof emotionsProfile.toward_player_default !== 'undefined') {
+    if (!isRecord(emotionsProfile.toward_player_default)) {
+      addSchemaError(context, 'emotions_profile', 'invalid-shape');
+      return;
+    }
+    const towardPlayer = emotionsProfile.toward_player_default;
+    if (
+      (typeof towardPlayer.stance !== 'undefined' &&
+        !isString(towardPlayer.stance)) ||
+      (typeof towardPlayer.note !== 'undefined' && !isString(towardPlayer.note))
+    ) {
+      addSchemaError(context, 'emotions_profile', 'invalid-shape');
+      return;
+    }
+  }
+  if (typeof emotionsProfile.sensitivities !== 'undefined') {
+    if (!isRecord(emotionsProfile.sensitivities)) {
+      addSchemaError(context, 'emotions_profile', 'invalid-shape');
+      return;
+    }
+    const sensitivities = emotionsProfile.sensitivities;
+    if (
+      (typeof sensitivities.angers_if !== 'undefined' &&
+        !isStringArray(sensitivities.angers_if)) ||
+      (typeof sensitivities.calms_if !== 'undefined' &&
+        !isStringArray(sensitivities.calms_if))
+    ) {
+      addSchemaError(context, 'emotions_profile', 'invalid-shape');
+      return;
+    }
+  }
+  if (typeof emotionsProfile.manipulability !== 'undefined') {
+    if (!isRecord(emotionsProfile.manipulability)) {
+      addSchemaError(context, 'emotions_profile', 'invalid-shape');
+      return;
+    }
+    const manipulability = emotionsProfile.manipulability;
+    if (
+      (typeof manipulability.by_empathy !== 'undefined' &&
+        !isString(manipulability.by_empathy)) ||
+      (typeof manipulability.by_bribe !== 'undefined' &&
+        !isString(manipulability.by_bribe)) ||
+      (typeof manipulability.by_intimidation !== 'undefined' &&
+        !isString(manipulability.by_intimidation)) ||
+      (typeof manipulability.by_authority !== 'undefined' &&
+        !isString(manipulability.by_authority)) ||
+      (typeof manipulability.notes !== 'undefined' &&
+        !isStringArray(manipulability.notes))
+    ) {
+      addSchemaError(context, 'emotions_profile', 'invalid-shape');
+      return;
+    }
+  }
+};
+
+const validateCharacterGoals = (context: SchemaContext): void => {
+  const goals = getOptionalRecord(context, 'goals');
+  if (!goals) {
+    return;
+  }
+  if (
+    (typeof goals.long_term !== 'undefined' &&
+      !isStringArray(goals.long_term)) ||
+    (typeof goals.typical_priorities !== 'undefined' &&
+      !isStringArray(goals.typical_priorities))
+  ) {
+    addSchemaError(context, 'goals', 'invalid-shape');
+  }
+};
+
+const validateCharacterCapabilities = (context: SchemaContext): void => {
+  const capabilities = getOptionalRecord(context, 'capabilities');
+  if (!capabilities) {
+    return;
+  }
+  const actions = capabilities.actions;
+  if (!Array.isArray(actions)) {
+    addSchemaError(context, 'capabilities', 'invalid-shape');
+    return;
+  }
+  for (const entry of actions) {
+    if (!isRecord(entry)) {
+      addSchemaError(context, 'capabilities', 'invalid-shape');
+      return;
+    }
+    if (!isString(entry.action)) {
+      addSchemaError(context, 'capabilities', 'invalid-shape');
+      return;
+    }
+    if (entry.action.trim().length === 0) {
+      addSchemaError(context, 'capabilities', 'invalid-value');
+      return;
+    }
+    if (!Array.isArray(entry.triggers)) {
+      addSchemaError(context, 'capabilities', 'invalid-shape');
+      return;
+    }
+    if (entry.triggers.length === 0) {
+      addSchemaError(context, 'capabilities', 'invalid-value');
+      return;
+    }
+    for (const trigger of entry.triggers) {
+      if (!isString(trigger)) {
+        addSchemaError(context, 'capabilities', 'invalid-shape');
+        return;
+      }
+      if (trigger.trim().length === 0) {
+        addSchemaError(context, 'capabilities', 'invalid-value');
+        return;
+      }
+    }
+    if (typeof entry.notes !== 'undefined' && !isStringArray(entry.notes)) {
+      addSchemaError(context, 'capabilities', 'invalid-shape');
+      return;
+    }
+    if (typeof entry.filters !== 'undefined' && !isStringArray(entry.filters)) {
+      addSchemaError(context, 'capabilities', 'invalid-shape');
+    }
+  }
+};
+
 type RelatedCharacterEntry = {
   type: string;
   character: string;
@@ -340,6 +594,12 @@ const validateCharacterFields = (context: SchemaContext): void => {
   }
   validateOptionalElementRefField(context, 'affinity', context.data.affinity);
   validateRelatedCharacters(context);
+  validateCharacterPersona(context);
+  validateCharacterKnowledge(context);
+  validateCharacterMemoryProfile(context);
+  validateCharacterEmotionsProfile(context);
+  validateCharacterGoals(context);
+  validateCharacterCapabilities(context);
 };
 
 const validateCardFields = (context: SchemaContext): void => {
