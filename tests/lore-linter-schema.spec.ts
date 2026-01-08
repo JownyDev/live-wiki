@@ -312,6 +312,97 @@ describe('lore-linter schema minimum', () => {
     expect(report.schemaErrors).toEqual([]);
   });
 
+  it('accepts optional character npc blocks', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'schema-character-npc-valid',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    expect(report.schemaErrors).toEqual([]);
+  });
+
+  it('reports invalid character capabilities', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'schema-character-npc-invalid',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    const expected: SchemaError[] = [
+      {
+        type: 'character',
+        id: 'capabilities-action-empty-action',
+        field: 'capabilities',
+        reason: 'invalid-value',
+      },
+      {
+        type: 'character',
+        id: 'capabilities-action-empty-trigger-string',
+        field: 'capabilities',
+        reason: 'invalid-value',
+      },
+      {
+        type: 'character',
+        id: 'capabilities-action-empty-triggers',
+        field: 'capabilities',
+        reason: 'invalid-value',
+      },
+      {
+        type: 'character',
+        id: 'capabilities-action-missing-action',
+        field: 'capabilities',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'character',
+        id: 'capabilities-action-missing-triggers',
+        field: 'capabilities',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'character',
+        id: 'capabilities-actions-not-array',
+        field: 'capabilities',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'character',
+        id: 'capabilities-filters-not-array',
+        field: 'capabilities',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'character',
+        id: 'capabilities-missing-actions',
+        field: 'capabilities',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'character',
+        id: 'capabilities-notes-not-array',
+        field: 'capabilities',
+        reason: 'invalid-shape',
+      },
+    ];
+
+    expect(sortSchemaErrors(report.schemaErrors)).toEqual(sortSchemaErrors(expected));
+  });
+
   it('reports invalid element origin', async () => {
     const fixturesDir = path.resolve(
       import.meta.dirname,
