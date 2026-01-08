@@ -256,15 +256,15 @@ El body sigue siendo la descripción “humana” para lectura en wiki. Recomend
 > con información variable, aunque compartan el mismo universo.
 
 ### Contrato de datos (frontmatter)
-- [ ] Definir schema y validaciones para `persona` (archetype, traits, voice, values, taboos, biography_bullets).
-- [ ] Definir schema y validaciones para `knowledge` (summary + listas).
-- [ ] Definir schema y validaciones para `memory_profile` (tags, provenance_policy, retrieval_limits).
-- [ ] Definir schema y validaciones para `emotions_profile` (baseline_mood, stance, sensitivities, manipulability).
-- [ ] Definir schema y validaciones para `goals` (long_term, typical_priorities).
-- [ ] Definir schema y validaciones para `capabilities` (actions, triggers, filters, notes).
+- [x] Definir schema y validaciones para `persona` (archetype, traits, voice, values, taboos, biography_bullets).
+- [x] Definir schema y validaciones para `knowledge` (summary + listas).
+- [x] Definir schema y validaciones para `memory_profile` (tags, provenance_policy, retrieval_limits).
+- [x] Definir schema y validaciones para `emotions_profile` (baseline_mood, stance, sensitivities, manipulability).
+- [x] Definir schema y validaciones para `goals` (long_term, typical_priorities).
+- [x] Definir schema y validaciones para `capabilities` (actions, triggers, filters, notes).
 
 ### Linter y tests
-- [ ] Añadir validaciones en `lore-linter` para los nuevos bloques (tipos, rangos, enums).
+- [x] Añadir validaciones en `lore-linter` para los nuevos bloques (tipos; rangos/enums pendientes).
 - [ ] Crear fixtures de tests válidos/ inválidos por bloque para cubrir edge cases.
 
 ### Tooling y contenido

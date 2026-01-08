@@ -27,8 +27,12 @@ knowledge:
 memory_profile:
   interest_tags:
     - "zone:old-docks.*"
+  relationship_tags:
+    - "player.*"
   allowed_tags:
     - "help.*"
+  blocked_tags:
+    - "divine.*"
   provenance_policy:
     allowed:
       - "heard"
@@ -40,6 +44,21 @@ emotions_profile:
   baseline_mood:
     calm: 55
     trust: 35
+  toward_player_default:
+    stance: "neutral"
+    note: "Cautious by default."
+  sensitivities:
+    angers_if:
+      - "threaten locals"
+    calms_if:
+      - "show empathy"
+  manipulability:
+    by_empathy: "high"
+    by_bribe: "low"
+    by_intimidation: "low"
+    by_authority: "medium"
+    notes:
+      - "Bribes rarely work."
 goals:
   long_term:
     - "keep the docks safe"
@@ -52,6 +71,8 @@ capabilities:
         - "player.threat"
       notes:
         - "Gives a warning before escalation."
+      filters:
+        - "Avoids conflict if outnumbered."
 ---
 
 Full profile.
