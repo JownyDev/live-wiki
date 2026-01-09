@@ -373,6 +373,9 @@ const getNonEmptyStringArrayIssue = (
   return null;
 };
 
+const isOptionalStringArrayInvalid = (value: unknown): boolean =>
+  typeof value !== 'undefined' && !isStringArray(value);
+
 const validateCharacterPersona = (context: SchemaContext): void => {
   const persona = getOptionalRecord(context, 'persona');
   if (!persona) {
@@ -585,28 +588,20 @@ const validateCapabilityActionEntry = (
     addSchemaError(context, 'capabilities', triggerIssue);
     return false;
   }
-  if (
-    typeof entry.notes !== 'undefined' &&
-    !isStringArray(entry.notes)
-  ) {
+  if (isOptionalStringArrayInvalid(entry.notes)) {
     addSchemaError(context, 'capabilities', 'invalid-shape');
     return false;
   }
-  if (
-    typeof entry.filters !== 'undefined' &&
-    !isStringArray(entry.filters)
-  ) {
+  if (isOptionalStringArrayInvalid(entry.filters)) {
     addSchemaError(context, 'capabilities', 'invalid-shape');
   }
   return true;
 };
 
-const validateCharacterCapabilities = (context: SchemaContext): void => {
-  const capabilities = getOptionalRecord(context, 'capabilities');
-  if (!capabilities) {
-    return;
-  }
-  const actions = capabilities.actions;
+const validateCapabilityActions = (
+  context: SchemaContext,
+  actions: unknown,
+): void => {
   if (!Array.isArray(actions)) {
     addSchemaError(context, 'capabilities', 'invalid-shape');
     return;
@@ -620,6 +615,14 @@ const validateCharacterCapabilities = (context: SchemaContext): void => {
       return;
     }
   }
+};
+
+const validateCharacterCapabilities = (context: SchemaContext): void => {
+  const capabilities = getOptionalRecord(context, 'capabilities');
+  if (!capabilities) {
+    return;
+  }
+  validateCapabilityActions(context, capabilities.actions);
 };
 
 type RelatedCharacterEntry = {

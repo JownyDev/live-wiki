@@ -265,7 +265,7 @@ El body sigue siendo la descripción “humana” para lectura en wiki. Recomend
 
 ### Linter y tests
 - [x] Añadir validaciones en `lore-linter` para los nuevos bloques (tipos; rangos/enums pendientes).
-- [ ] Crear fixtures de tests válidos/ inválidos por bloque para cubrir edge cases.
+- [x] Crear fixtures de tests válidos/ inválidos por bloque para cubrir edge cases.
 
 ### Tooling y contenido
 - [ ] Actualizar `templates/character.md` y la plantilla de CLI con placeholders del bloque NPC.
