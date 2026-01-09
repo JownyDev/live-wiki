@@ -352,7 +352,7 @@ describe('lore-linter schema minimum', () => {
       },
       {
         type: 'character',
-        id: 'capabilities-action-empty-trigger-string',
+        id: 'capabilities-action-trigger-empty-string',
         field: 'capabilities',
         reason: 'invalid-value',
       },
@@ -374,6 +374,13 @@ describe('lore-linter schema minimum', () => {
         field: 'capabilities',
         reason: 'invalid-shape',
       },
+      // Casos extra: evita actions con entradas no-objeto o capabilities serializado como string.
+      {
+        type: 'character',
+        id: 'capabilities-action-not-object',
+        field: 'capabilities',
+        reason: 'invalid-shape',
+      },
       {
         type: 'character',
         id: 'capabilities-actions-not-array',
@@ -383,6 +390,12 @@ describe('lore-linter schema minimum', () => {
       {
         type: 'character',
         id: 'capabilities-filters-not-array',
+        field: 'capabilities',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'character',
+        id: 'capabilities-not-object',
         field: 'capabilities',
         reason: 'invalid-shape',
       },

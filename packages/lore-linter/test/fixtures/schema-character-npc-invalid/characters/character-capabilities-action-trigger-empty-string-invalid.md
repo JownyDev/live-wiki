@@ -1,7 +1,7 @@
 ---
 type: character
-id: capabilities-action-empty-trigger-string
-name: Capabilities Action Empty Trigger String
+id: capabilities-action-trigger-empty-string
+name: Capabilities Action Trigger Empty String
 capabilities:
   actions:
     - action: "insult"
