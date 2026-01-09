@@ -268,7 +268,7 @@ El body sigue siendo la descripción “humana” para lectura en wiki. Recomend
 - [x] Crear fixtures de tests válidos/ inválidos por bloque para cubrir edge cases.
 
 ### Tooling y contenido
-- [ ] Actualizar `templates/character.md` y la plantilla de CLI con placeholders del bloque NPC.
+- [x] Actualizar `templates/character.md` y la plantilla de CLI con placeholders del bloque NPC.
 - [ ] Crear 1+ personajes de ejemplo con el bloque completo para validación end-to-end.
 
 ### UI + export a prompt
