@@ -269,7 +269,7 @@ El body sigue siendo la descripción “humana” para lectura en wiki. Recomend
 
 ### Tooling y contenido
 - [x] Actualizar `templates/character.md` y la plantilla de CLI con placeholders del bloque NPC.
-- [ ] Crear 1+ personajes de ejemplo con el bloque completo para validación end-to-end.
+- [x] Crear 1+ personajes de ejemplo con el bloque completo para validación end-to-end.
 
 ### UI + export a prompt
 - [ ] Decidir qué secciones se muestran en la UI y con qué layout/components.
