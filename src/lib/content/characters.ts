@@ -24,6 +24,15 @@ export type CharacterGoals = {
   longTerm: string[];
   typicalPriorities: string[];
 };
+export type CharacterCapabilityAction = {
+  action: string;
+  triggers: string[];
+  notes: string[];
+  filters: string[];
+};
+export type CharacterCapabilities = {
+  actions: CharacterCapabilityAction[];
+};
 export type Character = {
   id: string;
   name: string;
@@ -35,6 +44,7 @@ export type Character = {
   relatedCharacters: RelatedCharacter[];
   knowledge: CharacterKnowledge | null;
   goals: CharacterGoals | null;
+  capabilities: CharacterCapabilities | null;
   body: string;
 };
 
@@ -132,6 +142,42 @@ const getGoalsField = (record: Record<string, unknown>): CharacterGoals | null =
   };
 };
 
+const getCapabilitiesField = (
+  record: Record<string, unknown>,
+): CharacterCapabilities | null => {
+  const value = record.capabilities;
+  if (typeof value === 'undefined' || value === null) {
+    return null;
+  }
+  if (!isRecord(value)) {
+    throw new Error('Invalid capabilities');
+  }
+  const actionsValue = value.actions;
+  if (!Array.isArray(actionsValue) || actionsValue.length === 0) {
+    throw new Error('Invalid capabilities');
+  }
+  const actions = actionsValue.map((entry) => {
+    if (!isRecord(entry)) {
+      throw new Error('Invalid capabilities');
+    }
+    const actionValue = entry.action;
+    if (typeof actionValue !== 'string' || actionValue.length === 0) {
+      throw new Error('Invalid capabilities');
+    }
+    const triggers = getStringArrayField(entry, 'triggers');
+    if (triggers.length === 0) {
+      throw new Error('Invalid capabilities');
+    }
+    return {
+      action: actionValue,
+      triggers,
+      notes: getStringArrayField(entry, 'notes'),
+      filters: getStringArrayField(entry, 'filters'),
+    };
+  });
+  return { actions };
+};
+
 const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
   const { data, content } = parseFrontmatter(markdown);
   if (data.type !== 'character') {
@@ -148,6 +194,7 @@ const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
   const relatedCharacters = getRelatedCharactersField(data.related_characters);
   const knowledge = getKnowledgeField(data);
   const goals = getGoalsField(data);
+  const capabilities = getCapabilitiesField(data);
 
   return {
     id,
@@ -160,6 +207,7 @@ const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
     relatedCharacters,
     knowledge,
     goals,
+    capabilities,
     body: content,
   };
 };

@@ -6,6 +6,7 @@ import DataPanel, { type DataPanelItem } from '../../components/DataPanel.astro'
 import EventSummaryCard from '../../components/EventSummaryCard.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
 import EntityLink from '../../components/EntityLink.astro';
+import CapabilityCard from '../../components/CapabilityCard.astro';
 import GoalList from '../../components/GoalList.astro';
 import KnowledgeList from '../../components/KnowledgeList.astro';
 import KnowledgeSummary from '../../components/KnowledgeSummary.astro';
@@ -126,6 +127,9 @@ const goals = character?.goals ?? null;
 const hasGoals =
   goals !== null &&
   (goals.longTerm.length > 0 || goals.typicalPriorities.length > 0);
+const capabilities = character?.capabilities ?? null;
+const capabilityActions = capabilities?.actions ?? [];
+const hasCapabilities = capabilityActions.length > 0;
 const breadcrumbs: BreadcrumbItem[] = character
   ? [
       { label: 'Inicio', href: '/' },
@@ -225,6 +229,21 @@ if (affinityView) {
                     items={goals.typicalPriorities}
                   />
                 ) : null}
+              </div>
+            </Section>
+          ) : null}
+          {hasCapabilities ? (
+            <Section>
+              <SectionHeader title="Capabilities" showDivider />
+              <div class="character-page__capabilities">
+                {capabilityActions.map((capability) => (
+                  <CapabilityCard
+                    action={capability.action}
+                    triggers={capability.triggers}
+                    notes={capability.notes}
+                    filters={capability.filters}
+                  />
+                ))}
               </div>
             </Section>
           ) : null}

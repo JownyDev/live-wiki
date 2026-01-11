@@ -3,6 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 export type CharacterFixtureName =
+  | 'capabilities-valid.md'
   | 'goals-valid.md'
   | 'kael-nyx.md'
   | 'knowledge-valid.md'

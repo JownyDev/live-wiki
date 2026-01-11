@@ -29,6 +29,16 @@ const loadCharactersModule = async (): Promise<{
           typicalPriorities: string[];
         }
       | null;
+    capabilities:
+      | {
+          actions: Array<{
+            action: string;
+            triggers: string[];
+            notes: string[];
+            filters: string[];
+          }>;
+        }
+      | null;
   } | null>;
 }> => {
   return await import('../src/lib/content/characters');
@@ -96,6 +106,35 @@ describe('content/characters contract', () => {
     expect(result.goals).toEqual({
       longTerm: ['Keep harbor traffic safe', 'Save for a private chartroom'],
       typicalPriorities: ['Safety', 'Reputation', 'Quiet routines'],
+    });
+  });
+
+  it('getCharacterById exposes capabilities actions when present', async () => {
+    const baseDir = await createTempBaseDirWithCharacterFixtures([
+      'capabilities-valid.md',
+    ]);
+    const { getCharacterById } = await loadCharactersModule();
+
+    const result = await getCharacterById('capabilities-valid', baseDir);
+    expect(result).not.toBeNull();
+    if (!result) {
+      throw new Error('Expected character');
+    }
+    expect(result.capabilities).toEqual({
+      actions: [
+        {
+          action: 'warn',
+          triggers: ['player.threat'],
+          notes: ['Issues a calm warning before escalation.'],
+          filters: [],
+        },
+        {
+          action: 'refuse_service',
+          triggers: ['player.bribe'],
+          notes: [],
+          filters: ['Avoids refusal if harbor safety is at risk.'],
+        },
+      ],
     });
   });
 
