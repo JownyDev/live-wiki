@@ -33,6 +33,18 @@ export type CharacterCapabilityAction = {
 export type CharacterCapabilities = {
   actions: CharacterCapabilityAction[];
 };
+export type CharacterPersonaVoice = {
+  tone: string | null;
+  styleNotes: string[];
+};
+export type CharacterPersona = {
+  archetype: string | null;
+  traits: string[];
+  values: string[];
+  taboos: string[];
+  biographyHighlights: string[];
+  voice: CharacterPersonaVoice | null;
+};
 export type Character = {
   id: string;
   name: string;
@@ -45,6 +57,7 @@ export type Character = {
   knowledge: CharacterKnowledge | null;
   goals: CharacterGoals | null;
   capabilities: CharacterCapabilities | null;
+  persona: CharacterPersona | null;
   body: string;
 };
 
@@ -178,6 +191,42 @@ const getCapabilitiesField = (
   return { actions };
 };
 
+const getPersonaVoiceField = (
+  record: Record<string, unknown>,
+): CharacterPersonaVoice | null => {
+  const value = record.voice;
+  if (typeof value === 'undefined' || value === null) {
+    return null;
+  }
+  if (!isRecord(value)) {
+    throw new Error('Invalid persona');
+  }
+  return {
+    tone: getOptionalStringField(value, 'tone'),
+    styleNotes: getStringArrayField(value, 'style_notes'),
+  };
+};
+
+const getPersonaField = (
+  record: Record<string, unknown>,
+): CharacterPersona | null => {
+  const value = record.persona;
+  if (typeof value === 'undefined' || value === null) {
+    return null;
+  }
+  if (!isRecord(value)) {
+    throw new Error('Invalid persona');
+  }
+  return {
+    archetype: getOptionalStringField(value, 'archetype'),
+    traits: getStringArrayField(value, 'traits'),
+    values: getStringArrayField(value, 'values'),
+    taboos: getStringArrayField(value, 'taboos'),
+    biographyHighlights: getStringArrayField(value, 'biography_bullets'),
+    voice: getPersonaVoiceField(value),
+  };
+};
+
 const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
   const { data, content } = parseFrontmatter(markdown);
   if (data.type !== 'character') {
@@ -195,6 +244,7 @@ const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
   const knowledge = getKnowledgeField(data);
   const goals = getGoalsField(data);
   const capabilities = getCapabilitiesField(data);
+  const persona = getPersonaField(data);
 
   return {
     id,
@@ -208,6 +258,7 @@ const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
     knowledge,
     goals,
     capabilities,
+    persona,
     body: content,
   };
 };

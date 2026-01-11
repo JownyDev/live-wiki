@@ -7,6 +7,7 @@ export type CharacterFixtureName =
   | 'goals-valid.md'
   | 'kael-nyx.md'
   | 'knowledge-valid.md'
+  | 'persona-valid.md'
   | 'origin-absent.md'
   | 'origin-invalid.md'
   | 'origin-null.md'

@@ -39,6 +39,19 @@ const loadCharactersModule = async (): Promise<{
           }>;
         }
       | null;
+    persona:
+      | {
+          archetype: string | null;
+          traits: string[];
+          values: string[];
+          taboos: string[];
+          biographyHighlights: string[];
+          voice: {
+            tone: string | null;
+            styleNotes: string[];
+          } | null;
+        }
+      | null;
   } | null>;
 }> => {
   return await import('../src/lib/content/characters');
@@ -135,6 +148,28 @@ describe('content/characters contract', () => {
           filters: ['Avoids refusal if harbor safety is at risk.'],
         },
       ],
+    });
+  });
+
+  it('getCharacterById exposes persona fields when present', async () => {
+    const baseDir = await createTempBaseDirWithCharacterFixtures(['persona-valid.md']);
+    const { getCharacterById } = await loadCharactersModule();
+
+    const result = await getCharacterById('persona-valid', baseDir);
+    expect(result).not.toBeNull();
+    if (!result) {
+      throw new Error('Expected character');
+    }
+    expect(result.persona).toEqual({
+      archetype: 'Harbor signal-keeper',
+      traits: ['practical', 'watchful', 'soft-spoken'],
+      values: ['order', 'neighbors'],
+      taboos: ['false alarms'],
+      biographyHighlights: ['Maintains the foghorn logs.', 'Learned codes.'],
+      voice: {
+        tone: 'measured',
+        styleNotes: ['short clauses', 'asks for confirmation'],
+      },
     });
   });
 

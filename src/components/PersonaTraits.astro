@@ -1,0 +1,11 @@
+---
+import PersonaTagList from './PersonaTagList.astro';
+
+type Props = {
+  items: string[];
+};
+
+const { items } = Astro.props as Props;
+---
+
+<PersonaTagList label="Traits" items={items} />

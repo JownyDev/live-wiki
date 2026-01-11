@@ -1,0 +1,78 @@
+---
+import PersonaCard from './PersonaCard.astro';
+
+type Props = {
+  tone?: string | null;
+  styleNotes?: string[];
+};
+
+const { tone = null, styleNotes = [] } = Astro.props as Props;
+const hasTone = Boolean(tone);
+const hasStyleNotes = styleNotes.length > 0;
+---
+
+<PersonaCard title="Voice" span="wide">
+  <div class="persona-voice">
+    {hasTone ? (
+      <div class="persona-voice__block">
+        <p class="persona-voice__label">Tone</p>
+        <p class="persona-voice__tone">{tone}</p>
+      </div>
+    ) : null}
+    {hasStyleNotes ? (
+      <div class="persona-voice__block">
+        <p class="persona-voice__label">Style Notes</p>
+        <ul class="persona-voice__notes">
+          {styleNotes.map((note) => (
+            <li>{note}</li>
+          ))}
+        </ul>
+      </div>
+    ) : null}
+  </div>
+</PersonaCard>
+
+<style>
+  .persona-voice {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .persona-voice__block {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .persona-voice__label {
+    margin: 0;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+  }
+
+  .persona-voice__tone {
+    margin: 0;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    font-style: italic;
+    color: var(--color-text);
+  }
+
+  .persona-voice__notes {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: var(--space-1);
+    font-size: var(--text-sm);
+    color: var(--color-text);
+  }
+
+  @media (min-width: 640px) {
+    .persona-voice {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-4);
+    }
+  }
+</style>

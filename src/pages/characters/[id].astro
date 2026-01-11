@@ -10,6 +10,12 @@ import CapabilityCard from '../../components/CapabilityCard.astro';
 import GoalList from '../../components/GoalList.astro';
 import KnowledgeList from '../../components/KnowledgeList.astro';
 import KnowledgeSummary from '../../components/KnowledgeSummary.astro';
+import PersonaArchetype from '../../components/PersonaArchetype.astro';
+import PersonaBiographyHighlights from '../../components/PersonaBiographyHighlights.astro';
+import PersonaTaboos from '../../components/PersonaTaboos.astro';
+import PersonaTraits from '../../components/PersonaTraits.astro';
+import PersonaValues from '../../components/PersonaValues.astro';
+import PersonaVoice from '../../components/PersonaVoice.astro';
 import PriorityList from '../../components/PriorityList.astro';
 import Section from '../../components/Section.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
@@ -130,6 +136,17 @@ const hasGoals =
 const capabilities = character?.capabilities ?? null;
 const capabilityActions = capabilities?.actions ?? [];
 const hasCapabilities = capabilityActions.length > 0;
+const persona = character?.persona ?? null;
+const personaVoice = persona?.voice ?? null;
+const hasPersona =
+  persona !== null &&
+  (Boolean(persona.archetype) ||
+    persona.traits.length > 0 ||
+    persona.values.length > 0 ||
+    persona.taboos.length > 0 ||
+    persona.biographyHighlights.length > 0 ||
+    (personaVoice !== null &&
+      (Boolean(personaVoice.tone) || personaVoice.styleNotes.length > 0)));
 const breadcrumbs: BreadcrumbItem[] = character
   ? [
       { label: 'Inicio', href: '/' },
@@ -185,6 +202,36 @@ if (affinityView) {
             <SectionHeader title="Biografía" showDivider />
             <MarkdownDescription content={character.body} />
           </Section>
+          {hasPersona ? (
+            <Section>
+              <SectionHeader title="Persona" showDivider />
+              <div class="character-page__persona">
+                {persona && persona.traits.length > 0 ? (
+                  <PersonaTraits items={persona.traits} />
+                ) : null}
+                {persona && persona.values.length > 0 ? (
+                  <PersonaValues items={persona.values} />
+                ) : null}
+                {persona?.archetype ? (
+                  <PersonaArchetype archetype={persona.archetype} />
+                ) : null}
+                {personaVoice &&
+                (Boolean(personaVoice.tone) ||
+                  personaVoice.styleNotes.length > 0) ? (
+                  <PersonaVoice
+                    tone={personaVoice.tone}
+                    styleNotes={personaVoice.styleNotes}
+                  />
+                ) : null}
+                {persona && persona.taboos.length > 0 ? (
+                  <PersonaTaboos items={persona.taboos} />
+                ) : null}
+                {persona && persona.biographyHighlights.length > 0 ? (
+                  <PersonaBiographyHighlights items={persona.biographyHighlights} />
+                ) : null}
+              </div>
+            </Section>
+          ) : null}
           {hasKnowledge ? (
             <Section>
               <SectionHeader title="Knowledge" showDivider />

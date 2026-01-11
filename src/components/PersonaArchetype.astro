@@ -1,0 +1,22 @@
+---
+import PersonaCard from './PersonaCard.astro';
+
+type Props = {
+  archetype: string;
+};
+
+const { archetype } = Astro.props as Props;
+---
+
+<PersonaCard title="Archetype">
+  <p class="persona-archetype">{archetype}</p>
+</PersonaCard>
+
+<style>
+  .persona-archetype {
+    margin: 0;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text);
+  }
+</style>
