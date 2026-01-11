@@ -230,6 +230,11 @@ h4 {
   gap: var(--space-3);
 }
 
+.character-page__goals {
+  display: grid;
+  gap: var(--space-4);
+}
+
 .character-page__relation-group {
   display: grid;
   gap: var(--space-2);
@@ -253,6 +258,12 @@ h4 {
 
 @media (min-width: 720px) {
   .character-page__knowledge {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .character-page__goals {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

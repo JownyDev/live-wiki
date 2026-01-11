@@ -23,6 +23,12 @@ const loadCharactersModule = async (): Promise<{
           canReveal: string[];
         }
       | null;
+    goals:
+      | {
+          longTerm: string[];
+          typicalPriorities: string[];
+        }
+      | null;
   } | null>;
 }> => {
   return await import('../src/lib/content/characters');
@@ -75,6 +81,21 @@ describe('content/characters contract', () => {
       knowsAbout: ['night shifts'],
       blindspots: ['court politics'],
       canReveal: ['safe routes'],
+    });
+  });
+
+  it('getCharacterById exposes goals fields when present', async () => {
+    const baseDir = await createTempBaseDirWithCharacterFixtures(['goals-valid.md']);
+    const { getCharacterById } = await loadCharactersModule();
+
+    const result = await getCharacterById('goals-valid', baseDir);
+    expect(result).not.toBeNull();
+    if (!result) {
+      throw new Error('Expected character');
+    }
+    expect(result.goals).toEqual({
+      longTerm: ['Keep harbor traffic safe', 'Save for a private chartroom'],
+      typicalPriorities: ['Safety', 'Reputation', 'Quiet routines'],
     });
   });
 

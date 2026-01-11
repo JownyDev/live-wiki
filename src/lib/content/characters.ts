@@ -20,6 +20,10 @@ export type CharacterKnowledge = {
   blindspots: string[];
   canReveal: string[];
 };
+export type CharacterGoals = {
+  longTerm: string[];
+  typicalPriorities: string[];
+};
 export type Character = {
   id: string;
   name: string;
@@ -30,6 +34,7 @@ export type Character = {
   affinity: string | null;
   relatedCharacters: RelatedCharacter[];
   knowledge: CharacterKnowledge | null;
+  goals: CharacterGoals | null;
   body: string;
 };
 
@@ -113,6 +118,20 @@ const getKnowledgeField = (
   };
 };
 
+const getGoalsField = (record: Record<string, unknown>): CharacterGoals | null => {
+  const value = record.goals;
+  if (typeof value === 'undefined' || value === null) {
+    return null;
+  }
+  if (!isRecord(value)) {
+    throw new Error('Invalid goals');
+  }
+  return {
+    longTerm: getStringArrayField(value, 'long_term'),
+    typicalPriorities: getStringArrayField(value, 'typical_priorities'),
+  };
+};
+
 const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
   const { data, content } = parseFrontmatter(markdown);
   if (data.type !== 'character') {
@@ -128,6 +147,7 @@ const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
   const affinity = getOptionalStringField(data, 'affinity');
   const relatedCharacters = getRelatedCharactersField(data.related_characters);
   const knowledge = getKnowledgeField(data);
+  const goals = getGoalsField(data);
 
   return {
     id,
@@ -139,6 +159,7 @@ const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
     affinity,
     relatedCharacters,
     knowledge,
+    goals,
     body: content,
   };
 };

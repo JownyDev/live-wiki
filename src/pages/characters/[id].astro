@@ -6,8 +6,10 @@ import DataPanel, { type DataPanelItem } from '../../components/DataPanel.astro'
 import EventSummaryCard from '../../components/EventSummaryCard.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
 import EntityLink from '../../components/EntityLink.astro';
+import GoalList from '../../components/GoalList.astro';
 import KnowledgeList from '../../components/KnowledgeList.astro';
 import KnowledgeSummary from '../../components/KnowledgeSummary.astro';
+import PriorityList from '../../components/PriorityList.astro';
 import Section from '../../components/Section.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import { type InlineMetaItem } from '../../components/InlineMetaList.astro';
@@ -120,6 +122,10 @@ const hasKnowledge =
     knowledge.knowsAbout.length > 0 ||
     knowledge.blindspots.length > 0 ||
     knowledge.canReveal.length > 0);
+const goals = character?.goals ?? null;
+const hasGoals =
+  goals !== null &&
+  (goals.longTerm.length > 0 || goals.typicalPriorities.length > 0);
 const breadcrumbs: BreadcrumbItem[] = character
   ? [
       { label: 'Inicio', href: '/' },
@@ -201,6 +207,22 @@ if (affinityView) {
                     label="Can Reveal"
                     items={knowledge.canReveal}
                     variant="reveal"
+                  />
+                ) : null}
+              </div>
+            </Section>
+          ) : null}
+          {hasGoals ? (
+            <Section>
+              <SectionHeader title="Goals" showDivider />
+              <div class="character-page__goals">
+                {goals && goals.longTerm.length > 0 ? (
+                  <GoalList label="Long Term Goals" items={goals.longTerm} />
+                ) : null}
+                {goals && goals.typicalPriorities.length > 0 ? (
+                  <PriorityList
+                    label="Typical Priorities"
+                    items={goals.typicalPriorities}
                   />
                 ) : null}
               </div>

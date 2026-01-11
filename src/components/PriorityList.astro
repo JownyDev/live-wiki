@@ -1,0 +1,84 @@
+---
+type Props = {
+  label: string;
+  items: string[];
+  emptyText?: string;
+};
+
+const { label, items, emptyText } = Astro.props as Props;
+const hasItems = items.length > 0;
+const shouldRender = hasItems || typeof emptyText === 'string';
+---
+
+{shouldRender ? (
+  <div class="priority-list">
+    <h3 class="priority-list__label">{label}</h3>
+    {hasItems ? (
+      <div class="priority-list__items">
+        {items.map((item) => (
+          <div class="priority-list__item">
+            <span class="priority-list__icon" aria-hidden="true"></span>
+            <span class="priority-list__text">{item}</span>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p class="priority-list__empty">{emptyText}</p>
+    )}
+  </div>
+) : null}
+
+<style>
+  .priority-list {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .priority-list__label {
+    margin: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+  }
+
+  .priority-list__items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .priority-list__item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-muted);
+  }
+
+  .priority-list__icon {
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: var(--radius-pill);
+    background: #f5b14a;
+  }
+
+  .priority-list__text {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .priority-list__empty {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+</style>
