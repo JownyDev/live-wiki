@@ -7,6 +7,11 @@ import EventSummaryCard from '../../components/EventSummaryCard.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
 import EntityLink from '../../components/EntityLink.astro';
 import CapabilityCard from '../../components/CapabilityCard.astro';
+import EmotionsBaselineMood, {
+  type BaselineMoodItem,
+} from '../../components/EmotionsBaselineMood.astro';
+import EmotionsSensitivities from '../../components/EmotionsSensitivities.astro';
+import EmotionsTowardPlayer from '../../components/EmotionsTowardPlayer.astro';
 import GoalList from '../../components/GoalList.astro';
 import KnowledgeList from '../../components/KnowledgeList.astro';
 import KnowledgeSummary from '../../components/KnowledgeSummary.astro';
@@ -168,6 +173,33 @@ const hasRetrievalLimits = Boolean(
       memoryProfile.retrievalLimits.maxTokensSummary !== null),
 );
 const hasMemoryProfile = hasMemoryTags || hasProvenancePolicy || hasRetrievalLimits;
+const emotionsProfile = character?.emotionsProfile ?? null;
+const baselineMoodItems: BaselineMoodItem[] = emotionsProfile
+  ? Object.entries(emotionsProfile.baselineMood).map(([label, value]) => ({
+      label: label
+        .split('_')
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' '),
+      value,
+      tone: label.toLowerCase(),
+    }))
+  : [];
+const towardPlayer = emotionsProfile?.towardPlayer ?? null;
+const sensitivities = emotionsProfile?.sensitivities ?? null;
+const manipulability = emotionsProfile?.manipulability ?? null;
+const hasEmotionsProfile =
+  baselineMoodItems.length > 0 ||
+  Boolean(towardPlayer?.stance) ||
+  Boolean(towardPlayer?.note) ||
+  Boolean(sensitivities && (sensitivities.angersIf.length > 0 || sensitivities.calmsIf.length > 0)) ||
+  Boolean(
+    manipulability &&
+      (manipulability.byEmpathy ||
+        manipulability.byBribe ||
+        manipulability.byIntimidation ||
+        manipulability.byAuthority ||
+        manipulability.notes.length > 0),
+  );
 const breadcrumbs: BreadcrumbItem[] = character
   ? [
       { label: 'Inicio', href: '/' },
@@ -313,6 +345,31 @@ if (affinityView) {
                       />
                     ) : null}
                   </div>
+                ) : null}
+              </div>
+            </Section>
+          ) : null}
+          {hasEmotionsProfile ? (
+            <Section>
+              <SectionHeader title="Emotions Profile" showDivider />
+              <div class="character-page__emotions">
+                <div class="character-page__emotions-grid">
+                  {baselineMoodItems.length > 0 ? (
+                    <EmotionsBaselineMood items={baselineMoodItems} />
+                  ) : null}
+                  {towardPlayer?.stance ? (
+                    <EmotionsTowardPlayer
+                      stance={towardPlayer.stance}
+                      note={towardPlayer.note}
+                    />
+                  ) : null}
+                </div>
+                {sensitivities || manipulability ? (
+                  <EmotionsSensitivities
+                    angersIf={sensitivities?.angersIf ?? []}
+                    calmsIf={sensitivities?.calmsIf ?? []}
+                    manipulability={manipulability}
+                  />
                 ) : null}
               </div>
             </Section>

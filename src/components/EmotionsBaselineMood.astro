@@ -1,0 +1,107 @@
+---
+export type BaselineMoodItem = {
+  label: string;
+  value: number;
+  tone?: string;
+};
+
+type Props = {
+  items: BaselineMoodItem[];
+};
+
+const { items } = Astro.props as Props;
+const hasItems = items.length > 0;
+---
+
+{hasItems ? (
+  <div class="emotions-baseline">
+    <h3 class="emotions-baseline__title">Baseline Mood</h3>
+    <div class="emotions-baseline__list">
+      {items.map((item) => (
+        <div class="emotions-baseline__item">
+          <div class="emotions-baseline__meta">
+            <span class="emotions-baseline__label">{item.label}</span>
+            <span class="emotions-baseline__value">{item.value}%</span>
+          </div>
+          <div class="emotions-baseline__track">
+            <div
+              class={
+                item.tone
+                  ? `emotions-baseline__bar emotions-baseline__bar--${item.tone}`
+                  : 'emotions-baseline__bar'
+              }
+              style={`width: ${item.value}%`}
+            ></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+) : null}
+
+<style>
+  .emotions-baseline {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .emotions-baseline__title {
+    margin: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+  }
+
+  .emotions-baseline__list {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .emotions-baseline__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+  }
+
+  .emotions-baseline__label {
+    color: var(--color-muted);
+    font-weight: 600;
+  }
+
+  .emotions-baseline__value {
+    color: var(--color-text);
+    font-weight: 700;
+  }
+
+  .emotions-baseline__track {
+    height: 0.45rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-muted);
+    overflow: hidden;
+  }
+
+  .emotions-baseline__bar {
+    height: 100%;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+  }
+
+  .emotions-baseline__bar--calm {
+    background: #34d399;
+  }
+
+  .emotions-baseline__bar--trust {
+    background: var(--color-accent);
+  }
+
+  .emotions-baseline__bar--irritation {
+    background: #f59e0b;
+  }
+</style>

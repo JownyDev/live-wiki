@@ -1,0 +1,226 @@
+---
+type Manipulability = {
+  byEmpathy: string | null;
+  byBribe: string | null;
+  byIntimidation: string | null;
+  byAuthority: string | null;
+  notes: string[];
+};
+
+type Props = {
+  angersIf?: string[];
+  calmsIf?: string[];
+  manipulability?: Manipulability | null;
+};
+
+const { angersIf = [], calmsIf = [], manipulability = null } = Astro.props as Props;
+const hasAngers = angersIf.length > 0;
+const hasCalms = calmsIf.length > 0;
+const factors = manipulability
+  ? [
+      { label: 'Empathy', value: manipulability.byEmpathy },
+      { label: 'Bribe', value: manipulability.byBribe },
+      { label: 'Intimidation', value: manipulability.byIntimidation },
+      { label: 'Authority', value: manipulability.byAuthority },
+    ].filter((factor) => Boolean(factor.value))
+  : [];
+const notes = manipulability?.notes ?? [];
+const hasNotes = notes.length > 0;
+---
+
+<div class="emotions-sensitivity">
+  <h3 class="emotions-sensitivity__title">Sensitivities &amp; Manipulability</h3>
+  <div class="emotions-sensitivity__grid">
+    {hasAngers ? (
+      <div class="emotions-sensitivity__block">
+        <div class="emotions-sensitivity__heading emotions-sensitivity__heading--anger">
+          Angers If
+        </div>
+        <ul class="emotions-sensitivity__list">
+          {angersIf.map((item) => (
+            <li class="emotions-sensitivity__item emotions-sensitivity__item--anger">
+              <span class="emotions-sensitivity__dot emotions-sensitivity__dot--anger"></span>
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ) : null}
+    {hasCalms ? (
+      <div class="emotions-sensitivity__block">
+        <div class="emotions-sensitivity__heading emotions-sensitivity__heading--calm">
+          Calms If
+        </div>
+        <ul class="emotions-sensitivity__list">
+          {calmsIf.map((item) => (
+            <li class="emotions-sensitivity__item emotions-sensitivity__item--calm">
+              <span class="emotions-sensitivity__dot emotions-sensitivity__dot--calm"></span>
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ) : null}
+  </div>
+  {factors.length > 0 ? (
+    <div class="emotions-sensitivity__manipulability">
+      <span class="emotions-sensitivity__caption">Manipulability Factors</span>
+      <div class="emotions-sensitivity__factors">
+        {factors.map((factor) => (
+          <div class="emotions-sensitivity__factor">
+            <span class="emotions-sensitivity__factor-label">{factor.label}:</span>
+            <span class="emotions-sensitivity__factor-value">
+              {String(factor.value).toUpperCase()}
+            </span>
+          </div>
+        ))}
+      </div>
+      {hasNotes ? (
+        <div class="emotions-sensitivity__notes">
+          {notes.map((note) => (
+            <p>{note}</p>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  ) : null}
+</div>
+
+<style>
+  .emotions-sensitivity {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .emotions-sensitivity__title {
+    margin: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+  }
+
+  .emotions-sensitivity__grid {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .emotions-sensitivity__heading {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .emotions-sensitivity__heading--anger {
+    color: #f87171;
+  }
+
+  .emotions-sensitivity__heading--calm {
+    color: #34d399;
+  }
+
+  .emotions-sensitivity__list {
+    list-style: none;
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .emotions-sensitivity__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    padding: 0.35rem 0.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: rgba(30, 35, 46, 0.4);
+  }
+
+  .emotions-sensitivity__dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: var(--radius-pill);
+  }
+
+  .emotions-sensitivity__dot--anger {
+    background: #f87171;
+  }
+
+  .emotions-sensitivity__dot--calm {
+    background: #34d399;
+  }
+
+  .emotions-sensitivity__manipulability {
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-3);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .emotions-sensitivity__caption {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-muted);
+  }
+
+  .emotions-sensitivity__factors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .emotions-sensitivity__factor {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.25rem 0.7rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-muted);
+  }
+
+  .emotions-sensitivity__factor-label {
+    font-size: 0.7rem;
+    color: var(--color-muted);
+  }
+
+  .emotions-sensitivity__factor-value {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .emotions-sensitivity__notes {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(43, 108, 238, 0.3);
+    background: rgba(43, 108, 238, 0.1);
+    color: var(--color-text);
+    font-size: 0.75rem;
+    font-style: italic;
+  }
+
+  .emotions-sensitivity__notes p {
+    margin: 0;
+  }
+
+  @media (min-width: 720px) {
+    .emotions-sensitivity__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-5);
+    }
+  }
+</style>

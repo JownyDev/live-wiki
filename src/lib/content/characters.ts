@@ -59,6 +59,24 @@ export type CharacterMemoryProfile = {
     maxTokensSummary: number | null;
   } | null;
 };
+export type CharacterEmotionsProfile = {
+  baselineMood: Record<string, number>;
+  towardPlayer: {
+    stance: string | null;
+    note: string | null;
+  } | null;
+  sensitivities: {
+    angersIf: string[];
+    calmsIf: string[];
+  } | null;
+  manipulability: {
+    byEmpathy: string | null;
+    byBribe: string | null;
+    byIntimidation: string | null;
+    byAuthority: string | null;
+    notes: string[];
+  } | null;
+};
 export type Character = {
   id: string;
   name: string;
@@ -73,6 +91,7 @@ export type Character = {
   capabilities: CharacterCapabilities | null;
   persona: CharacterPersona | null;
   memoryProfile: CharacterMemoryProfile | null;
+  emotionsProfile: CharacterEmotionsProfile | null;
   body: string;
 };
 
@@ -127,6 +146,29 @@ const getOptionalNumberField = (
     throw new Error(`Invalid ${field}`);
   }
   return value;
+};
+
+const getNumberRecordField = (
+  record: Record<string, unknown>,
+  field: string,
+): Record<string, number> => {
+  const value = record[field];
+  if (typeof value === 'undefined' || value === null) {
+    return {};
+  }
+  if (!isRecord(value)) {
+    throw new Error(`Invalid ${field}`);
+  }
+  const entries = Object.entries(value);
+  for (const [key, entryValue] of entries) {
+    if (typeof entryValue !== 'number' || Number.isNaN(entryValue)) {
+      throw new Error(`Invalid ${field}`);
+    }
+    if (key.length === 0) {
+      throw new Error(`Invalid ${field}`);
+    }
+  }
+  return value as Record<string, number>;
 };
 
 const getRelatedCharactersField = (value: unknown): RelatedCharacter[] => {
@@ -302,6 +344,69 @@ const getMemoryProfileField = (
   };
 };
 
+const getEmotionsProfileField = (
+  record: Record<string, unknown>,
+): CharacterEmotionsProfile | null => {
+  const value = record.emotions_profile;
+  if (typeof value === 'undefined' || value === null) {
+    return null;
+  }
+  if (!isRecord(value)) {
+    throw new Error('Invalid emotions_profile');
+  }
+  const towardPlayerValue = value.toward_player_default;
+  const towardPlayer =
+    typeof towardPlayerValue === 'undefined' || towardPlayerValue === null
+      ? null
+      : (() => {
+          if (!isRecord(towardPlayerValue)) {
+            throw new Error('Invalid emotions_profile');
+          }
+          return {
+            stance: getOptionalStringField(towardPlayerValue, 'stance'),
+            note: getOptionalStringField(towardPlayerValue, 'note'),
+          };
+        })();
+  const sensitivitiesValue = value.sensitivities;
+  const sensitivities =
+    typeof sensitivitiesValue === 'undefined' || sensitivitiesValue === null
+      ? null
+      : (() => {
+          if (!isRecord(sensitivitiesValue)) {
+            throw new Error('Invalid emotions_profile');
+          }
+          return {
+            angersIf: getStringArrayField(sensitivitiesValue, 'angers_if'),
+            calmsIf: getStringArrayField(sensitivitiesValue, 'calms_if'),
+          };
+        })();
+  const manipulabilityValue = value.manipulability;
+  const manipulability =
+    typeof manipulabilityValue === 'undefined' || manipulabilityValue === null
+      ? null
+      : (() => {
+          if (!isRecord(manipulabilityValue)) {
+            throw new Error('Invalid emotions_profile');
+          }
+          return {
+            byEmpathy: getOptionalStringField(manipulabilityValue, 'by_empathy'),
+            byBribe: getOptionalStringField(manipulabilityValue, 'by_bribe'),
+            byIntimidation: getOptionalStringField(
+              manipulabilityValue,
+              'by_intimidation',
+            ),
+            byAuthority: getOptionalStringField(manipulabilityValue, 'by_authority'),
+            notes: getStringArrayField(manipulabilityValue, 'notes'),
+          };
+        })();
+  return {
+    baselineMood: getNumberRecordField(value, 'baseline_mood'),
+    towardPlayer,
+    sensitivities,
+    manipulability,
+  };
+};
+
 const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
   const { data, content } = parseFrontmatter(markdown);
   if (data.type !== 'character') {
@@ -321,6 +426,7 @@ const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
   const capabilities = getCapabilitiesField(data);
   const persona = getPersonaField(data);
   const memoryProfile = getMemoryProfileField(data);
+  const emotionsProfile = getEmotionsProfileField(data);
 
   return {
     id,
@@ -336,6 +442,7 @@ const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
     capabilities,
     persona,
     memoryProfile,
+    emotionsProfile,
     body: content,
   };
 };

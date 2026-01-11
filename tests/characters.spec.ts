@@ -68,6 +68,26 @@ const loadCharactersModule = async (): Promise<{
           } | null;
         }
       | null;
+    emotionsProfile:
+      | {
+          baselineMood: Record<string, number>;
+          towardPlayer: {
+            stance: string | null;
+            note: string | null;
+          } | null;
+          sensitivities: {
+            angersIf: string[];
+            calmsIf: string[];
+          } | null;
+          manipulability: {
+            byEmpathy: string | null;
+            byBribe: string | null;
+            byIntimidation: string | null;
+            byAuthority: string | null;
+            notes: string[];
+          } | null;
+        }
+      | null;
   } | null>;
 }> => {
   return await import('../src/lib/content/characters');
@@ -212,6 +232,41 @@ describe('content/characters contract', () => {
       retrievalLimits: {
         maxItems: 6,
         maxTokensSummary: 160,
+      },
+    });
+  });
+
+  it('getCharacterById exposes emotions profile fields when present', async () => {
+    const baseDir = await createTempBaseDirWithCharacterFixtures([
+      'emotions-profile-valid.md',
+    ]);
+    const { getCharacterById } = await loadCharactersModule();
+
+    const result = await getCharacterById('emotions-profile-valid', baseDir);
+    expect(result).not.toBeNull();
+    if (!result) {
+      throw new Error('Expected character');
+    }
+    expect(result.emotionsProfile).toEqual({
+      baselineMood: {
+        calm: 65,
+        trust: 45,
+        irritation: 15,
+      },
+      towardPlayer: {
+        stance: 'wary',
+        note: 'Opens up after consistent manners.',
+      },
+      sensitivities: {
+        angersIf: ['tamper with beacons', 'mock the crew'],
+        calmsIf: ['offer help', 'keep promises'],
+      },
+      manipulability: {
+        byEmpathy: 'high',
+        byBribe: 'medium',
+        byIntimidation: 'low',
+        byAuthority: 'medium',
+        notes: ['Responds to official seals more than coin.'],
       },
     });
   });

@@ -1,0 +1,98 @@
+---
+type Props = {
+  stance: string;
+  note?: string | null;
+};
+
+const { stance, note = null } = Astro.props as Props;
+const normalized = stance.toLowerCase();
+const badgeClass = (() => {
+  switch (normalized) {
+    case 'friendly':
+      return 'emotions-toward__badge emotions-toward__badge--friendly';
+    case 'wary':
+      return 'emotions-toward__badge emotions-toward__badge--wary';
+    case 'hostile':
+      return 'emotions-toward__badge emotions-toward__badge--hostile';
+    default:
+      return 'emotions-toward__badge emotions-toward__badge--neutral';
+  }
+})();
+---
+
+<div class="emotions-toward">
+  <h3 class="emotions-toward__title">Toward Player</h3>
+  <div class="emotions-toward__content">
+    <span class={badgeClass}>{stance}</span>
+    {note ? <p class="emotions-toward__note">"{note}"</p> : null}
+  </div>
+</div>
+
+<style>
+  .emotions-toward {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .emotions-toward__title {
+    margin: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+  }
+
+  .emotions-toward__content {
+    display: grid;
+    place-items: center;
+    gap: var(--space-2);
+    text-align: center;
+    padding: var(--space-2) 0;
+  }
+
+  .emotions-toward__badge {
+    padding: 0.45rem 1.2rem;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    border: 2px solid transparent;
+  }
+
+  .emotions-toward__badge--friendly {
+    background: rgba(52, 211, 153, 0.15);
+    border-color: rgba(52, 211, 153, 0.4);
+    color: #34d399;
+  }
+
+  .emotions-toward__badge--wary {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.35);
+    color: #f59e0b;
+  }
+
+  .emotions-toward__badge--hostile {
+    background: rgba(248, 113, 113, 0.12);
+    border-color: rgba(248, 113, 113, 0.35);
+    color: #f87171;
+  }
+
+  .emotions-toward__badge--neutral {
+    background: rgba(148, 163, 184, 0.12);
+    border-color: rgba(148, 163, 184, 0.35);
+    color: #94a3b8;
+  }
+
+  .emotions-toward__note {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    font-style: italic;
+  }
+</style>
