@@ -4,6 +4,7 @@ import {
   getDateField,
   getOptionalLocationField,
   getStringField,
+  getStringArrayField,
   parseFrontmatter,
 } from './frontmatter';
 import {
@@ -13,6 +14,12 @@ import {
 
 export type CharacterListItem = { id: string; name: string };
 export type RelatedCharacter = { type: string; character: string };
+export type CharacterKnowledge = {
+  summary: string | null;
+  knowsAbout: string[];
+  blindspots: string[];
+  canReveal: string[];
+};
 export type Character = {
   id: string;
   name: string;
@@ -22,6 +29,7 @@ export type Character = {
   died: string | null;
   affinity: string | null;
   relatedCharacters: RelatedCharacter[];
+  knowledge: CharacterKnowledge | null;
   body: string;
 };
 
@@ -87,6 +95,24 @@ const getRelatedCharactersField = (value: unknown): RelatedCharacter[] => {
   });
 };
 
+const getKnowledgeField = (
+  record: Record<string, unknown>,
+): CharacterKnowledge | null => {
+  const value = record.knowledge;
+  if (typeof value === 'undefined' || value === null) {
+    return null;
+  }
+  if (!isRecord(value)) {
+    throw new Error('Invalid knowledge');
+  }
+  return {
+    summary: getOptionalStringField(value, 'summary'),
+    knowsAbout: getStringArrayField(value, 'knows_about'),
+    blindspots: getStringArrayField(value, 'blindspots'),
+    canReveal: getStringArrayField(value, 'can_reveal'),
+  };
+};
+
 const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
   const { data, content } = parseFrontmatter(markdown);
   if (data.type !== 'character') {
@@ -101,6 +127,7 @@ const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
   const died = getOptionalDateField(data, 'died');
   const affinity = getOptionalStringField(data, 'affinity');
   const relatedCharacters = getRelatedCharactersField(data.related_characters);
+  const knowledge = getKnowledgeField(data);
 
   return {
     id,
@@ -111,6 +138,7 @@ const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
     died,
     affinity,
     relatedCharacters,
+    knowledge,
     body: content,
   };
 };

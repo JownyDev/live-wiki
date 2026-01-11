@@ -4,6 +4,7 @@ import path from 'node:path';
 
 export type CharacterFixtureName =
   | 'kael-nyx.md'
+  | 'knowledge-valid.md'
   | 'origin-absent.md'
   | 'origin-invalid.md'
   | 'origin-null.md'

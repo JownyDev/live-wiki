@@ -10,7 +10,20 @@ const loadCharactersModule = async (): Promise<{
   getCharacterById: (
     id: string,
     baseDir?: string,
-  ) => Promise<{ id: string; name: string; body: string; origin: string | null } | null>;
+  ) => Promise<{
+    id: string;
+    name: string;
+    body: string;
+    origin: string | null;
+    knowledge:
+      | {
+          summary: string | null;
+          knowsAbout: string[];
+          blindspots: string[];
+          canReveal: string[];
+        }
+      | null;
+  } | null>;
 }> => {
   return await import('../src/lib/content/characters');
 };
@@ -46,6 +59,23 @@ describe('content/characters contract', () => {
     const { getCharacterById } = await loadCharactersModule();
 
     await expect(getCharacterById('no-existe', baseDir)).resolves.toBeNull();
+  });
+
+  it('getCharacterById exposes knowledge fields when present', async () => {
+    const baseDir = await createTempBaseDirWithCharacterFixtures(['knowledge-valid.md']);
+    const { getCharacterById } = await loadCharactersModule();
+
+    const result = await getCharacterById('knowledge-valid', baseDir);
+    expect(result).not.toBeNull();
+    if (!result) {
+      throw new Error('Expected character');
+    }
+    expect(result.knowledge).toEqual({
+      summary: 'Tracks dock schedules.',
+      knowsAbout: ['night shifts'],
+      blindspots: ['court politics'],
+      canReveal: ['safe routes'],
+    });
   });
 
   it('getCharacterById exposes valid origins and allows missing or null origin', async () => {

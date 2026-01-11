@@ -6,6 +6,8 @@ import DataPanel, { type DataPanelItem } from '../../components/DataPanel.astro'
 import EventSummaryCard from '../../components/EventSummaryCard.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
 import EntityLink from '../../components/EntityLink.astro';
+import KnowledgeList from '../../components/KnowledgeList.astro';
+import KnowledgeSummary from '../../components/KnowledgeSummary.astro';
 import Section from '../../components/Section.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import { type InlineMetaItem } from '../../components/InlineMetaList.astro';
@@ -111,6 +113,13 @@ const affinityView = character?.affinity
   ? await resolveAffinityView(character.affinity)
   : null;
 const relatedGroups = character ? await buildRelatedGroups(character.relatedCharacters) : [];
+const knowledge = character?.knowledge ?? null;
+const hasKnowledge =
+  knowledge !== null &&
+  (Boolean(knowledge.summary) ||
+    knowledge.knowsAbout.length > 0 ||
+    knowledge.blindspots.length > 0 ||
+    knowledge.canReveal.length > 0);
 const breadcrumbs: BreadcrumbItem[] = character
   ? [
       { label: 'Inicio', href: '/' },
@@ -166,6 +175,37 @@ if (affinityView) {
             <SectionHeader title="Biografía" showDivider />
             <MarkdownDescription content={character.body} />
           </Section>
+          {hasKnowledge ? (
+            <Section>
+              <SectionHeader title="Knowledge" showDivider />
+              <div class="character-page__knowledge">
+                {knowledge?.summary ? (
+                  <KnowledgeSummary summary={knowledge.summary} />
+                ) : null}
+                {knowledge && knowledge.knowsAbout.length > 0 ? (
+                  <KnowledgeList
+                    label="Knows About"
+                    items={knowledge.knowsAbout}
+                    variant="knows"
+                  />
+                ) : null}
+                {knowledge && knowledge.blindspots.length > 0 ? (
+                  <KnowledgeList
+                    label="Blindspots"
+                    items={knowledge.blindspots}
+                    variant="blindspots"
+                  />
+                ) : null}
+                {knowledge && knowledge.canReveal.length > 0 ? (
+                  <KnowledgeList
+                    label="Can Reveal"
+                    items={knowledge.canReveal}
+                    variant="reveal"
+                  />
+                ) : null}
+              </div>
+            </Section>
+          ) : null}
           {relatedGroups.length > 0 ? (
             <Section>
               <SectionHeader title="Relaciones" showDivider />
