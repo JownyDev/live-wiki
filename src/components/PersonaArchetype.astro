@@ -6,11 +6,14 @@ type Props = {
 };
 
 const { archetype } = Astro.props as Props;
+const shouldRender = archetype.length > 0;
 ---
 
-<PersonaCard title="Archetype" icon="badge">
-  <p class="persona-archetype">{archetype}</p>
-</PersonaCard>
+{shouldRender ? (
+  <PersonaCard title="Archetype" icon="badge">
+    <p class="persona-archetype">{archetype}</p>
+  </PersonaCard>
+) : null}
 
 <style>
   .persona-archetype {

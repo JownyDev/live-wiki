@@ -8,15 +8,18 @@ type Props = {
 };
 
 const { label, items, icon } = Astro.props as Props;
+const hasItems = items.length > 0;
 ---
 
-<PersonaCard title={label} icon={icon}>
-  <ul class="persona-tag-list">
-    {items.map((item) => (
-      <li>{item}</li>
-    ))}
-  </ul>
-</PersonaCard>
+{hasItems ? (
+  <PersonaCard title={label} icon={icon}>
+    <ul class="persona-tag-list">
+      {items.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  </PersonaCard>
+) : null}
 
 <style>
   .persona-tag-list {

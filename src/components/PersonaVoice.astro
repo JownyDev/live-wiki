@@ -9,28 +9,31 @@ type Props = {
 const { tone = null, styleNotes = [] } = Astro.props as Props;
 const hasTone = Boolean(tone);
 const hasStyleNotes = styleNotes.length > 0;
+const shouldRender = hasTone || hasStyleNotes;
 ---
 
-<PersonaCard title="Voice" span="wide" icon="record_voice_over">
-  <div class="persona-voice">
-    {hasTone ? (
-      <div class="persona-voice__block">
-        <p class="persona-voice__label">Tone</p>
-        <p class="persona-voice__tone">{tone}</p>
-      </div>
-    ) : null}
-    {hasStyleNotes ? (
-      <div class="persona-voice__block">
-        <p class="persona-voice__label">Style Notes</p>
-        <ul class="persona-voice__notes">
-          {styleNotes.map((note) => (
-            <li>{note}</li>
-          ))}
-        </ul>
-      </div>
-    ) : null}
-  </div>
-</PersonaCard>
+{shouldRender ? (
+  <PersonaCard title="Voice" span="wide" icon="record_voice_over">
+    <div class="persona-voice">
+      {hasTone ? (
+        <div class="persona-voice__block">
+          <p class="persona-voice__label">Tone</p>
+          <p class="persona-voice__tone">{tone}</p>
+        </div>
+      ) : null}
+      {hasStyleNotes ? (
+        <div class="persona-voice__block">
+          <p class="persona-voice__label">Style Notes</p>
+          <ul class="persona-voice__notes">
+            {styleNotes.map((note) => (
+              <li>{note}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+    </div>
+  </PersonaCard>
+) : null}
 
 <style>
   .persona-voice {

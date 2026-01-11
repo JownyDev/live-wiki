@@ -5,6 +5,7 @@ type Props = {
 };
 
 const { stance, note = null } = Astro.props as Props;
+const shouldRender = stance.length > 0;
 const normalized = stance.toLowerCase();
 const badgeClass = (() => {
   switch (normalized) {
@@ -20,18 +21,20 @@ const badgeClass = (() => {
 })();
 ---
 
-<div class="emotions-toward">
-  <h3 class="emotions-toward__title">
-    <span class="material-symbols-outlined emotions-toward__icon" aria-hidden="true">
-      person_pin_circle
-    </span>
-    Toward Player
-  </h3>
-  <div class="emotions-toward__content">
-    <span class={badgeClass}>{stance}</span>
-    {note ? <p class="emotions-toward__note">"{note}"</p> : null}
+{shouldRender ? (
+  <div class="emotions-toward">
+    <h3 class="emotions-toward__title">
+      <span class="material-symbols-outlined emotions-toward__icon" aria-hidden="true">
+        person_pin_circle
+      </span>
+      Toward Player
+    </h3>
+    <div class="emotions-toward__content">
+      <span class={badgeClass}>{stance}</span>
+      {note ? <p class="emotions-toward__note">"{note}"</p> : null}
+    </div>
   </div>
-</div>
+) : null}
 
 <style>
   .emotions-toward {

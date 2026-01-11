@@ -6,15 +6,18 @@ type Props = {
 };
 
 const { items } = Astro.props as Props;
+const hasItems = items.length > 0;
 ---
 
-<PersonaCard title="Taboos" icon="block">
-  <ul class="persona-taboos">
-    {items.map((item) => (
-      <li>{item}</li>
-    ))}
-  </ul>
-</PersonaCard>
+{hasItems ? (
+  <PersonaCard title="Taboos" icon="block">
+    <ul class="persona-taboos">
+      {items.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  </PersonaCard>
+) : null}
 
 <style>
   .persona-taboos {

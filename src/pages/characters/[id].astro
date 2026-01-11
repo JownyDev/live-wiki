@@ -41,9 +41,9 @@ export async function getStaticPaths() {
 }
 
 const id = Astro.params.id;
-const character = typeof id === 'string' ? await getCharacterById(id) : null;
-const events =
-  character && typeof id === 'string' ? await listEventsByCharacterId(id) : [];
+const characterId = typeof id === 'string' ? id : null;
+const character = characterId ? await getCharacterById(characterId) : null;
+const events = characterId && character ? await listEventsByCharacterId(characterId) : [];
 const title = character ? character.name : 'Personaje no encontrado';
 const originView = (() => {
   if (!character?.origin) {
@@ -68,6 +68,15 @@ const originView = (() => {
 type LinkView = { text: string; href?: string };
 type RelationView = LinkView & { missing?: boolean };
 type RelatedGroup = { label: string; items: RelationView[] };
+
+const hasItems = <T,>(items: readonly T[]): boolean => items.length > 0;
+const hasText = (value: string | null | undefined): value is string =>
+  typeof value === 'string' && value.length > 0;
+const toTitleCase = (value: string): string =>
+  value
+    .split('_')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
 
 const parseWithPrefix = (value: string, prefix: string): string | null => {
   if (!value.startsWith(prefix)) {
@@ -131,41 +140,53 @@ const affinityView = character?.affinity
   : null;
 const relatedGroups = character ? await buildRelatedGroups(character.relatedCharacters) : [];
 const knowledge = character?.knowledge ?? null;
+const knowledgeSummary = knowledge?.summary ?? null;
+const knowledgeKnowsAbout = knowledge?.knowsAbout ?? [];
+const knowledgeBlindspots = knowledge?.blindspots ?? [];
+const knowledgeCanReveal = knowledge?.canReveal ?? [];
 const hasKnowledge =
-  knowledge !== null &&
-  (Boolean(knowledge.summary) ||
-    knowledge.knowsAbout.length > 0 ||
-    knowledge.blindspots.length > 0 ||
-    knowledge.canReveal.length > 0);
+  hasText(knowledgeSummary) ||
+  hasItems(knowledgeKnowsAbout) ||
+  hasItems(knowledgeBlindspots) ||
+  hasItems(knowledgeCanReveal);
 const goals = character?.goals ?? null;
-const hasGoals =
-  goals !== null &&
-  (goals.longTerm.length > 0 || goals.typicalPriorities.length > 0);
+const goalsLongTerm = goals?.longTerm ?? [];
+const goalsPriorities = goals?.typicalPriorities ?? [];
+const hasGoals = hasItems(goalsLongTerm) || hasItems(goalsPriorities);
 const capabilities = character?.capabilities ?? null;
 const capabilityActions = capabilities?.actions ?? [];
-const hasCapabilities = capabilityActions.length > 0;
+const hasCapabilities = hasItems(capabilityActions);
 const persona = character?.persona ?? null;
 const personaVoice = persona?.voice ?? null;
+const personaArchetype = persona?.archetype ?? null;
+const personaVoiceTone = personaVoice?.tone ?? null;
+const personaVoiceStyleNotes = personaVoice?.styleNotes ?? [];
+const hasPersonaVoice = hasText(personaVoiceTone) || hasItems(personaVoiceStyleNotes);
+const personaTraits = persona?.traits ?? [];
+const personaValues = persona?.values ?? [];
+const personaTaboos = persona?.taboos ?? [];
+const personaHighlights = persona?.biographyHighlights ?? [];
 const hasPersona =
-  persona !== null &&
-  (Boolean(persona.archetype) ||
-    persona.traits.length > 0 ||
-    persona.values.length > 0 ||
-    persona.taboos.length > 0 ||
-    persona.biographyHighlights.length > 0 ||
-    (personaVoice !== null &&
-      (Boolean(personaVoice.tone) || personaVoice.styleNotes.length > 0)));
+  hasText(personaArchetype) ||
+  hasItems(personaTraits) ||
+  hasItems(personaValues) ||
+  hasItems(personaTaboos) ||
+  hasItems(personaHighlights) ||
+  hasPersonaVoice;
 const memoryProfile = character?.memoryProfile ?? null;
-const hasMemoryTags = Boolean(
-  memoryProfile &&
-    (memoryProfile.interestTags.length > 0 ||
-      memoryProfile.relationshipTags.length > 0 ||
-      memoryProfile.allowedTags.length > 0 ||
-      memoryProfile.blockedTags.length > 0),
-);
+const memoryInterestTags = memoryProfile?.interestTags ?? [];
+const memoryRelationshipTags = memoryProfile?.relationshipTags ?? [];
+const memoryAllowedTags = memoryProfile?.allowedTags ?? [];
+const memoryBlockedTags = memoryProfile?.blockedTags ?? [];
+const hasMemoryTags = [
+  memoryInterestTags,
+  memoryRelationshipTags,
+  memoryAllowedTags,
+  memoryBlockedTags,
+].some(hasItems);
 const hasProvenancePolicy = Boolean(
   memoryProfile?.provenancePolicy &&
-    memoryProfile.provenancePolicy.allowed.length > 0,
+    hasItems(memoryProfile.provenancePolicy.allowed),
 );
 const hasRetrievalLimits = Boolean(
   memoryProfile?.retrievalLimits &&
@@ -176,30 +197,31 @@ const hasMemoryProfile = hasMemoryTags || hasProvenancePolicy || hasRetrievalLim
 const emotionsProfile = character?.emotionsProfile ?? null;
 const baselineMoodItems: BaselineMoodItem[] = emotionsProfile
   ? Object.entries(emotionsProfile.baselineMood).map(([key, value]) => ({
-      label: key
-        .split('_')
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(' '),
+      label: toTitleCase(key),
       value,
       tone: key.toLowerCase(),
     }))
   : [];
 const towardPlayer = emotionsProfile?.towardPlayer ?? null;
+const towardPlayerStance = towardPlayer?.stance ?? null;
+const towardPlayerNote = towardPlayer?.note ?? null;
+const hasTowardPlayer = hasText(towardPlayerStance);
 const sensitivities = emotionsProfile?.sensitivities ?? null;
 const manipulability = emotionsProfile?.manipulability ?? null;
+const hasSensitivities = Boolean(
+  sensitivities &&
+    (hasItems(sensitivities.angersIf) || hasItems(sensitivities.calmsIf)),
+);
+const hasManipulability = Boolean(
+  manipulability &&
+    (hasText(manipulability.byEmpathy) ||
+      hasText(manipulability.byBribe) ||
+      hasText(manipulability.byIntimidation) ||
+      hasText(manipulability.byAuthority) ||
+      hasItems(manipulability.notes)),
+);
 const hasEmotionsProfile =
-  baselineMoodItems.length > 0 ||
-  Boolean(towardPlayer?.stance) ||
-  Boolean(towardPlayer?.note) ||
-  Boolean(sensitivities && (sensitivities.angersIf.length > 0 || sensitivities.calmsIf.length > 0)) ||
-  Boolean(
-    manipulability &&
-      (manipulability.byEmpathy ||
-        manipulability.byBribe ||
-        manipulability.byIntimidation ||
-        manipulability.byAuthority ||
-        manipulability.notes.length > 0),
-  );
+  hasItems(baselineMoodItems) || hasTowardPlayer || hasSensitivities || hasManipulability;
 const breadcrumbs: BreadcrumbItem[] = character
   ? [
       { label: 'Inicio', href: '/' },
@@ -259,28 +281,26 @@ if (affinityView) {
             <Section>
               <SectionHeader title="Persona" showDivider />
               <div class="character-page__persona">
-                {persona && persona.traits.length > 0 ? (
-                  <PersonaTraits items={persona.traits} />
+                {hasItems(personaTraits) ? (
+                  <PersonaTraits items={personaTraits} />
                 ) : null}
-                {persona && persona.values.length > 0 ? (
-                  <PersonaValues items={persona.values} />
+                {hasItems(personaValues) ? (
+                  <PersonaValues items={personaValues} />
                 ) : null}
-                {persona?.archetype ? (
-                  <PersonaArchetype archetype={persona.archetype} />
+                {hasText(personaArchetype) ? (
+                  <PersonaArchetype archetype={personaArchetype} />
                 ) : null}
-                {personaVoice &&
-                (Boolean(personaVoice.tone) ||
-                  personaVoice.styleNotes.length > 0) ? (
+                {hasPersonaVoice ? (
                   <PersonaVoice
-                    tone={personaVoice.tone}
-                    styleNotes={personaVoice.styleNotes}
+                    tone={personaVoiceTone}
+                    styleNotes={personaVoiceStyleNotes}
                   />
                 ) : null}
-                {persona && persona.taboos.length > 0 ? (
-                  <PersonaTaboos items={persona.taboos} />
+                {hasItems(personaTaboos) ? (
+                  <PersonaTaboos items={personaTaboos} />
                 ) : null}
-                {persona && persona.biographyHighlights.length > 0 ? (
-                  <PersonaBiographyHighlights items={persona.biographyHighlights} />
+                {hasItems(personaHighlights) ? (
+                  <PersonaBiographyHighlights items={personaHighlights} />
                 ) : null}
               </div>
             </Section>
@@ -289,27 +309,27 @@ if (affinityView) {
             <Section>
               <SectionHeader title="Knowledge" showDivider />
               <div class="character-page__knowledge">
-                {knowledge?.summary ? (
-                  <KnowledgeSummary summary={knowledge.summary} />
+                {hasText(knowledgeSummary) ? (
+                  <KnowledgeSummary summary={knowledgeSummary} />
                 ) : null}
-                {knowledge && knowledge.knowsAbout.length > 0 ? (
+                {hasItems(knowledgeKnowsAbout) ? (
                   <KnowledgeList
                     label="Knows About"
-                    items={knowledge.knowsAbout}
+                    items={knowledgeKnowsAbout}
                     variant="knows"
                   />
                 ) : null}
-                {knowledge && knowledge.blindspots.length > 0 ? (
+                {hasItems(knowledgeBlindspots) ? (
                   <KnowledgeList
                     label="Blindspots"
-                    items={knowledge.blindspots}
+                    items={knowledgeBlindspots}
                     variant="blindspots"
                   />
                 ) : null}
-                {knowledge && knowledge.canReveal.length > 0 ? (
+                {hasItems(knowledgeCanReveal) ? (
                   <KnowledgeList
                     label="Can Reveal"
-                    items={knowledge.canReveal}
+                    items={knowledgeCanReveal}
                     variant="reveal"
                   />
                 ) : null}
@@ -322,10 +342,10 @@ if (affinityView) {
               <div class="character-page__memory">
                 {memoryProfile ? (
                   <MemoryTags
-                    interestTags={memoryProfile.interestTags}
-                    relationshipTags={memoryProfile.relationshipTags}
-                    allowedTags={memoryProfile.allowedTags}
-                    blockedTags={memoryProfile.blockedTags}
+                    interestTags={memoryInterestTags}
+                    relationshipTags={memoryRelationshipTags}
+                    allowedTags={memoryAllowedTags}
+                    blockedTags={memoryBlockedTags}
                   />
                 ) : null}
                 {hasProvenancePolicy || hasRetrievalLimits ? (
@@ -354,17 +374,17 @@ if (affinityView) {
               <SectionHeader title="Emotions Profile" showDivider />
               <div class="character-page__emotions">
                 <div class="character-page__emotions-grid">
-                  {baselineMoodItems.length > 0 ? (
+                  {hasItems(baselineMoodItems) ? (
                     <EmotionsBaselineMood items={baselineMoodItems} />
                   ) : null}
-                  {towardPlayer?.stance ? (
+                  {hasTowardPlayer ? (
                     <EmotionsTowardPlayer
-                      stance={towardPlayer.stance}
-                      note={towardPlayer.note}
+                      stance={towardPlayerStance}
+                      note={towardPlayerNote}
                     />
                   ) : null}
                 </div>
-                {sensitivities || manipulability ? (
+                {hasSensitivities || hasManipulability ? (
                   <EmotionsSensitivities
                     angersIf={sensitivities?.angersIf ?? []}
                     calmsIf={sensitivities?.calmsIf ?? []}
@@ -378,18 +398,18 @@ if (affinityView) {
             <Section>
               <SectionHeader title="Goals" showDivider />
               <div class="character-page__goals">
-                {goals && goals.longTerm.length > 0 ? (
+                {hasItems(goalsLongTerm) ? (
                   <GoalList
                     label="Long Term Goals"
-                    items={goals.longTerm}
+                    items={goalsLongTerm}
                     icon="flag"
                     itemIcon="ads_click"
                   />
                 ) : null}
-                {goals && goals.typicalPriorities.length > 0 ? (
+                {hasItems(goalsPriorities) ? (
                   <PriorityList
                     label="Typical Priorities"
-                    items={goals.typicalPriorities}
+                    items={goalsPriorities}
                     icon="list_alt"
                     itemIcon="priority_high"
                   />
