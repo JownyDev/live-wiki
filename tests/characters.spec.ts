@@ -52,6 +52,22 @@ const loadCharactersModule = async (): Promise<{
           } | null;
         }
       | null;
+    memoryProfile:
+      | {
+          interestTags: string[];
+          relationshipTags: string[];
+          allowedTags: string[];
+          blockedTags: string[];
+          provenancePolicy: {
+            allowed: string[];
+            default: string | null;
+          } | null;
+          retrievalLimits: {
+            maxItems: number | null;
+            maxTokensSummary: number | null;
+          } | null;
+        }
+      | null;
   } | null>;
 }> => {
   return await import('../src/lib/content/characters');
@@ -169,6 +185,33 @@ describe('content/characters contract', () => {
       voice: {
         tone: 'measured',
         styleNotes: ['short clauses', 'asks for confirmation'],
+      },
+    });
+  });
+
+  it('getCharacterById exposes memory profile fields when present', async () => {
+    const baseDir = await createTempBaseDirWithCharacterFixtures([
+      'memory-profile-valid.md',
+    ]);
+    const { getCharacterById } = await loadCharactersModule();
+
+    const result = await getCharacterById('memory-profile-valid', baseDir);
+    expect(result).not.toBeNull();
+    if (!result) {
+      throw new Error('Expected character');
+    }
+    expect(result.memoryProfile).toEqual({
+      interestTags: ['zone:haven-docks.*', 'rumor.*'],
+      relationshipTags: ['character:arina-mora.*', 'player.*'],
+      allowedTags: ['help.*', 'trade.*'],
+      blockedTags: ['divine.*'],
+      provenancePolicy: {
+        allowed: ['seen', 'heard', 'rumor', 'inferred'],
+        default: 'heard',
+      },
+      retrievalLimits: {
+        maxItems: 6,
+        maxTokensSummary: 160,
       },
     });
   });

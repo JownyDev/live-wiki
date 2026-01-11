@@ -1,0 +1,39 @@
+---
+type Props = {
+  title: string;
+};
+
+const { title } = Astro.props as Props;
+---
+
+<div class="memory-card">
+  <h3 class="memory-card__title">{title}</h3>
+  <div class="memory-card__content">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .memory-card {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .memory-card__title {
+    margin: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+  }
+
+  .memory-card__content {
+    display: grid;
+    gap: var(--space-3);
+  }
+</style>

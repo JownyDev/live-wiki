@@ -1,0 +1,109 @@
+---
+import MemoryProfileCard from './MemoryProfileCard.astro';
+
+type TagGroup = {
+  label: string;
+  items: string[];
+  variant: 'interest' | 'relationships' | 'allowed' | 'blocked';
+};
+
+type Props = {
+  interestTags?: string[];
+  relationshipTags?: string[];
+  allowedTags?: string[];
+  blockedTags?: string[];
+};
+
+const {
+  interestTags = [],
+  relationshipTags = [],
+  allowedTags = [],
+  blockedTags = [],
+} = Astro.props as Props;
+
+const groups: TagGroup[] = [
+  { label: 'Interest', items: interestTags, variant: 'interest' },
+  { label: 'Relationships', items: relationshipTags, variant: 'relationships' },
+  { label: 'Allowed', items: allowedTags, variant: 'allowed' },
+  { label: 'Blocked', items: blockedTags, variant: 'blocked' },
+].filter((group) => group.items.length > 0);
+
+const shouldRender = groups.length > 0;
+---
+
+{shouldRender ? (
+  <MemoryProfileCard title="Tags">
+    <div class="memory-tags">
+      {groups.map((group) => (
+        <div class="memory-tags__group">
+          <span class="memory-tags__label">{group.label}</span>
+          <div class="memory-tags__list">
+            {group.items.map((item) => (
+              <span class={`memory-tags__tag memory-tags__tag--${group.variant}`}>
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </MemoryProfileCard>
+) : null}
+
+<style>
+  .memory-tags {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .memory-tags__group {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .memory-tags__label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-muted);
+  }
+
+  .memory-tags__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .memory-tags__tag {
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .memory-tags__tag--interest {
+    color: #34d399;
+    background: rgba(52, 211, 153, 0.12);
+    border-color: rgba(52, 211, 153, 0.2);
+  }
+
+  .memory-tags__tag--relationships {
+    color: #818cf8;
+    background: rgba(129, 140, 248, 0.12);
+    border-color: rgba(129, 140, 248, 0.2);
+  }
+
+  .memory-tags__tag--allowed {
+    color: #60a5fa;
+    background: rgba(96, 165, 250, 0.12);
+    border-color: rgba(96, 165, 250, 0.2);
+  }
+
+  .memory-tags__tag--blocked {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.12);
+    border-color: rgba(248, 113, 113, 0.2);
+  }
+</style>

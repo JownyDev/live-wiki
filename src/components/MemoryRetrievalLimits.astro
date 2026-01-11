@@ -1,0 +1,63 @@
+---
+import MemoryProfileCard from './MemoryProfileCard.astro';
+
+type Props = {
+  maxItems?: number | null;
+  maxTokensSummary?: number | null;
+};
+
+const { maxItems = null, maxTokensSummary = null } = Astro.props as Props;
+const hasItems = typeof maxItems === 'number';
+const hasTokens = typeof maxTokensSummary === 'number';
+const shouldRender = hasItems || hasTokens;
+---
+
+{shouldRender ? (
+  <MemoryProfileCard title="Retrieval Limits">
+    <div class="memory-limits">
+      {hasItems ? (
+        <div class="memory-limits__item">
+          <span class="memory-limits__label">Max Items:</span>
+          <span class="memory-limits__value">{maxItems}</span>
+        </div>
+      ) : null}
+      {hasTokens ? (
+        <div class="memory-limits__item">
+          <span class="memory-limits__label">Max Tokens Summary:</span>
+          <span class="memory-limits__value">{maxTokensSummary}</span>
+        </div>
+      ) : null}
+    </div>
+  </MemoryProfileCard>
+) : null}
+
+<style>
+  .memory-limits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .memory-limits__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.45rem 0.75rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-muted);
+    flex: 1 1 12rem;
+  }
+
+  .memory-limits__label {
+    font-size: 0.7rem;
+    color: var(--color-muted);
+    font-weight: 600;
+  }
+
+  .memory-limits__value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+</style>

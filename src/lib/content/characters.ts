@@ -45,6 +45,20 @@ export type CharacterPersona = {
   biographyHighlights: string[];
   voice: CharacterPersonaVoice | null;
 };
+export type CharacterMemoryProfile = {
+  interestTags: string[];
+  relationshipTags: string[];
+  allowedTags: string[];
+  blockedTags: string[];
+  provenancePolicy: {
+    allowed: string[];
+    default: string | null;
+  } | null;
+  retrievalLimits: {
+    maxItems: number | null;
+    maxTokensSummary: number | null;
+  } | null;
+};
 export type Character = {
   id: string;
   name: string;
@@ -58,6 +72,7 @@ export type Character = {
   goals: CharacterGoals | null;
   capabilities: CharacterCapabilities | null;
   persona: CharacterPersona | null;
+  memoryProfile: CharacterMemoryProfile | null;
   body: string;
 };
 
@@ -98,6 +113,20 @@ const getOptionalDateField = (
     return null;
   }
   return getDateField(record, field);
+};
+
+const getOptionalNumberField = (
+  record: Record<string, unknown>,
+  field: string,
+): number | null => {
+  const value = record[field];
+  if (typeof value === 'undefined' || value === null) {
+    return null;
+  }
+  if (typeof value !== 'number' || Number.isNaN(value)) {
+    throw new Error(`Invalid ${field}`);
+  }
+  return value;
 };
 
 const getRelatedCharactersField = (value: unknown): RelatedCharacter[] => {
@@ -227,6 +256,52 @@ const getPersonaField = (
   };
 };
 
+const getMemoryProfileField = (
+  record: Record<string, unknown>,
+): CharacterMemoryProfile | null => {
+  const value = record.memory_profile;
+  if (typeof value === 'undefined' || value === null) {
+    return null;
+  }
+  if (!isRecord(value)) {
+    throw new Error('Invalid memory_profile');
+  }
+  const provenanceValue = value.provenance_policy;
+  const provenancePolicy =
+    typeof provenanceValue === 'undefined' || provenanceValue === null
+      ? null
+      : (() => {
+          if (!isRecord(provenanceValue)) {
+            throw new Error('Invalid memory_profile');
+          }
+          return {
+            allowed: getStringArrayField(provenanceValue, 'allowed'),
+            default: getOptionalStringField(provenanceValue, 'default'),
+          };
+        })();
+  const limitsValue = value.retrieval_limits;
+  const retrievalLimits =
+    typeof limitsValue === 'undefined' || limitsValue === null
+      ? null
+      : (() => {
+          if (!isRecord(limitsValue)) {
+            throw new Error('Invalid memory_profile');
+          }
+          return {
+            maxItems: getOptionalNumberField(limitsValue, 'max_items'),
+            maxTokensSummary: getOptionalNumberField(limitsValue, 'max_tokens_summary'),
+          };
+        })();
+  return {
+    interestTags: getStringArrayField(value, 'interest_tags'),
+    relationshipTags: getStringArrayField(value, 'relationship_tags'),
+    allowedTags: getStringArrayField(value, 'allowed_tags'),
+    blockedTags: getStringArrayField(value, 'blocked_tags'),
+    provenancePolicy,
+    retrievalLimits,
+  };
+};
+
 const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
   const { data, content } = parseFrontmatter(markdown);
   if (data.type !== 'character') {
@@ -245,6 +320,7 @@ const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
   const goals = getGoalsField(data);
   const capabilities = getCapabilitiesField(data);
   const persona = getPersonaField(data);
+  const memoryProfile = getMemoryProfileField(data);
 
   return {
     id,
@@ -259,6 +335,7 @@ const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
     goals,
     capabilities,
     persona,
+    memoryProfile,
     body: content,
   };
 };

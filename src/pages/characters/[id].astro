@@ -10,6 +10,9 @@ import CapabilityCard from '../../components/CapabilityCard.astro';
 import GoalList from '../../components/GoalList.astro';
 import KnowledgeList from '../../components/KnowledgeList.astro';
 import KnowledgeSummary from '../../components/KnowledgeSummary.astro';
+import MemoryProvenancePolicy from '../../components/MemoryProvenancePolicy.astro';
+import MemoryRetrievalLimits from '../../components/MemoryRetrievalLimits.astro';
+import MemoryTags from '../../components/MemoryTags.astro';
 import PersonaArchetype from '../../components/PersonaArchetype.astro';
 import PersonaBiographyHighlights from '../../components/PersonaBiographyHighlights.astro';
 import PersonaTaboos from '../../components/PersonaTaboos.astro';
@@ -147,6 +150,24 @@ const hasPersona =
     persona.biographyHighlights.length > 0 ||
     (personaVoice !== null &&
       (Boolean(personaVoice.tone) || personaVoice.styleNotes.length > 0)));
+const memoryProfile = character?.memoryProfile ?? null;
+const hasMemoryTags = Boolean(
+  memoryProfile &&
+    (memoryProfile.interestTags.length > 0 ||
+      memoryProfile.relationshipTags.length > 0 ||
+      memoryProfile.allowedTags.length > 0 ||
+      memoryProfile.blockedTags.length > 0),
+);
+const hasProvenancePolicy = Boolean(
+  memoryProfile?.provenancePolicy &&
+    memoryProfile.provenancePolicy.allowed.length > 0,
+);
+const hasRetrievalLimits = Boolean(
+  memoryProfile?.retrievalLimits &&
+    (memoryProfile.retrievalLimits.maxItems !== null ||
+      memoryProfile.retrievalLimits.maxTokensSummary !== null),
+);
+const hasMemoryProfile = hasMemoryTags || hasProvenancePolicy || hasRetrievalLimits;
 const breadcrumbs: BreadcrumbItem[] = character
   ? [
       { label: 'Inicio', href: '/' },
@@ -259,6 +280,39 @@ if (affinityView) {
                     items={knowledge.canReveal}
                     variant="reveal"
                   />
+                ) : null}
+              </div>
+            </Section>
+          ) : null}
+          {hasMemoryProfile ? (
+            <Section>
+              <SectionHeader title="Memory Profile" showDivider />
+              <div class="character-page__memory">
+                {memoryProfile ? (
+                  <MemoryTags
+                    interestTags={memoryProfile.interestTags}
+                    relationshipTags={memoryProfile.relationshipTags}
+                    allowedTags={memoryProfile.allowedTags}
+                    blockedTags={memoryProfile.blockedTags}
+                  />
+                ) : null}
+                {hasProvenancePolicy || hasRetrievalLimits ? (
+                  <div class="character-page__memory-grid">
+                    {memoryProfile?.provenancePolicy && hasProvenancePolicy ? (
+                      <MemoryProvenancePolicy
+                        allowed={memoryProfile.provenancePolicy.allowed}
+                        defaultValue={memoryProfile.provenancePolicy.default}
+                      />
+                    ) : null}
+                    {memoryProfile?.retrievalLimits && hasRetrievalLimits ? (
+                      <MemoryRetrievalLimits
+                        maxItems={memoryProfile.retrievalLimits.maxItems}
+                        maxTokensSummary={
+                          memoryProfile.retrievalLimits.maxTokensSummary
+                        }
+                      />
+                    ) : null}
+                  </div>
                 ) : null}
               </div>
             </Section>

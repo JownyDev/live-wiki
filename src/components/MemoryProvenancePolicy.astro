@@ -1,0 +1,55 @@
+---
+import MemoryProfileCard from './MemoryProfileCard.astro';
+
+type Props = {
+  allowed: string[];
+  defaultValue?: string | null;
+};
+
+const { allowed, defaultValue = null } = Astro.props as Props;
+const hasItems = allowed.length > 0;
+---
+
+{hasItems ? (
+  <MemoryProfileCard title="Provenance Policy">
+    <div class="memory-provenance">
+      {allowed.map((item) => (
+        <span
+          class={
+            item === defaultValue
+              ? 'memory-provenance__item memory-provenance__item--active'
+              : 'memory-provenance__item'
+          }
+        >
+          {item}
+        </span>
+      ))}
+    </div>
+  </MemoryProfileCard>
+) : null}
+
+<style>
+  .memory-provenance {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: var(--space-1);
+    background: var(--color-surface-muted);
+    border-radius: var(--radius-md);
+    padding: var(--space-1);
+  }
+
+  .memory-provenance__item {
+    text-align: center;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    border-radius: var(--radius-sm);
+  }
+
+  .memory-provenance__item--active {
+    background: var(--color-accent);
+    color: #ffffff;
+    box-shadow: var(--shadow-soft);
+  }
+</style>
