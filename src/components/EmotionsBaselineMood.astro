@@ -15,7 +15,12 @@ const hasItems = items.length > 0;
 
 {hasItems ? (
   <div class="emotions-baseline">
-    <h3 class="emotions-baseline__title">Baseline Mood</h3>
+    <h3 class="emotions-baseline__title">
+      <span class="material-symbols-outlined emotions-baseline__icon" aria-hidden="true">
+        mood
+      </span>
+      Baseline Mood
+    </h3>
     <div class="emotions-baseline__list">
       {items.map((item) => (
         <div class="emotions-baseline__item">
@@ -50,12 +55,19 @@ const hasItems = items.length > 0;
   }
 
   .emotions-baseline__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
     margin: 0;
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--color-accent);
+  }
+
+  .emotions-baseline__icon {
+    font-size: 0.9rem;
   }
 
   .emotions-baseline__list {

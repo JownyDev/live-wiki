@@ -29,11 +29,22 @@ const hasNotes = notes.length > 0;
 ---
 
 <div class="emotions-sensitivity">
-  <h3 class="emotions-sensitivity__title">Sensitivities &amp; Manipulability</h3>
+  <h3 class="emotions-sensitivity__title">
+    <span class="material-symbols-outlined emotions-sensitivity__icon" aria-hidden="true">
+      psychology
+    </span>
+    Sensitivities &amp; Manipulability
+  </h3>
   <div class="emotions-sensitivity__grid">
     {hasAngers ? (
       <div class="emotions-sensitivity__block">
         <div class="emotions-sensitivity__heading emotions-sensitivity__heading--anger">
+          <span
+            class="material-symbols-outlined emotions-sensitivity__heading-icon"
+            aria-hidden="true"
+          >
+            warning
+          </span>
           Angers If
         </div>
         <ul class="emotions-sensitivity__list">
@@ -49,6 +60,12 @@ const hasNotes = notes.length > 0;
     {hasCalms ? (
       <div class="emotions-sensitivity__block">
         <div class="emotions-sensitivity__heading emotions-sensitivity__heading--calm">
+          <span
+            class="material-symbols-outlined emotions-sensitivity__heading-icon"
+            aria-hidden="true"
+          >
+            check_circle
+          </span>
           Calms If
         </div>
         <ul class="emotions-sensitivity__list">
@@ -77,9 +94,17 @@ const hasNotes = notes.length > 0;
       </div>
       {hasNotes ? (
         <div class="emotions-sensitivity__notes">
-          {notes.map((note) => (
-            <p>{note}</p>
-          ))}
+          <span
+            class="material-symbols-outlined emotions-sensitivity__notes-icon"
+            aria-hidden="true"
+          >
+            info
+          </span>
+          <div class="emotions-sensitivity__notes-text">
+            {notes.map((note) => (
+              <p>{note}</p>
+            ))}
+          </div>
         </div>
       ) : null}
     </div>
@@ -97,6 +122,9 @@ const hasNotes = notes.length > 0;
   }
 
   .emotions-sensitivity__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
     margin: 0;
     font-size: 0.7rem;
     font-weight: 700;
@@ -105,16 +133,27 @@ const hasNotes = notes.length > 0;
     color: var(--color-accent);
   }
 
+  .emotions-sensitivity__icon {
+    font-size: 0.9rem;
+  }
+
   .emotions-sensitivity__grid {
     display: grid;
     gap: var(--space-4);
   }
 
   .emotions-sensitivity__heading {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
     font-size: 0.65rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.12em;
+  }
+
+  .emotions-sensitivity__heading-icon {
+    font-size: 0.95rem;
   }
 
   .emotions-sensitivity__heading--anger {
@@ -202,7 +241,7 @@ const hasNotes = notes.length > 0;
   }
 
   .emotions-sensitivity__notes {
-    display: grid;
+    display: flex;
     gap: var(--space-2);
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
@@ -211,6 +250,21 @@ const hasNotes = notes.length > 0;
     color: var(--color-text);
     font-size: 0.75rem;
     font-style: italic;
+  }
+
+  .emotions-sensitivity__notes-icon {
+    font-size: 0.9rem;
+    color: var(--color-accent);
+    margin-top: 0.05rem;
+  }
+
+  .emotions-sensitivity__notes-text {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .emotions-sensitivity__notes-text p {
+    margin: 0;
   }
 
   .emotions-sensitivity__notes p {

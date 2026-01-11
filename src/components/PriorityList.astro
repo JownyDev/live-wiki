@@ -2,22 +2,43 @@
 type Props = {
   label: string;
   items: string[];
+  icon?: string;
+  itemIcon?: string;
   emptyText?: string;
 };
 
-const { label, items, emptyText } = Astro.props as Props;
+const { label, items, icon, itemIcon, emptyText } = Astro.props as Props;
 const hasItems = items.length > 0;
 const shouldRender = hasItems || typeof emptyText === 'string';
 ---
 
 {shouldRender ? (
   <div class="priority-list">
-    <h3 class="priority-list__label">{label}</h3>
+    <h3 class="priority-list__label">
+      {icon ? (
+        <span
+          class="material-symbols-outlined priority-list__label-icon"
+          aria-hidden="true"
+        >
+          {icon}
+        </span>
+      ) : null}
+      {label}
+    </h3>
     {hasItems ? (
       <div class="priority-list__items">
         {items.map((item) => (
           <div class="priority-list__item">
-            <span class="priority-list__icon" aria-hidden="true"></span>
+            {itemIcon ? (
+              <span
+                class="material-symbols-outlined priority-list__item-icon"
+                aria-hidden="true"
+              >
+                {itemIcon}
+              </span>
+            ) : (
+              <span class="priority-list__dot" aria-hidden="true"></span>
+            )}
             <span class="priority-list__text">{item}</span>
           </div>
         ))}
@@ -39,12 +60,19 @@ const shouldRender = hasItems || typeof emptyText === 'string';
   }
 
   .priority-list__label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
     margin: 0;
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--color-accent);
+  }
+
+  .priority-list__icon {
+    font-size: 0.9rem;
   }
 
   .priority-list__items {
@@ -63,11 +91,20 @@ const shouldRender = hasItems || typeof emptyText === 'string';
     background: var(--color-surface-muted);
   }
 
-  .priority-list__icon {
+  .priority-list__label-icon {
+    font-size: 0.9rem;
+  }
+
+  .priority-list__dot {
     width: 0.35rem;
     height: 0.35rem;
     border-radius: var(--radius-pill);
     background: #f5b14a;
+  }
+
+  .priority-list__item-icon {
+    font-size: 0.9rem;
+    color: #f5b14a;
   }
 
   .priority-list__text {

@@ -8,7 +8,7 @@ type Props = {
 const { items } = Astro.props as Props;
 ---
 
-<PersonaCard title="Biography Highlights" span="full">
+<PersonaCard title="Biography Highlights" span="full" icon="menu_book">
   <ul class="persona-highlights">
     {items.map((item) => (
       <li>{item}</li>

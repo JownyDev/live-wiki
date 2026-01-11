@@ -4,9 +4,10 @@ type Props = {
   triggers: string[];
   notes?: string[];
   filters?: string[];
+  icon?: string;
 };
 
-const { action, triggers, notes = [], filters = [] } = Astro.props as Props;
+const { action, triggers, notes = [], filters = [], icon } = Astro.props as Props;
 const hasNotes = notes.length > 0;
 const hasFilters = filters.length > 0;
 ---
@@ -14,6 +15,11 @@ const hasFilters = filters.length > 0;
 <article class="capability-card">
   <header class="capability-card__header">
     <h3 class="capability-card__title">{action}</h3>
+    {icon ? (
+      <span class="material-symbols-outlined capability-card__icon" aria-hidden="true">
+        {icon}
+      </span>
+    ) : null}
   </header>
   <div class="capability-card__body">
     <div class="capability-card__section">
@@ -72,6 +78,11 @@ const hasFilters = filters.length > 0;
     font-size: 1.05rem;
     font-weight: 700;
     color: var(--color-text);
+  }
+
+  .capability-card__icon {
+    font-size: 1.1rem;
+    color: var(--color-muted);
   }
 
   .capability-card__body {

@@ -12,11 +12,26 @@ const { label, items, variant = 'knows', emptyText } = Astro.props as Props;
 const hasItems = items.length > 0;
 const shouldRender = hasItems || typeof emptyText === 'string';
 const className = `knowledge-list knowledge-list--${variant}`;
+const iconName = (() => {
+  switch (variant) {
+    case 'blindspots':
+      return 'visibility_off';
+    case 'reveal':
+      return 'key';
+    default:
+      return 'visibility';
+  }
+})();
 ---
 
 {shouldRender ? (
   <div class={className}>
-    <h3 class="knowledge-list__label">{label}</h3>
+    <h3 class="knowledge-list__label">
+      <span class="material-symbols-outlined knowledge-list__icon" aria-hidden="true">
+        {iconName}
+      </span>
+      {label}
+    </h3>
     {hasItems ? (
       <ul class="knowledge-list__items">
         {items.map((item) => (
@@ -43,12 +58,19 @@ const className = `knowledge-list knowledge-list--${variant}`;
   }
 
   .knowledge-list__label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
     margin: 0;
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--color-accent);
+  }
+
+  .knowledge-list__icon {
+    font-size: 0.9rem;
   }
 
   .knowledge-list__items {

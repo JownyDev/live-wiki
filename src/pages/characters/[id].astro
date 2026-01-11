@@ -175,13 +175,13 @@ const hasRetrievalLimits = Boolean(
 const hasMemoryProfile = hasMemoryTags || hasProvenancePolicy || hasRetrievalLimits;
 const emotionsProfile = character?.emotionsProfile ?? null;
 const baselineMoodItems: BaselineMoodItem[] = emotionsProfile
-  ? Object.entries(emotionsProfile.baselineMood).map(([label, value]) => ({
-      label: label
+  ? Object.entries(emotionsProfile.baselineMood).map(([key, value]) => ({
+      label: key
         .split('_')
         .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
         .join(' '),
       value,
-      tone: label.toLowerCase(),
+      tone: key.toLowerCase(),
     }))
   : [];
 const towardPlayer = emotionsProfile?.towardPlayer ?? null;
@@ -379,12 +379,19 @@ if (affinityView) {
               <SectionHeader title="Goals" showDivider />
               <div class="character-page__goals">
                 {goals && goals.longTerm.length > 0 ? (
-                  <GoalList label="Long Term Goals" items={goals.longTerm} />
+                  <GoalList
+                    label="Long Term Goals"
+                    items={goals.longTerm}
+                    icon="flag"
+                    itemIcon="ads_click"
+                  />
                 ) : null}
                 {goals && goals.typicalPriorities.length > 0 ? (
                   <PriorityList
                     label="Typical Priorities"
                     items={goals.typicalPriorities}
+                    icon="list_alt"
+                    itemIcon="priority_high"
                   />
                 ) : null}
               </div>

@@ -4,12 +4,13 @@ import PersonaCard from './PersonaCard.astro';
 type Props = {
   label: string;
   items: string[];
+  icon?: string;
 };
 
-const { label, items } = Astro.props as Props;
+const { label, items, icon } = Astro.props as Props;
 ---
 
-<PersonaCard title={label}>
+<PersonaCard title={label} icon={icon}>
   <ul class="persona-tag-list">
     {items.map((item) => (
       <li>{item}</li>

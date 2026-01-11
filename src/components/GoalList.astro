@@ -2,22 +2,40 @@
 type Props = {
   label: string;
   items: string[];
+  icon?: string;
+  itemIcon?: string;
   emptyText?: string;
 };
 
-const { label, items, emptyText } = Astro.props as Props;
+const { label, items, icon, itemIcon, emptyText } = Astro.props as Props;
 const hasItems = items.length > 0;
 const shouldRender = hasItems || typeof emptyText === 'string';
 ---
 
 {shouldRender ? (
   <div class="goal-list">
-    <h3 class="goal-list__label">{label}</h3>
+    <h3 class="goal-list__label">
+      {icon ? (
+        <span class="material-symbols-outlined goal-list__icon" aria-hidden="true">
+          {icon}
+        </span>
+      ) : null}
+      {label}
+    </h3>
     {hasItems ? (
       <ul class="goal-list__items">
         {items.map((item) => (
           <li class="goal-list__item">
-            <span class="goal-list__dot" aria-hidden="true"></span>
+            {itemIcon ? (
+              <span
+                class="material-symbols-outlined goal-list__item-icon"
+                aria-hidden="true"
+              >
+                {itemIcon}
+              </span>
+            ) : (
+              <span class="goal-list__dot" aria-hidden="true"></span>
+            )}
             <span class="goal-list__text">{item}</span>
           </li>
         ))}
@@ -39,12 +57,19 @@ const shouldRender = hasItems || typeof emptyText === 'string';
   }
 
   .goal-list__label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
     margin: 0;
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--color-accent);
+  }
+
+  .goal-list__icon {
+    font-size: 0.9rem;
   }
 
   .goal-list__items {
@@ -59,6 +84,12 @@ const shouldRender = hasItems || typeof emptyText === 'string';
     display: flex;
     align-items: flex-start;
     gap: var(--space-2);
+  }
+
+  .goal-list__item-icon {
+    font-size: 1rem;
+    color: var(--color-accent);
+    margin-top: 0.1rem;
   }
 
   .goal-list__dot {

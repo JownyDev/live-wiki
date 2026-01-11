@@ -21,7 +21,12 @@ const badgeClass = (() => {
 ---
 
 <div class="emotions-toward">
-  <h3 class="emotions-toward__title">Toward Player</h3>
+  <h3 class="emotions-toward__title">
+    <span class="material-symbols-outlined emotions-toward__icon" aria-hidden="true">
+      person_pin_circle
+    </span>
+    Toward Player
+  </h3>
   <div class="emotions-toward__content">
     <span class={badgeClass}>{stance}</span>
     {note ? <p class="emotions-toward__note">"{note}"</p> : null}
@@ -39,12 +44,19 @@ const badgeClass = (() => {
   }
 
   .emotions-toward__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
     margin: 0;
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--color-accent);
+  }
+
+  .emotions-toward__icon {
+    font-size: 0.9rem;
   }
 
   .emotions-toward__content {

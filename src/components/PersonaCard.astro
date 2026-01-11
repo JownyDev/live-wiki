@@ -3,15 +3,23 @@ type PersonaCardSpan = 'wide' | 'full';
 
 type Props = {
   title: string;
+  icon?: string;
   span?: PersonaCardSpan;
 };
 
-const { title, span } = Astro.props as Props;
+const { title, icon, span } = Astro.props as Props;
 const className = span ? `persona-card persona-card--${span}` : 'persona-card';
 ---
 
 <div class={className}>
-  <h3 class="persona-card__label">{title}</h3>
+  <h3 class="persona-card__label">
+    {icon ? (
+      <span class="material-symbols-outlined persona-card__icon" aria-hidden="true">
+        {icon}
+      </span>
+    ) : null}
+    {title}
+  </h3>
   <div class="persona-card__content">
     <slot />
   </div>
@@ -28,12 +36,19 @@ const className = span ? `persona-card persona-card--${span}` : 'persona-card';
   }
 
   .persona-card__label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
     margin: 0;
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--color-accent);
+  }
+
+  .persona-card__icon {
+    font-size: 0.9rem;
   }
 
   .persona-card__content {
