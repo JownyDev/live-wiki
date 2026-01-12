@@ -155,3 +155,10 @@ CI falla por:
 - Código (identificadores) en inglés; comentarios en ES.
 
 ---
+
+## Lore authoring
+
+- Antes de editar lore, lee `AGENTS-LORE.md`.
+- Después de editar lore, pasa validación (`pnpm wiki:check` / `pnpm verify`).
+
+---

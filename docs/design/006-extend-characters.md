@@ -30,25 +30,19 @@ Ampliar el frontmatter de `type: character` para soportar el **sistema contextua
 ```yaml
 ---
 type: character
-id: character:character-name
+id: character-name
 name: Character Name
 
 # --- Meta / UI ---
-status: draft # draft | canon
 origin: unknown
 image: /img/character.webp
-tags:
-  - npc
-  - faction:unknown
-  - zone:unknown
 
 # --- Línea temporal (opcional) ---
 born: 2999-01-01
 died: 3005-01-01
 
 # --- Afinidades / mecánicas (opcional, si aplica) ---
-affinity:
-  - element:tide-mist
+affinity: element:tide-mist
 
 # --- Relaciones (conocimiento estable) ---
 related_characters:

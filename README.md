@@ -131,7 +131,7 @@ GitHub Actions runs on push/PR:
 - install deps (pnpm)
 - quality checks
 - tests
-- wiki check
+- pnpm wiki:check
 - build
 
 Workflow: `.github/workflows/ci.yml`

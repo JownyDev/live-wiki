@@ -202,9 +202,9 @@ Opcionales:
 
 ## 8) CLI (MVP)
 Comandos:
-- `wiki new <type> <id>` → crea archivo desde `templates/` con frontmatter mínimo.
-- `wiki check` → ejecuta `lore-linter` y devuelve reporte.
-- `wiki build` → build de Astro (usado por CI).
+- `pnpm wiki:new <type> <id>` → crea archivo desde `templates/` con frontmatter mínimo.
+- `pnpm wiki:check` → ejecuta `lore-linter` y devuelve reporte.
+- `pnpm wiki:build` → build de Astro (usado por CI).
 
 ---
 
@@ -214,7 +214,7 @@ GitHub Actions (en PR y main):
 - `pnpm lint`
 - `pnpm typecheck`
 - `pnpm test`
-- `pnpm wiki check`
+- `pnpm wiki:check`
 - `pnpm build`
 
 ---
