@@ -10,7 +10,7 @@ const places = await listPlaces();
 ---
 
 <BaseLayout title={title}>
-  <Header title={title} />
+  <Header title={title} icon="place" />
   <Section>
     {places.length === 0 ? (
       <p>No hay lugares todavía.</p>

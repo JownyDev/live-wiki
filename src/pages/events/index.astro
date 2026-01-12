@@ -10,7 +10,7 @@ const events = await listEvents();
 ---
 
 <BaseLayout title={title} lang="en">
-  <Header title={title} />
+  <Header title={title} icon="event" />
   <Section>
     {events.length === 0 ? (
       <p>No hay eventos todavía.</p>

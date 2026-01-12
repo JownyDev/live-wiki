@@ -22,7 +22,7 @@ const resolvedAlt = imageAlt ?? name;
     {imageUrl ? <EntityImage src={imageUrl} alt={resolvedAlt} variant="hero" /> : null}
     <div class="character-hero__content">
       {hasBadges ? (
-        <div class="character-hero__badges">
+        <div class="character-hero__badges tag-list">
           <slot name="badges" />
         </div>
       ) : null}
@@ -58,12 +58,6 @@ const resolvedAlt = imageAlt ?? name;
   .character-hero__content {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .character-hero__badges {
-    display: flex;
-    flex-wrap: wrap;
     gap: var(--space-2);
   }
 

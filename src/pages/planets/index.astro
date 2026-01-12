@@ -10,7 +10,7 @@ const planets = await listPlanets();
 ---
 
 <BaseLayout title={title}>
-  <Header title={title} />
+  <Header title={title} icon="public" />
   <Section>
     {planets.length === 0 ? (
       <p>No hay planetas todavía.</p>

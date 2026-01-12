@@ -16,13 +16,42 @@ type Props = {
 const { angersIf = [], calmsIf = [], manipulability = null } = Astro.props as Props;
 const hasAngers = angersIf.length > 0;
 const hasCalms = calmsIf.length > 0;
+type FactorTone = 'high' | 'medium' | 'low' | 'unknown';
+
+const hasText = (value: string | null | undefined): value is string =>
+  typeof value === 'string' && value.trim().length > 0;
+
+const getFactorTone = (value: string): FactorTone => {
+  const normalized = value.trim().toLowerCase();
+
+  if (normalized === 'high') {
+    return 'high';
+  }
+
+  if (normalized === 'medium') {
+    return 'medium';
+  }
+
+  if (normalized === 'low') {
+    return 'low';
+  }
+
+  return 'unknown';
+};
+
 const factors = manipulability
   ? [
       { label: 'Empathy', value: manipulability.byEmpathy },
       { label: 'Bribe', value: manipulability.byBribe },
       { label: 'Intimidation', value: manipulability.byIntimidation },
       { label: 'Authority', value: manipulability.byAuthority },
-    ].filter((factor) => Boolean(factor.value))
+    ]
+      .filter((factor) => hasText(factor.value))
+      .map((factor) => ({
+        label: factor.label,
+        value: factor.value,
+        tone: getFactorTone(factor.value),
+      }))
   : [];
 const notes = manipulability?.notes ?? [];
 const hasNotes = notes.length > 0;
@@ -82,11 +111,13 @@ const hasNotes = notes.length > 0;
   {factors.length > 0 ? (
     <div class="emotions-sensitivity__manipulability">
       <span class="emotions-sensitivity__caption">Manipulability Factors</span>
-      <div class="emotions-sensitivity__factors">
+      <div class="emotions-sensitivity__factors tag-list">
         {factors.map((factor) => (
           <div class="emotions-sensitivity__factor">
             <span class="emotions-sensitivity__factor-label">{factor.label}:</span>
-            <span class="emotions-sensitivity__factor-value">
+            <span
+              class={`emotions-sensitivity__factor-value emotions-sensitivity__factor-value--${factor.tone}`}
+            >
               {String(factor.value).toUpperCase()}
             </span>
           </div>
@@ -213,12 +244,6 @@ const hasNotes = notes.length > 0;
     color: var(--color-muted);
   }
 
-  .emotions-sensitivity__factors {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-
   .emotions-sensitivity__factor {
     display: inline-flex;
     align-items: center;
@@ -235,9 +260,32 @@ const hasNotes = notes.length > 0;
   }
 
   .emotions-sensitivity__factor-value {
-    font-size: 0.65rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.15rem 0.6rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.6rem;
     font-weight: 700;
     color: var(--color-text);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: rgba(148, 163, 184, 0.15);
+  }
+
+  .emotions-sensitivity__factor-value--high {
+    color: #34d399;
+    background: rgba(52, 211, 153, 0.18);
+  }
+
+  .emotions-sensitivity__factor-value--medium {
+    color: #f5b14a;
+    background: rgba(245, 177, 74, 0.2);
+  }
+
+  .emotions-sensitivity__factor-value--low {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.18);
   }
 
   .emotions-sensitivity__notes {

@@ -24,7 +24,7 @@ const hasFilters = filters.length > 0;
   <div class="capability-card__body">
     <div class="capability-card__section">
       <p class="capability-card__label">Triggers</p>
-      <div class="capability-card__tags">
+        <div class="capability-card__tags tag-list">
         {triggers.map((trigger) => (
           <span class="capability-card__tag">{trigger}</span>
         ))}
@@ -102,12 +102,6 @@ const hasFilters = filters.length > 0;
     text-transform: uppercase;
     letter-spacing: 0.12em;
     color: var(--color-muted);
-  }
-
-  .capability-card__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
   }
 
   .capability-card__tag {

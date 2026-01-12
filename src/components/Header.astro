@@ -10,16 +10,24 @@ type MetaItem = {
 type Props = {
   title: string;
   meta?: MetaItem[];
+  icon?: string;
 };
 
-const { title, meta = [] } = Astro.props;
+const { title, meta = [], icon } = Astro.props as Props;
 const hasMeta = meta.length > 0;
 const hasActions = Astro.slots.has('actions');
 ---
 
 <header class="page-header">
   <div class="page-header__title-row">
-    <h1>{title}</h1>
+    <h1 class="page-header__title">
+      {icon ? (
+        <span class="material-symbols-outlined page-header__title-icon" aria-hidden="true">
+          {icon}
+        </span>
+      ) : null}
+      <span>{title}</span>
+    </h1>
     {hasActions ? <div class="page-header__actions"><slot name="actions" /></div> : null}
   </div>
   {hasMeta ? (
@@ -45,9 +53,21 @@ const hasActions = Astro.slots.has('actions');
 
   .page-header__title-row {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     gap: 1rem;
+  }
+
+  .page-header__title {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+  }
+
+  .page-header__title-icon {
+    font-size: 1.35rem;
+    color: var(--color-accent);
   }
 
   .page-header__meta {

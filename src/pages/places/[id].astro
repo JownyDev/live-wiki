@@ -47,7 +47,7 @@ const planetLabel = (() => {
 <BaseLayout title={title}>
   {place ? (
     <>
-      <Header title={place.name} />
+      <Header title={place.name} icon="place" />
       <Section title="Planeta">
         {typeof planetLabel === 'string' ? (
           <p>{planetLabel}</p>
@@ -62,7 +62,7 @@ const planetLabel = (() => {
     </>
   ) : (
     <>
-      <Header title="Lugar no encontrado" />
+      <Header title="Lugar no encontrado" icon="place" />
       <Section>
         <p>El lugar solicitado no existe.</p>
         <p>

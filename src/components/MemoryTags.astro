@@ -37,7 +37,7 @@ const shouldRender = groups.length > 0;
       {groups.map((group) => (
         <div class="memory-tags__group">
           <span class="memory-tags__label">{group.label}</span>
-          <div class="memory-tags__list">
+          <div class="memory-tags__list tag-list">
             {group.items.map((item) => (
               <span class={`memory-tags__tag memory-tags__tag--${group.variant}`}>
                 {item}
@@ -67,12 +67,6 @@ const shouldRender = groups.length > 0;
     text-transform: uppercase;
     letter-spacing: 0.12em;
     color: var(--color-muted);
-  }
-
-  .memory-tags__list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
   }
 
   .memory-tags__tag {

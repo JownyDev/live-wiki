@@ -20,12 +20,12 @@ const title = mechanic ? mechanic.name : 'Mecanica no encontrada';
 <BaseLayout title={title}>
   {mechanic ? (
     <>
-      <Header title={mechanic.name} />
+      <Header title={mechanic.name} icon="tune" />
       <MarkdownDescription content={mechanic.body} />
     </>
   ) : (
     <>
-      <Header title="Mecanica no encontrada" />
+      <Header title="Mecanica no encontrada" icon="tune" />
       <Section>
         <p>La mecanica solicitada no existe.</p>
         <p>

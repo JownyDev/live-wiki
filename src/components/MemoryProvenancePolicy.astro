@@ -8,11 +8,15 @@ type Props = {
 
 const { allowed, defaultValue = null } = Astro.props as Props;
 const hasItems = allowed.length > 0;
+const columnCount = allowed.length;
 ---
 
 {hasItems ? (
   <MemoryProfileCard title="Provenance Policy" icon="policy">
-    <div class="memory-provenance">
+    <div
+      class="memory-provenance"
+      style={`--memory-provenance-columns: ${columnCount};`}
+    >
       {allowed.map((item) => (
         <span
           class={
@@ -31,7 +35,7 @@ const hasItems = allowed.length > 0;
 <style>
   .memory-provenance {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    grid-template-columns: repeat(var(--memory-provenance-columns), minmax(0, 1fr));
     gap: var(--space-1);
     background: var(--color-surface-muted);
     border-radius: var(--radius-md);

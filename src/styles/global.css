@@ -89,6 +89,16 @@ ol {
   padding-left: 1.3rem;
 }
 
+.tag-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
 section {
   margin-bottom: var(--space-5);
 }
@@ -293,11 +303,6 @@ h4 {
 }
 
 .character-page__relation-items {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
   gap: var(--space-2) var(--space-3);
 }
 

@@ -4,16 +4,17 @@ import EntityLink from './EntityLink.astro';
 type NavItem = {
   href: string;
   label: string;
+  icon: string;
 };
 
 const items: NavItem[] = [
-  { href: '/characters', label: 'Personajes' },
-  { href: '/events', label: 'Eventos' },
-  { href: '/places', label: 'Lugares' },
-  { href: '/planets', label: 'Planetas' },
-  { href: '/elements', label: 'Elementos' },
-  { href: '/cards', label: 'Cartas' },
-  { href: '/mechanics', label: 'Mecanicas' },
+  { href: '/characters', label: 'Personajes', icon: 'group' },
+  { href: '/events', label: 'Eventos', icon: 'event' },
+  { href: '/places', label: 'Lugares', icon: 'place' },
+  { href: '/planets', label: 'Planetas', icon: 'public' },
+  { href: '/elements', label: 'Elementos', icon: 'auto_awesome' },
+  { href: '/cards', label: 'Cartas', icon: 'style' },
+  { href: '/mechanics', label: 'Mecanicas', icon: 'tune' },
 ];
 ---
 
@@ -21,7 +22,7 @@ const items: NavItem[] = [
   <ul class="primary-nav__list">
     {items.map((item) => (
       <li>
-        <EntityLink href={item.href} label={item.label} />
+        <EntityLink href={item.href} label={item.label} icon={item.icon} />
       </li>
     ))}
   </ul>
@@ -30,16 +31,24 @@ const items: NavItem[] = [
 <style>
   .primary-nav {
     justify-self: start;
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
 
   .primary-nav__list {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2) var(--space-4);
+    flex-wrap: nowrap;
+    gap: var(--space-2) var(--space-3);
     list-style: none;
     margin: 0;
     padding: 0;
     font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .primary-nav::-webkit-scrollbar {
+    display: none;
   }
 
   :global(.primary-nav .entity-link) {
@@ -49,5 +58,9 @@ const items: NavItem[] = [
 
   :global(.primary-nav .entity-link:hover) {
     color: var(--color-accent);
+  }
+
+  :global(.primary-nav .entity-link__icon) {
+    font-size: 0.9rem;
   }
 </style>

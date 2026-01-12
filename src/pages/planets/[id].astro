@@ -69,7 +69,7 @@ const eventItems: RelationItem[] = events.map((event) => ({
 <BaseLayout title={title}>
   {planet ? (
     <>
-      <Header title={planet.name} />
+      <Header title={planet.name} icon="public" />
       <Section>
         <RelationList label="Lugares" items={placeItems} emptyText="Sin lugares." />
       </Section>
@@ -84,7 +84,7 @@ const eventItems: RelationItem[] = events.map((event) => ({
     </>
   ) : (
     <>
-      <Header title="Planeta no encontrado" />
+      <Header title="Planeta no encontrado" icon="public" />
       <Section>
         <p>El planeta solicitado no existe.</p>
         <p>

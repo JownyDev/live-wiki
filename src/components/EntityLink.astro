@@ -3,15 +3,43 @@ export type EntityLinkProps = {
   label: string;
   href?: string;
   missing?: boolean;
+  icon?: string;
 };
 
-const { label, href, missing = false } = Astro.props;
+const { label, href, missing = false, icon } = Astro.props as EntityLinkProps;
 const isMissing = missing || !href;
 const className = isMissing ? 'entity-link entity-link--missing' : 'entity-link';
 ---
 
 {isMissing ? (
-  <span class={className} aria-disabled="true">{label}</span>
+  <span class={className} aria-disabled="true">
+    {icon ? (
+      <span class="material-symbols-outlined entity-link__icon" aria-hidden="true">
+        {icon}
+      </span>
+    ) : null}
+    <span class="entity-link__label">{label}</span>
+  </span>
 ) : (
-  <a class={className} href={href}>{label}</a>
+  <a class={className} href={href}>
+    {icon ? (
+      <span class="material-symbols-outlined entity-link__icon" aria-hidden="true">
+        {icon}
+      </span>
+    ) : null}
+    <span class="entity-link__label">{label}</span>
+  </a>
 )}
+
+<style>
+  .entity-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .entity-link__icon {
+    font-size: 1rem;
+    color: currentColor;
+  }
+</style>

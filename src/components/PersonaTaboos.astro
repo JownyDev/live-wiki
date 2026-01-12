@@ -11,7 +11,7 @@ const hasItems = items.length > 0;
 
 {hasItems ? (
   <PersonaCard title="Taboos" icon="block">
-    <ul class="persona-taboos">
+    <ul class="persona-taboos tag-list">
       {items.map((item) => (
         <li>{item}</li>
       ))}
@@ -20,15 +20,6 @@ const hasItems = items.length > 0;
 ) : null}
 
 <style>
-  .persona-taboos {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-
   .persona-taboos li {
     padding: 0.2rem 0.65rem;
     border-radius: var(--radius-md);

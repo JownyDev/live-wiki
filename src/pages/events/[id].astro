@@ -119,7 +119,7 @@ if (originView) {
           <DataPanel title="Datos del evento" items={dataItems} />
         </aside>
         <div class="event-page__content">
-          <Header title={event.title} meta={meta} />
+          <Header title={event.title} meta={meta} icon="event" />
           <Section>
             <MarkdownDescription content={event.body} />
           </Section>
@@ -142,7 +142,7 @@ if (originView) {
     </div>
   ) : (
     <>
-      <Header title="Evento no encontrado" />
+      <Header title="Evento no encontrado" icon="event" />
       <Section>
         <p>El evento solicitado no existe.</p>
         <p>

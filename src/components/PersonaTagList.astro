@@ -13,7 +13,7 @@ const hasItems = items.length > 0;
 
 {hasItems ? (
   <PersonaCard title={label} icon={icon}>
-    <ul class="persona-tag-list">
+    <ul class="persona-tag-list tag-list">
       {items.map((item) => (
         <li>{item}</li>
       ))}
@@ -22,15 +22,6 @@ const hasItems = items.length > 0;
 ) : null}
 
 <style>
-  .persona-tag-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-
   .persona-tag-list li {
     padding: 0.2rem 0.65rem;
     border-radius: var(--radius-md);

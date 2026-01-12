@@ -55,7 +55,7 @@ if (originView) {
           <DataPanel title="Datos del elemento" items={dataItems} />
         </aside>
         <div class="element-page__content">
-          <Header title={element.name} />
+          <Header title={element.name} icon="auto_awesome" />
           <Section>
             <MarkdownDescription content={element.body} />
           </Section>
@@ -64,7 +64,7 @@ if (originView) {
     </div>
   ) : (
     <>
-      <Header title="Elemento no encontrado" />
+      <Header title="Elemento no encontrado" icon="auto_awesome" />
       <Section>
         <p>El elemento solicitado no existe.</p>
         <p>

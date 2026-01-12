@@ -10,7 +10,7 @@ const characters = await listCharacters();
 ---
 
 <BaseLayout title={title} lang="en">
-  <Header title={title} />
+  <Header title={title} icon="group" />
   <Section>
     {characters.length === 0 ? (
       <p>No hay personajes todavía.</p>

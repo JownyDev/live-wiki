@@ -105,7 +105,7 @@ const representsItems: RelationItem[] = represents.map((entry) => ({
 <BaseLayout title={title}>
   {card ? (
     <>
-      <Header title={card.name} />
+      <Header title={card.name} icon="style" />
       <Section>
         <RelationList label="Elementos" items={elementItems} emptyText="Sin elementos." />
       </Section>
@@ -118,7 +118,7 @@ const representsItems: RelationItem[] = represents.map((entry) => ({
     </>
   ) : (
     <>
-      <Header title="Carta no encontrada" />
+      <Header title="Carta no encontrada" icon="style" />
       <Section>
         <p>La carta solicitada no existe.</p>
         <p>

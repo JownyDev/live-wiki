@@ -239,15 +239,20 @@ const characterMeta: InlineMetaItem[] = character
 const dataItems: DataPanelItem[] = [];
 
 if (character?.born) {
-  dataItems.push({ label: 'Nacimiento', value: character.born });
+  dataItems.push({ label: 'Nacimiento', value: character.born, icon: 'cake' });
 }
 
 if (character?.died) {
-  dataItems.push({ label: 'Muerte', value: character.died });
+  dataItems.push({ label: 'Muerte', value: character.died, icon: 'heart_broken' });
 }
 
 if (originView) {
-  dataItems.push({ label: 'Origen', value: originView.text, href: originView.href });
+  dataItems.push({
+    label: 'Origen',
+    value: originView.text,
+    href: originView.href,
+    icon: 'location_on',
+  });
 }
 
 if (affinityView) {
@@ -255,6 +260,7 @@ if (affinityView) {
     label: 'Afinidad',
     value: affinityView.text,
     href: affinityView.href,
+    icon: 'auto_awesome',
   });
 }
 ---
@@ -439,7 +445,7 @@ if (affinityView) {
                 {relatedGroups.map((group) => (
                   <div class="character-page__relation-group">
                     <h3 class="character-page__relation-title">{group.label}</h3>
-                    <ul class="character-page__relation-items">
+                    <ul class="character-page__relation-items tag-list">
                       {group.items.map((item) => (
                         <li>
                           <EntityLink

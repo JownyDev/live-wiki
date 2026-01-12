@@ -26,7 +26,7 @@ const shouldRender = hasItems || typeof emptyText === 'string';
       {label}
     </h3>
     {hasItems ? (
-      <div class="priority-list__items">
+      <div class="priority-list__items tag-list">
         {items.map((item) => (
           <div class="priority-list__item">
             {itemIcon ? (
@@ -73,12 +73,6 @@ const shouldRender = hasItems || typeof emptyText === 'string';
 
   .priority-list__icon {
     font-size: 0.9rem;
-  }
-
-  .priority-list__items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
   }
 
   .priority-list__item {
