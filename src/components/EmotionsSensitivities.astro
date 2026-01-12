@@ -22,29 +22,28 @@ const hasText = (value: string | null | undefined): value is string =>
   typeof value === 'string' && value.trim().length > 0;
 
 const getFactorTone = (value: string): FactorTone => {
-  const normalized = value.trim().toLowerCase();
-
-  if (normalized === 'high') {
-    return 'high';
-  }
-
-  if (normalized === 'medium') {
-    return 'medium';
-  }
-
-  if (normalized === 'low') {
-    return 'low';
-  }
-
-  return 'unknown';
+  const normalized = value
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+  const toneMap: Record<string, FactorTone> = {
+    high: 'high',
+    alta: 'high',
+    medium: 'medium',
+    media: 'medium',
+    low: 'low',
+    baja: 'low',
+  };
+  return toneMap[normalized] ?? 'unknown';
 };
 
 const factors = manipulability
   ? [
-      { label: 'Empathy', value: manipulability.byEmpathy },
-      { label: 'Bribe', value: manipulability.byBribe },
-      { label: 'Intimidation', value: manipulability.byIntimidation },
-      { label: 'Authority', value: manipulability.byAuthority },
+      { label: 'Empatia', value: manipulability.byEmpathy },
+      { label: 'Soborno', value: manipulability.byBribe },
+      { label: 'Intimidacion', value: manipulability.byIntimidation },
+      { label: 'Autoridad', value: manipulability.byAuthority },
     ]
       .filter((factor) => hasText(factor.value))
       .map((factor) => ({
@@ -62,7 +61,7 @@ const hasNotes = notes.length > 0;
     <span class="material-symbols-outlined emotions-sensitivity__icon" aria-hidden="true">
       psychology
     </span>
-    Sensitivities &amp; Manipulability
+    Sensibilidades y manipulabilidad
   </h3>
   <div class="emotions-sensitivity__grid">
     {hasAngers ? (
@@ -74,7 +73,7 @@ const hasNotes = notes.length > 0;
           >
             warning
           </span>
-          Angers If
+          Se enfada si
         </div>
         <ul class="emotions-sensitivity__list">
           {angersIf.map((item) => (
@@ -95,7 +94,7 @@ const hasNotes = notes.length > 0;
           >
             check_circle
           </span>
-          Calms If
+          Se calma si
         </div>
         <ul class="emotions-sensitivity__list">
           {calmsIf.map((item) => (
@@ -110,7 +109,7 @@ const hasNotes = notes.length > 0;
   </div>
   {factors.length > 0 ? (
     <div class="emotions-sensitivity__manipulability">
-      <span class="emotions-sensitivity__caption">Manipulability Factors</span>
+      <span class="emotions-sensitivity__caption">Factores de manipulabilidad</span>
       <div class="emotions-sensitivity__factors tag-list">
         {factors.map((factor) => (
           <div class="emotions-sensitivity__factor">

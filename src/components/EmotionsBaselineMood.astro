@@ -11,6 +11,25 @@ type Props = {
 
 const { items } = Astro.props as Props;
 const hasItems = items.length > 0;
+const normalizeTone = (tone?: string): string | null => {
+  if (!tone) {
+    return null;
+  }
+  const normalized = tone
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+  const toneMap: Record<string, string> = {
+    calm: 'calm',
+    calma: 'calm',
+    trust: 'trust',
+    confianza: 'trust',
+    irritation: 'irritation',
+    irritacion: 'irritation',
+  };
+  return toneMap[normalized] ?? null;
+};
 ---
 
 {hasItems ? (
@@ -19,27 +38,26 @@ const hasItems = items.length > 0;
       <span class="material-symbols-outlined emotions-baseline__icon" aria-hidden="true">
         mood
       </span>
-      Baseline Mood
+      Estado de animo base
     </h3>
     <div class="emotions-baseline__list">
-      {items.map((item) => (
-        <div class="emotions-baseline__item">
-          <div class="emotions-baseline__meta">
-            <span class="emotions-baseline__label">{item.label}</span>
-            <span class="emotions-baseline__value">{item.value}%</span>
+      {items.map((item) => {
+        const toneClass = normalizeTone(item.tone);
+        const className = toneClass
+          ? `emotions-baseline__bar emotions-baseline__bar--${toneClass}`
+          : 'emotions-baseline__bar';
+        return (
+          <div class="emotions-baseline__item">
+            <div class="emotions-baseline__meta">
+              <span class="emotions-baseline__label">{item.label}</span>
+              <span class="emotions-baseline__value">{item.value}%</span>
+            </div>
+            <div class="emotions-baseline__track">
+              <div class={className} style={`width: ${item.value}%`}></div>
+            </div>
           </div>
-          <div class="emotions-baseline__track">
-            <div
-              class={
-                item.tone
-                  ? `emotions-baseline__bar emotions-baseline__bar--${item.tone}`
-                  : 'emotions-baseline__bar'
-              }
-              style={`width: ${item.value}%`}
-            ></div>
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   </div>
 ) : null}

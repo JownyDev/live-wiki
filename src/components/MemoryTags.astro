@@ -22,17 +22,17 @@ const {
 } = Astro.props as Props;
 
 const groups: TagGroup[] = [
-  { label: 'Interest', items: interestTags, variant: 'interest' },
-  { label: 'Relationships', items: relationshipTags, variant: 'relationships' },
-  { label: 'Allowed', items: allowedTags, variant: 'allowed' },
-  { label: 'Blocked', items: blockedTags, variant: 'blocked' },
+  { label: 'Intereses', items: interestTags, variant: 'interest' },
+  { label: 'Relaciones', items: relationshipTags, variant: 'relationships' },
+  { label: 'Permitidos', items: allowedTags, variant: 'allowed' },
+  { label: 'Bloqueados', items: blockedTags, variant: 'blocked' },
 ].filter((group) => group.items.length > 0);
 
 const shouldRender = groups.length > 0;
 ---
 
 {shouldRender ? (
-  <MemoryProfileCard title="Tags" icon="sell">
+  <MemoryProfileCard title="Etiquetas" icon="sell">
     <div class="memory-tags">
       {groups.map((group) => (
         <div class="memory-tags__group">

@@ -13,17 +13,17 @@ const shouldRender = hasItems || hasTokens;
 ---
 
 {shouldRender ? (
-  <MemoryProfileCard title="Retrieval Limits" icon="analytics">
+  <MemoryProfileCard title="Limites de recuperacion" icon="analytics">
     <div class="memory-limits">
       {hasItems ? (
         <div class="memory-limits__item">
-          <span class="memory-limits__label">Max Items:</span>
+          <span class="memory-limits__label">Maximo de items:</span>
           <span class="memory-limits__value">{maxItems}</span>
         </div>
       ) : null}
       {hasTokens ? (
         <div class="memory-limits__item">
-          <span class="memory-limits__label">Max Tokens Summary:</span>
+          <span class="memory-limits__label">Maximo de tokens resumen:</span>
           <span class="memory-limits__value">{maxTokensSummary}</span>
         </div>
       ) : null}

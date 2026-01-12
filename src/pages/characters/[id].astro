@@ -118,12 +118,12 @@ const buildRelatedGroups = async (
 
     const characterId = parseWithPrefix(entry.character, 'character:');
     if (!characterId) {
-      groups[groupIndex].items.push({ text: 'missing', missing: true });
+      groups[groupIndex].items.push({ text: 'no encontrado', missing: true });
       continue;
     }
     const relatedCharacter = await getCharacterById(characterId);
     if (!relatedCharacter) {
-      groups[groupIndex].items.push({ text: 'missing', missing: true });
+      groups[groupIndex].items.push({ text: 'no encontrado', missing: true });
       continue;
     }
     groups[groupIndex].items.push({
@@ -265,7 +265,7 @@ if (affinityView) {
 }
 ---
 
-<BaseLayout title={title} lang="en" pageClass="page--character">
+<BaseLayout title={title} lang="es" pageClass="page--character">
   {character ? (
     <div class="character-page">
       <Breadcrumbs items={breadcrumbs} />
@@ -313,28 +313,28 @@ if (affinityView) {
           ) : null}
           {hasKnowledge ? (
             <Section>
-              <SectionHeader title="Knowledge" showDivider />
+              <SectionHeader title="Conocimiento" showDivider />
               <div class="character-page__knowledge">
                 {hasText(knowledgeSummary) ? (
                   <KnowledgeSummary summary={knowledgeSummary} />
                 ) : null}
                 {hasItems(knowledgeKnowsAbout) ? (
                   <KnowledgeList
-                    label="Knows About"
+                    label="Sabe sobre"
                     items={knowledgeKnowsAbout}
                     variant="knows"
                   />
                 ) : null}
                 {hasItems(knowledgeBlindspots) ? (
                   <KnowledgeList
-                    label="Blindspots"
+                    label="Puntos ciegos"
                     items={knowledgeBlindspots}
                     variant="blindspots"
                   />
                 ) : null}
                 {hasItems(knowledgeCanReveal) ? (
                   <KnowledgeList
-                    label="Can Reveal"
+                    label="Puede revelar"
                     items={knowledgeCanReveal}
                     variant="reveal"
                   />
@@ -344,7 +344,7 @@ if (affinityView) {
           ) : null}
           {hasMemoryProfile ? (
             <Section>
-              <SectionHeader title="Memory Profile" showDivider />
+              <SectionHeader title="Perfil de memoria" showDivider />
               <div class="character-page__memory">
                 {memoryProfile ? (
                   <MemoryTags
@@ -377,7 +377,7 @@ if (affinityView) {
           ) : null}
           {hasEmotionsProfile ? (
             <Section>
-              <SectionHeader title="Emotions Profile" showDivider />
+              <SectionHeader title="Perfil emocional" showDivider />
               <div class="character-page__emotions">
                 <div class="character-page__emotions-grid">
                   {hasItems(baselineMoodItems) ? (
@@ -402,11 +402,11 @@ if (affinityView) {
           ) : null}
           {hasGoals ? (
             <Section>
-              <SectionHeader title="Goals" showDivider />
+              <SectionHeader title="Objetivos" showDivider />
               <div class="character-page__goals">
                 {hasItems(goalsLongTerm) ? (
                   <GoalList
-                    label="Long Term Goals"
+                    label="Objetivos a largo plazo"
                     items={goalsLongTerm}
                     icon="flag"
                     itemIcon="ads_click"
@@ -414,7 +414,7 @@ if (affinityView) {
                 ) : null}
                 {hasItems(goalsPriorities) ? (
                   <PriorityList
-                    label="Typical Priorities"
+                    label="Prioridades habituales"
                     items={goalsPriorities}
                     icon="list_alt"
                     itemIcon="priority_high"
@@ -425,7 +425,7 @@ if (affinityView) {
           ) : null}
           {hasCapabilities ? (
             <Section>
-              <SectionHeader title="Capabilities" showDivider />
+              <SectionHeader title="Capacidades" showDivider />
               <div class="character-page__capabilities">
                 {capabilityActions.map((capability) => (
                   <CapabilityCard
@@ -464,7 +464,7 @@ if (affinityView) {
           <Section>
             <SectionHeader title="Eventos relacionados" showDivider>
               <a slot="action" href="/events">
-                Ver timeline
+                Ver linea de tiempo
               </a>
             </SectionHeader>
             {events.length === 0 ? (

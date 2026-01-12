@@ -23,7 +23,7 @@ const hasFilters = filters.length > 0;
   </header>
   <div class="capability-card__body">
     <div class="capability-card__section">
-      <p class="capability-card__label">Triggers</p>
+      <p class="capability-card__label">Disparadores</p>
         <div class="capability-card__tags tag-list">
         {triggers.map((trigger) => (
           <span class="capability-card__tag">{trigger}</span>
@@ -32,7 +32,7 @@ const hasFilters = filters.length > 0;
     </div>
     {hasNotes ? (
       <div class="capability-card__section">
-        <p class="capability-card__label">Notes</p>
+        <p class="capability-card__label">Notas</p>
         <ul class="capability-card__notes">
           {notes.map((note) => (
             <li>{note}</li>

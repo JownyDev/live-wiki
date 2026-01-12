@@ -13,17 +13,17 @@ const shouldRender = hasTone || hasStyleNotes;
 ---
 
 {shouldRender ? (
-  <PersonaCard title="Voice" span="wide" icon="record_voice_over">
+  <PersonaCard title="Voz" span="wide" icon="record_voice_over">
     <div class="persona-voice">
       {hasTone ? (
         <div class="persona-voice__block">
-          <p class="persona-voice__label">Tone</p>
+          <p class="persona-voice__label">Tono</p>
           <p class="persona-voice__tone">{tone}</p>
         </div>
       ) : null}
       {hasStyleNotes ? (
         <div class="persona-voice__block">
-          <p class="persona-voice__label">Style Notes</p>
+          <p class="persona-voice__label">Notas de estilo</p>
           <ul class="persona-voice__notes">
             {styleNotes.map((note) => (
               <li>{note}</li>

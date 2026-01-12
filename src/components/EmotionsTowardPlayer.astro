@@ -6,19 +6,37 @@ type Props = {
 
 const { stance, note = null } = Astro.props as Props;
 const shouldRender = stance.length > 0;
-const normalized = stance.toLowerCase();
-const badgeClass = (() => {
-  switch (normalized) {
-    case 'friendly':
-      return 'emotions-toward__badge emotions-toward__badge--friendly';
-    case 'wary':
-      return 'emotions-toward__badge emotions-toward__badge--wary';
-    case 'hostile':
-      return 'emotions-toward__badge emotions-toward__badge--hostile';
-    default:
-      return 'emotions-toward__badge emotions-toward__badge--neutral';
-  }
-})();
+const normalized = stance
+  .trim()
+  .toLowerCase()
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '');
+const stanceMap: Record<string, 'friendly' | 'wary' | 'hostile' | 'neutral'> = {
+  friendly: 'friendly',
+  amable: 'friendly',
+  amigable: 'friendly',
+  abierto: 'friendly',
+  abierta: 'friendly',
+  open: 'friendly',
+  wary: 'wary',
+  reservado: 'wary',
+  reservada: 'wary',
+  cauteloso: 'wary',
+  cautelosa: 'wary',
+  desconfiado: 'wary',
+  desconfiada: 'wary',
+  guarded: 'wary',
+  hostile: 'hostile',
+  hostil: 'hostile',
+  agresivo: 'hostile',
+  agresiva: 'hostile',
+  neutral: 'neutral',
+  neutro: 'neutral',
+  neutra: 'neutral',
+  evaluando: 'neutral',
+};
+const stanceTone = stanceMap[normalized] ?? 'neutral';
+const badgeClass = `emotions-toward__badge emotions-toward__badge--${stanceTone}`;
 ---
 
 {shouldRender ? (
@@ -27,7 +45,7 @@ const badgeClass = (() => {
       <span class="material-symbols-outlined emotions-toward__icon" aria-hidden="true">
         person_pin_circle
       </span>
-      Toward Player
+      Hacia el jugador
     </h3>
     <div class="emotions-toward__content">
       <span class={badgeClass}>{stance}</span>
