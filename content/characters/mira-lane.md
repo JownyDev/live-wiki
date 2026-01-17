@@ -24,23 +24,23 @@ persona:
     - "apurar el rito"
   biography_bullets:
     - "Mantiene rutas de tiza en el mapa del atrio."
-    - "Oculto la pieza perdida en el canal de agua."
+    - "Oculto la llave de repuesto en el canal de agua."
 knowledge:
-  summary: "Controla las rutas del mapa, el canal de agua y como una ruta se vuelve valida."
+  summary: "Controla las rutas del mapa, el canal de agua y la llave de repuesto del atrio."
   knows_about:
-    - "activacion del cuenco"
     - "marcas del mapa"
-    - "rumores de peregrinos"
+    - "llave de repuesto"
   blindspots:
     - "mecanica de la puerta"
     - "confrontaciones duras"
   can_reveal:
-    - "donde cayo la pieza perdida"
+    - "donde oculto la llave"
     - "como marcar una ruta valida"
 memory_profile:
   interest_tags:
+    # Zona del NPC: eventos locales (ej. acariciar al gato) usan este tag.
+    - "zona:atrio.mapa.*"
     - "mapa.*"
-    - "zona:atrio.*"
     - "agua.*"
   relationship_tags:
     - "jugador.*"
@@ -102,7 +102,7 @@ capabilities:
         - "jugador.inspecciona_mapa"
         - "jugador.ofrece_ayuda"
       notes:
-        - "Pide la pieza perdida del canal."
+        - "Pide recuperar la llave de repuesto del canal."
     - action: "dar_pista"
       triggers:
         - "jugador.confundido"
@@ -115,12 +115,12 @@ capabilities:
         - "jugador.descortes"
       notes:
         - "Se niega a ayudar hasta que el jugador se calme."
-    - action: "testificar"
+    - action: "entregar_llave"
       triggers:
-        - "jugador.recupera_pieza"
-        - "jugador.activa_cuenco"
+        - "jugador.recupera_llave"
+        - "jugador.muestra_cuidado"
       notes:
-        - "Confirma la ruta ante Kellen."
+        - "Entrega la llave y deja la ruta lista."
 ---
 
 Cartografa amable que cuida el mapa del atrio. Ve la puerta como un lugar de esperanza y quiere que la gente llegue al juicio con calma.
@@ -134,7 +134,7 @@ Cartografa amable que cuida el mapa del atrio. Ve la puerta como un lugar de esp
 - Probar que la gentileza tambien abre puertas.
 
 ## Contradiccion
-- Cree en la bondad, pero oculta una pieza del mapa por miedo a que la puerta se use con violencia.
+- Cree en la bondad, pero oculta una llave ajena y empuja atajos "amables" que evitan asumir el peso del rito.
 
 ## Como falla
 - Si el jugador presiona demasiado, se cierra y deja de dar pistas.
@@ -142,5 +142,5 @@ Cartografa amable que cuida el mapa del atrio. Ve la puerta como un lugar de esp
 
 ## En el puzzle
 - Ofrece una tiza especial para marcar rutas en el mapa.
-- Pide recuperar una pieza de piedra que se cayo en el canal de agua.
-- Su testimonio abre la puerta junto con una activacion del Cuenco.
+- Pide recuperar la llave de repuesto escondida en el canal de agua.
+- A nivel jugable, su ruta abre mas rapido, pero se lee como robo y pesa en el juicio.

@@ -23,23 +23,24 @@ persona:
     - "sobornos"
     - "burlas a la puerta"
   biography_bullets:
-    - "Alinea el mapa del atrio a mano."
-    - "Registra testimonios en una libreta de pizarra."
+    - "Custodia la llave del atrio."
+    - "Registra pruebas del rito en una libreta de pizarra."
 knowledge:
-  summary: "Comprende el mecanismo de la puerta y las estaciones del mapa, pero no los veredictos divinos."
+  summary: "Comprende el cerrojo y la llave del atrio, pero no los veredictos divinos."
   knows_about:
-    - "alineacion del mapa"
-    - "reglas de testimonio"
-    - "ritmo de campana"
+    - "uso de la llave"
+    - "reglas de validacion del rito"
+    - "protocolo del cerrojo"
   blindspots:
     - "motivos personales de los peregrinos"
     - "excepciones divinas"
   can_reveal:
-    - "como abrir la puerta"
-    - "que cuenta como testimonio valido"
+    - "como usar la llave"
+    - "que cuenta como prueba valida"
 memory_profile:
   interest_tags:
-    - "zona:atrio.*"
+    # Zona del NPC: eventos locales (ej. acariciar al gato) usan este tag.
+    - "zona:atrio.puerta.*"
     - "ritual.*"
     - "puerta.*"
   relationship_tags:
@@ -97,33 +98,38 @@ capabilities:
         - "jugador.confesion"
       notes:
         - "Pide una accion concreta y su motivo."
-    - action: "pedir_testimonio"
+    - action: "pedir_prueba"
       triggers:
-        - "jugador.busca_testigo"
-        - "jugador.avanza_mapa"
+        - "jugador.busca_prueba"
+        - "jugador.insiste"
       notes:
-        - "Exige un testigo nombrado o confesion directa."
-    - action: "abrir_puerta"
+        - "Exige una prueba clara o confesion directa."
+    - action: "entregar_llave"
       triggers:
-        - "jugador.testimonio_valido"
-        - "jugador.mapa_alineado"
+        - "jugador.asume_responsabilidad"
+        - "jugador.confesion"
       notes:
-        - "Solo abre cuando mapa y testimonio coinciden."
-    - action: "negar_paso"
+        - "Entrega la llave si el jugador acepta el peso del rito."
+    - action: "negar_llave"
       triggers:
         - "jugador.amenaza"
         - "jugador.soborno"
       notes:
-        - "Cierra el mecanismo y termina la conversacion."
+        - "Retira la llave y termina la conversacion."
+    - action: "abrir_puerta"
+      triggers:
+        - "jugador.llave_en_cerrojo"
+      notes:
+        - "Abre cuando la llave correcta gira en el cerrojo."
     - action: "redirigir"
       triggers:
         - "jugador.confundido"
         - "jugador.paso_omitido"
       notes:
-        - "Devuelve al jugador a las estaciones del mapa."
+        - "Devuelve al jugador al rito y sus opciones."
 ---
 
-Guardian de la Puerta del Juicio. Su trabajo es vigilar el mapa del atrio y abrir solo cuando el jugador demuestra una intencion clara.
+Guardian de la Puerta del Juicio. Su trabajo es custodiar la llave del atrio y abrir solo cuando el jugador demuestra una intencion clara.
 
 ## Rol
 - Custodia la puerta y el rito de paso.
@@ -138,15 +144,17 @@ Guardian de la Puerta del Juicio. Su trabajo es vigilar el mapa del atrio y abri
 
 ## Como falla
 - Puede dejar pasar a alguien manipulador si su confesion es muy convincente.
-- Si recibe testimonios falsos, tarda en detectarlo.
+- Si recibe pruebas falsas, tarda en detectarlo.
 
-## Puzzle del mapa (varias soluciones)
-El atrio tiene un mapa grabado con tres estaciones: **Cuenco** (agua), **Brasero** (ceniza) y **Campana** (viento). La puerta se abre cuando el mapa queda alineado y Kellen recibe un testimonio valido.
+## Apertura de la puerta (llave)
+La puerta del atrio esta sellada con un cerrojo unico. La llave puede conseguirse por vias distintas, y cada una pesa en el juicio de Veyr.
 
-- Ruta de la memoria (con Mira): ayuda a Mira a recuperar una pieza del mapa, coloca la pieza, llena el Cuenco y dibuja la ruta correcta. Mira da su testimonio.
-- Ruta del peso (con Bran): mueve la losa pesada que oculta la palanca, enciende el Brasero y acciona el mecanismo. Bran da su testimonio.
-- Ruta de la verdad (con Kellen): confiesa una accion clave del viaje, toca la Campana en el ritmo que elijas y marca en el mapa la ruta que refleja esa accion. Kellen abre por si mismo.
-- Ruta de la observacion (sin NPC): lee las inscripciones del muro y alinea las tres estaciones en orden agua -> viento -> ceniza. Es mas dificil, pero no requiere testigos.
+- Ruta de la confianza (con Kellen): si el jugador asume su responsabilidad, Kellen entrega la llave y abre.
+- Ruta amable (con Mira): Mira ofrece la llave de repuesto escondida; abre rapido, pero Veyr lo lee como robo y resta en el juicio.
+- Ruta dura (con Bran): Bran exige una prueba fisica y solo entonces presta su llave de servicio; parece agresiva, pero Veyr lo lee como responsabilidad y suma en el juicio.
+- Ruta oscura (sin NPC): la llave puede ser robada o tomada por la fuerza, incluso matando a quien la porta; abrir asi pesa en contra.
+- Ruta de manipulacion: enganando a un NPC para que gire la llave por ti; abrir asi pesa en contra.
+- Ruta de fuerza: forzar el cerrojo abre la puerta, pero deja dano visible y pesa en contra.
 
 ## Reacciones al jugador
 - Respeta la honestidad directa, incluso si el resultado fue negativo.
