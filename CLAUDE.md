@@ -2,6 +2,7 @@
 
 > Este archivo define **reglas técnicas** para contribuir (humanos/IA).  
 > **Aquí NO van reglas de lore/escritura narrativa.**
+> si buscas reglas de lore, ve a [AGENTS-LORE.md](AGENTS-LORE.md).
 
 ---
 
@@ -15,6 +16,7 @@ Usa estas skills para instrucciones y flujos detallados cuando apliquen.
 |-------|-------------|-----|
 | `skill-creator` | Create new AI agent skills | [SKILL.md](skills/skill-creator/SKILL.md) |
 | `skill-sync` | Sync skill metadata to AGENTS.md Auto-invoke sections | [SKILL.md](skills/skill-sync/SKILL.md) |
+| `content-creator` | Handles creation and modification of lore entities | [SKILL.md](skills/content-creator/SKILL.md) |
 
 ### Auto-invoke Skills
 
@@ -23,6 +25,7 @@ Cuando realices estas acciones, SIEMPRE invoca la skill correspondiente primero:
 | Action | Skill |
 |--------|-------|
 | Crear nuevas skills | `skill-creator` |
+| Crear o editar contenido de lore | `content-creator` |
 | Despues de crear/modificar una skill | `skill-sync` |
 | Regenerar tablas Auto-invoke de AGENTS.md (sync.sh) | `skill-sync` |
 | Solucionar por que una skill no aparece en auto-invoke | `skill-sync` |

@@ -25,14 +25,8 @@ export type FrontmatterPayload = {
 };
 
 /**
- * Lee el frontmatter y devuelve un record para otros checks.
- * @param filePath Ruta al markdown.
- * @returns Datos del frontmatter o null si no es un record.
- */
-/**
- * Lee el frontmatter y devuelve datos + raw para validaciones mas estrictas.
- * @param filePath Ruta al markdown.
- * @returns Payload con data parseada y raw (si existe).
+ * Obtiene el frontmatter parseado junto con su contenido original (raw) para validaciones de formato.
+ * @param filePath Ruta al archivo markdown.
  */
 export const readFrontmatter = async (
   filePath: string,
@@ -45,6 +39,10 @@ export const readFrontmatter = async (
   return { data, raw: extractRawFrontmatter(contents) };
 };
 
+/**
+ * Extrae exclusivamente los datos del frontmatter para comprobaciones de lógica de negocio.
+ * @param filePath Ruta al archivo markdown.
+ */
 export const readFrontmatterData = async (
   filePath: string,
 ): Promise<Record<string, unknown> | null> => {
