@@ -3,15 +3,15 @@ name: skill-sync
 description: >
   Syncs skill metadata to AGENTS.md Auto-invoke sections for Live-Wiki.
   Trigger: When updating skill metadata (metadata.scope/metadata.auto_invoke), regenerating Auto-invoke tables, or running ./skills/skill-sync/assets/sync.sh (including --dry-run/--scope).
-license: UNLICENSED
+license: Apache-2.0
 metadata:
-  author: live-wiki
+  author: prowler-cloud (adapted by live-wiki)
   version: "1.0"
   scope: [root]
   auto_invoke:
-    - "Despues de crear/modificar una skill"
-    - "Regenerar tablas Auto-invoke de AGENTS.md (sync.sh)"
-    - "Solucionar por que una skill no aparece en auto-invoke"
+    - "After creating/modifying a skill"
+    - "Regenerate AGENTS.md Auto-invoke tables (sync.sh)"
+    - "Troubleshoot why a skill is missing from AGENTS.md auto-invoke"
 allowed-tools: Read, Edit, Write, Glob, Grep, Bash
 ---
 

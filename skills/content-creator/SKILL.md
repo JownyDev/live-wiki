@@ -1,21 +1,21 @@
 ---
 name: content-creator
 description: >
-  Handles creation and modification of lore entities (characters, events, places, elements) 
+  Handles creation and modification of lore entities (characters, events, places, planets, elements, mechanics, cards) 
   ensuring compliance with AGENTS-LORE.md and project conventions.
   Trigger: When asked to create, edit, or extend lore content/entities.
-license: UNLICENSED
+license: Apache-2.0
 metadata:
   author: live-wiki
   version: "1.0"
   scope: [root]
-  auto_invoke: "Crear o editar contenido de lore"
+  auto_invoke: "Creating or editing lore content"
 ---
 
 ## When to Use
 
 Use this skill when:
-- Creating a new character, place, event, or element.
+- Creating a new entity: Character, Event, Place, Planet, Element, Mechanic, or Card.
 - Modifying existing lore to add depth or resolve inconsistencies.
 - Expanding the world building of the project.
 
@@ -24,6 +24,7 @@ Use this skill when:
 ### 1. Mandatory Reading
 Before writing a single line of lore, you **MUST** read:
 - `AGENTS-LORE.md`: For style, tone, and coherence rules.
+- `packages/lore-linter/LORE_SCHEMA.md`: For field definitions and UI mapping.
 - Existing related entities: Search `content/` for connections.
 
 ### 2. Coherence First
@@ -33,6 +34,14 @@ Before writing a single line of lore, you **MUST** read:
 - **Mirroring**: If you add a relationship in A to B, check if B needs a mirror reference to A.
 
 ### 3. Technical Compliance
+- **Supported Types**:
+  - `character` (People, NPCs)
+  - `event` (History, timeline)
+  - `place` (Specific locations)
+  - `planet` (Worlds, celestial bodies)
+  - `element` (Magic, matter)
+  - `mechanic` (Game rules, laws of physics)
+  - `card` (Items, abilities)
 - Use the correct template from `templates/`.
 - Maintain `kebab-case` for IDs.
 - Keep frontmatter strictly technical; narrative belongs in the body.
@@ -42,7 +51,7 @@ Before writing a single line of lore, you **MUST** read:
 1. **Investigate**: Search `content/` for relevant context.
 2. **Contextualize**: Read `AGENTS-LORE.md`.
 3. **Draft**: Create the file using the appropriate template.
-4. **Validate**: Run `pnpm quality` to ensure schema compliance.
+4. **Validate**: Run `pnpm wiki:check` to validate lore and `pnpm verify` for general quality.
 
 ## Code Examples
 
@@ -62,14 +71,24 @@ related_characters:
 ## Commands
 
 ```bash
-# Validate content
-pnpm quality
+# Validate lore consistency and schema
+pnpm wiki:check
 
-# Check for broken references (if applicable)
-pnpm test
+# Run full project quality check (lint + typecheck + tests + build)
+pnpm verify
 ```
+
+## Final Checklist
+
+- [ ] Read `AGENTS-LORE.md` and related entities in `content/`.
+- [ ] Verified consistency (chronology, relationships, tone).
+- [ ] Used correct template and technical schema (`LORE_SCHEMA.md`).
+- [ ] IDs follow `kebab-case`.
+- [ ] Ran `pnpm wiki:check` and `pnpm verify` successfully.
 
 ## Resources
 
 - **Templates**: See `templates/` directory.
+- **Examples**: See `assets/examples/` for full files of each type.
 - **Rules**: See [AGENTS-LORE.md](../../AGENTS-LORE.md).
+- **Schema**: See [LORE_SCHEMA.md](../../packages/lore-linter/LORE_SCHEMA.md).

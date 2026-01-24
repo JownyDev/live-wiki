@@ -3,7 +3,7 @@ name: {skill-name}
 description: >
   {Brief description of what this skill enables}.
   Trigger: {When the AI should load this skill - be specific}.
-license: UNLICENSED
+license: Apache-2.0
 metadata:
   author: live-wiki
   version: "1.0"

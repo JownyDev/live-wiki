@@ -3,12 +3,12 @@ name: skill-creator
 description: >
   Creates new Live-Wiki agent skills aligned with repo conventions.
   Trigger: When user asks to create a new skill, add agent instructions, or document reusable patterns for Live-Wiki.
-license: UNLICENSED
+license: Apache-2.0
 metadata:
-  author: live-wiki
+  author: prowler-cloud (adapted by live-wiki)
   version: "1.0"
   scope: [root]
-  auto_invoke: "Crear nuevas skills"
+  auto_invoke: "Creating new skills"
 allowed-tools: Read, Edit, Write, Glob, Grep, Bash, WebFetch, WebSearch, Task
 ---
 
@@ -49,7 +49,7 @@ name: {skill-name}
 description: >
   {One-line description of what this skill does}.
   Trigger: {When the AI should load this skill}.
-license: UNLICENSED
+license: Apache-2.0
 metadata:
   author: live-wiki
   version: "1.0"
@@ -74,6 +74,12 @@ metadata:
 ```bash
 {Common commands}
 ```
+
+## Final Checklist
+
+- [ ] {Critical check 1}
+- [ ] {Critical check 2}
+- [ ] {Verification command run?}
 
 ## Resources
 
@@ -123,7 +129,7 @@ Generic skill needs Live-Wiki info? → Add references/ pointing to docs/ in thi
 |-------|----------|-------------|
 | `name` | Yes | Skill identifier (lowercase, hyphens) |
 | `description` | Yes | What + Trigger in one block |
-| `license` | Yes | Use repo license (currently `UNLICENSED`) |
+| `license` | Yes | Use `Apache-2.0` (for this structure) |
 | `metadata.author` | Yes | `live-wiki` |
 | `metadata.version` | Yes | Semantic version as string |
 | `metadata.scope` | Recommended | Which AGENTS.md to update (e.g., `root`) |
@@ -138,6 +144,7 @@ Generic skill needs Live-Wiki info? → Add references/ pointing to docs/ in thi
 - Use tables for decision trees
 - Keep code examples minimal and focused
 - Include Commands section with copy-paste commands
+- End with a Final Checklist for self-correction
 
 ### DON'T
 - Add Keywords section (agent searches frontmatter, not body)
@@ -172,6 +179,8 @@ If the skill should appear in Auto-invoke, add `metadata.scope` and `metadata.au
 - [ ] Commands section exists
 - [ ] Added to AGENTS.md
 - [ ] Ran skill sync (if auto-invoke)
+- [ ] Ran `bash ./skills/setup.sh --all` to propagate changes to CLAUDE.md/GEMINI.md
+
 
 ## Resources
 
