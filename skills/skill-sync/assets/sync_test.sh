@@ -49,9 +49,9 @@ name: mock-site-skill
 description: >
   Mock site skill for testing.
   Trigger: When testing site.
-license: UNLICENSED
+license: Apache-2.0
 metadata:
-  author: test
+  author: live-wiki
   version: "1.0"
   scope: [site]
   auto_invoke: "Testing site rendering"
@@ -67,9 +67,9 @@ name: mock-lore-linter-skill
 description: >
   Mock lore-linter skill for testing.
   Trigger: When testing lore-linter.
-license: UNLICENSED
+license: Apache-2.0
 metadata:
-  author: test
+  author: live-wiki
   version: "1.0"
   scope: [lore-linter]
   auto_invoke: "Testing lore-linter rules"
@@ -85,9 +85,9 @@ name: mock-wiki-cli-skill
 description: >
   Mock wiki-cli skill for testing.
   Trigger: When testing wiki-cli.
-license: UNLICENSED
+license: Apache-2.0
 metadata:
-  author: test
+  author: live-wiki
   version: "1.0"
   scope: [wiki-cli]
   auto_invoke: "Testing wiki-cli commands"
@@ -103,9 +103,9 @@ name: mock-root-skill
 description: >
   Mock root skill for testing.
   Trigger: When testing root.
-license: UNLICENSED
+license: Apache-2.0
 metadata:
-  author: test
+  author: live-wiki
   version: "1.0"
   scope: [root]
   auto_invoke: "Testing root actions"
@@ -121,9 +121,9 @@ EOF
 name: mock-no-metadata
 description: >
   Skill without sync metadata.
-license: UNLICENSED
+license: Apache-2.0
 metadata:
-  author: test
+  author: live-wiki
   version: "1.0"
 allowed-tools: Read
 ---
@@ -385,9 +385,9 @@ test_generate_splits_multi_action_auto_invoke_list() {
 ---
 name: mock-site-skill
 description: Mock site skill with multi-action auto_invoke list.
-license: UNLICENSED
+license: Apache-2.0
 metadata:
-  author: test
+  author: live-wiki
   version: "1.0"
   scope: [site]
   auto_invoke:
@@ -412,9 +412,9 @@ test_generate_orders_rows_by_action_then_skill() {
 ---
 name: mock-site-skill
 description: Mock site skill.
-license: UNLICENSED
+license: Apache-2.0
 metadata:
-  author: test
+  author: live-wiki
   version: "1.0"
   scope: [site]
   auto_invoke:
@@ -429,9 +429,9 @@ EOF
 ---
 name: mock-site-skill-2
 description: Second site skill.
-license: UNLICENSED
+license: Apache-2.0
 metadata:
-  author: test
+  author: live-wiki
   version: "1.0"
   scope: [site]
   auto_invoke: "A action"
@@ -533,9 +533,9 @@ test_multiscope_skill_appears_in_multiple() {
 ---
 name: mock-site-skill
 description: Mock skill with multiple scopes.
-license: UNLICENSED
+license: Apache-2.0
 metadata:
-  author: test
+  author: live-wiki
   version: "1.0"
   scope: [site, lore-linter]
   auto_invoke: "Multi-scope action"

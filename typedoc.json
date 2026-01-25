@@ -1,0 +1,17 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "packages/lore-linter/src/index.ts",
+    "packages/wiki-cli/src/index.ts",
+    "src/lib/content/index.ts"
+  ],
+  "out": "docs/api",
+  "plugin": ["typedoc-plugin-markdown"],
+  "name": "Live Wiki API",
+  "readme": "none",
+  "githubPages": false,
+  "hideBreadcrumbs": true,
+  "entryPointStrategy": "resolve",
+  "excludePrivate": true,
+  "excludeInternal": true
+}

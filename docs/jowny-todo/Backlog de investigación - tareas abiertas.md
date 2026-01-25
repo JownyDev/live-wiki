@@ -4,6 +4,18 @@
 Estado: NO implementar hasta definir criterios claros.
 > 
 
+## 📚 Documentación y Developer Experience (DX) — completado
+
+- [x] **Documentación de paquetes**: Crear README.md para `packages/lore-linter` y `packages/wiki-cli`.
+- [x] **Guías de extensibilidad**: Crear guías "How-To" paso a paso:
+    - [x] Añadir nuevo tipo de entidad (`GUIDE_NEW_ENTITY_TYPE.md`).
+    - [x] Añadir nueva regla de validación (`GUIDE_ADD_RULE.md`).
+    - [x] Añadir nuevo comando CLI (`GUIDE_ADD_COMMAND.md`).
+- [x] **API Reference**: Generar documentación automática con TypeDoc (`pnpm build:docs`).
+- [x] **Metadatos del proyecto**:
+    - [x] Unificar autor (`live-wiki`) en `package.json`.
+    - [x] Unificar licencia (`Apache-2.0`).
+
 ## 📊 Cobertura (testing/metrics) — investigación
 
 - [ ]  Definir qué métricas de cobertura interesan en este repo (por paquete/capa):
@@ -35,25 +47,25 @@ Estado: NO implementar hasta definir criterios claros.
     - estados vacíos (no image / no relations)
     - refs rotas (cómo se ve y cómo se detecta)
     - navegación (breadcrumbs, sidebar, quick links)
-- [ ]  Decidir si la búsqueda será 0-JS (query param) o island live-search (y por qué)
+- [x]  Decidir si la búsqueda será 0-JS (query param) o island live-search (y por qué)
 
 ## 🧠 Sistema de acciones de personaje — diseño futuro
 
-- [ ]  Definir qué es una “acción” (taxonomía):
+- [x]  Definir qué es una “acción” (taxonomía):
     - social (hablar, intimidar, negociar)
     - combate (atacar, defender, huir)
     - exploración (investigar, rastrear, viajar)
     - economía (comprar, robar, intercambiar)
-- [ ]  Decidir si las acciones son:
+- [x]  Decidir si las acciones son:
     - solo lore (documentación narrativa)
     - o base para un motor/simulación (implica reglas y validación)
-- [ ]  Definir formato de datos (frontmatter vs tipo nuevo `action`)
+- [x]  Definir formato de datos (frontmatter vs tipo nuevo `action`)
 - [ ]  Definir cómo se conectan con Mechanics (si aplica)
 - [ ]  Decidir requisitos de UI (filtros, tags, vistas por personaje)
 
 ## 🃏 Cards (gran expansión) — pospuesto
 
-- [ ]  Definir subtipos de card y atributos (sin tocar aún):
+- [x]  Definir subtipos de card y atributos (sin tocar aún):
     - estructura de tipos
     - validaciones
     - rendering UI

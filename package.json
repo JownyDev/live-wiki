@@ -1,7 +1,9 @@
 {
   "name": "live-wiki",
+  "author": "live-wiki",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "lint": "eslint . --ext .ts,.astro",
@@ -15,7 +17,8 @@
     "verify": "pnpm quality && pnpm build",
     "wiki:check": "pnpm -C packages/wiki-cli build && pnpm exec wiki check",
     "wiki:build": "pnpm -C packages/wiki-cli build && pnpm exec wiki build",
-    "wiki:new": "pnpm -C packages/wiki-cli build && pnpm exec wiki new"
+    "wiki:new": "pnpm -C packages/wiki-cli build && pnpm exec wiki new",
+    "build:docs": "typedoc"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
@@ -28,6 +31,8 @@
     "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-astro": "^1.5.0",
     "prettier": "^3.7.0",
+    "typedoc": "^0.28.16",
+    "typedoc-plugin-markdown": "^4.9.0",
     "typescript": "^5.5.4",
     "vitest": "^3.2.4",
     "wiki-cli": "workspace:*"
