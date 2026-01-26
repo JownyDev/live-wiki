@@ -27,6 +27,7 @@ import PersonaVoice from '../../components/PersonaVoice.astro';
 import PriorityList from '../../components/PriorityList.astro';
 import Section from '../../components/Section.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
+import Tabs, { type TabItem } from '../../components/Tabs.astro';
 import { type InlineMetaItem } from '../../components/InlineMetaList.astro';
 import { getCharacterById, listCharacters } from '../../lib/content/characters';
 import { getElementById } from '../../lib/content/elements';
@@ -263,6 +264,13 @@ if (affinityView) {
     icon: 'auto_awesome',
   });
 }
+
+const tabItems: TabItem[] = [
+  { id: 'bio', label: 'Biografía', icon: 'description' },
+  { id: 'technical', label: 'Ficha Técnica', icon: 'analytics' },
+  { id: 'relations', label: 'Relaciones', icon: 'group' },
+  { id: 'events', label: 'Eventos', icon: 'event' },
+];
 ---
 
 <BaseLayout title={title} lang="es" pageClass="page--character">
@@ -279,208 +287,223 @@ if (affinityView) {
           <DataPanel title="Datos del personaje" items={dataItems} />
         </aside>
         <div class="character-page__content">
-          <Section>
-            <SectionHeader title="Biografía" showDivider />
-            <MarkdownDescription content={character.body} />
-          </Section>
-          {hasPersona ? (
-            <Section>
-              <SectionHeader title="Persona" showDivider />
-              <div class="character-page__persona">
-                {hasItems(personaTraits) ? (
-                  <PersonaTraits items={personaTraits} />
-                ) : null}
-                {hasItems(personaValues) ? (
-                  <PersonaValues items={personaValues} />
-                ) : null}
-                {hasText(personaArchetype) ? (
-                  <PersonaArchetype archetype={personaArchetype} />
-                ) : null}
-                {hasPersonaVoice ? (
-                  <PersonaVoice
-                    tone={personaVoiceTone}
-                    styleNotes={personaVoiceStyleNotes}
-                  />
-                ) : null}
-                {hasItems(personaTaboos) ? (
-                  <PersonaTaboos items={personaTaboos} />
-                ) : null}
-                {hasItems(personaHighlights) ? (
-                  <PersonaBiographyHighlights items={personaHighlights} />
-                ) : null}
-              </div>
-            </Section>
-          ) : null}
-          {hasKnowledge ? (
-            <Section>
-              <SectionHeader title="Conocimiento" showDivider />
-              <div class="character-page__knowledge">
-                {hasText(knowledgeSummary) ? (
-                  <KnowledgeSummary summary={knowledgeSummary} />
-                ) : null}
-                {hasItems(knowledgeKnowsAbout) ? (
-                  <KnowledgeList
-                    label="Sabe sobre"
-                    items={knowledgeKnowsAbout}
-                    variant="knows"
-                  />
-                ) : null}
-                {hasItems(knowledgeBlindspots) ? (
-                  <KnowledgeList
-                    label="Puntos ciegos"
-                    items={knowledgeBlindspots}
-                    variant="blindspots"
-                  />
-                ) : null}
-                {hasItems(knowledgeCanReveal) ? (
-                  <KnowledgeList
-                    label="Puede revelar"
-                    items={knowledgeCanReveal}
-                    variant="reveal"
-                  />
-                ) : null}
-              </div>
-            </Section>
-          ) : null}
-          {hasMemoryProfile ? (
-            <Section>
-              <SectionHeader title="Perfil de memoria" showDivider />
-              <div class="character-page__memory">
-                {memoryProfile ? (
-                  <MemoryTags
-                    interestTags={memoryInterestTags}
-                    relationshipTags={memoryRelationshipTags}
-                    allowedTags={memoryAllowedTags}
-                    blockedTags={memoryBlockedTags}
-                  />
-                ) : null}
-                {hasProvenancePolicy || hasRetrievalLimits ? (
-                  <div class="character-page__memory-grid">
-                    {memoryProfile?.provenancePolicy && hasProvenancePolicy ? (
-                      <MemoryProvenancePolicy
-                        allowed={memoryProfile.provenancePolicy.allowed}
-                        defaultValue={memoryProfile.provenancePolicy.default}
+          <Tabs items={tabItems} defaultTab="bio">
+            <div data-tab-panel="bio">
+              <Section>
+                <SectionHeader title="Biografía" showDivider />
+                <MarkdownDescription content={character.body} />
+              </Section>
+            </div>
+
+            <div data-tab-panel="technical" hidden>
+              {hasPersona ? (
+                <Section>
+                  <SectionHeader title="Persona" showDivider />
+                  <div class="character-page__persona">
+                    {hasItems(personaTraits) ? (
+                      <PersonaTraits items={personaTraits} />
+                    ) : null}
+                    {hasItems(personaValues) ? (
+                      <PersonaValues items={personaValues} />
+                    ) : null}
+                    {hasText(personaArchetype) ? (
+                      <PersonaArchetype archetype={personaArchetype} />
+                    ) : null}
+                    {hasPersonaVoice ? (
+                      <PersonaVoice
+                        tone={personaVoiceTone}
+                        styleNotes={personaVoiceStyleNotes}
                       />
                     ) : null}
-                    {memoryProfile?.retrievalLimits && hasRetrievalLimits ? (
-                      <MemoryRetrievalLimits
-                        maxItems={memoryProfile.retrievalLimits.maxItems}
-                        maxTokensSummary={
-                          memoryProfile.retrievalLimits.maxTokensSummary
-                        }
+                    {hasItems(personaTaboos) ? (
+                      <PersonaTaboos items={personaTaboos} />
+                    ) : null}
+                    {hasItems(personaHighlights) ? (
+                      <PersonaBiographyHighlights items={personaHighlights} />
+                    ) : null}
+                  </div>
+                </Section>
+              ) : null}
+              {hasKnowledge ? (
+                <Section>
+                  <SectionHeader title="Conocimiento" showDivider />
+                  <div class="character-page__knowledge">
+                    {hasText(knowledgeSummary) ? (
+                      <KnowledgeSummary summary={knowledgeSummary} />
+                    ) : null}
+                    {hasItems(knowledgeKnowsAbout) ? (
+                      <KnowledgeList
+                        label="Sabe sobre"
+                        items={knowledgeKnowsAbout}
+                        variant="knows"
+                      />
+                    ) : null}
+                    {hasItems(knowledgeBlindspots) ? (
+                      <KnowledgeList
+                        label="Puntos ciegos"
+                        items={knowledgeBlindspots}
+                        variant="blindspots"
+                      />
+                    ) : null}
+                    {hasItems(knowledgeCanReveal) ? (
+                      <KnowledgeList
+                        label="Puede revelar"
+                        items={knowledgeCanReveal}
+                        variant="reveal"
                       />
                     ) : null}
                   </div>
-                ) : null}
-              </div>
-            </Section>
-          ) : null}
-          {hasEmotionsProfile ? (
-            <Section>
-              <SectionHeader title="Perfil emocional" showDivider />
-              <div class="character-page__emotions">
-                <div class="character-page__emotions-grid">
-                  {hasItems(baselineMoodItems) ? (
-                    <EmotionsBaselineMood items={baselineMoodItems} />
-                  ) : null}
-                  {hasTowardPlayer ? (
-                    <EmotionsTowardPlayer
-                      stance={towardPlayerStance}
-                      note={towardPlayerNote}
-                    />
-                  ) : null}
-                </div>
-                {hasSensitivities || hasManipulability ? (
-                  <EmotionsSensitivities
-                    angersIf={sensitivities?.angersIf ?? []}
-                    calmsIf={sensitivities?.calmsIf ?? []}
-                    manipulability={manipulability}
-                  />
-                ) : null}
-              </div>
-            </Section>
-          ) : null}
-          {hasGoals ? (
-            <Section>
-              <SectionHeader title="Objetivos" showDivider />
-              <div class="character-page__goals">
-                {hasItems(goalsLongTerm) ? (
-                  <GoalList
-                    label="Objetivos a largo plazo"
-                    items={goalsLongTerm}
-                    icon="flag"
-                    itemIcon="ads_click"
-                  />
-                ) : null}
-                {hasItems(goalsPriorities) ? (
-                  <PriorityList
-                    label="Prioridades habituales"
-                    items={goalsPriorities}
-                    icon="list_alt"
-                    itemIcon="priority_high"
-                  />
-                ) : null}
-              </div>
-            </Section>
-          ) : null}
-          {hasCapabilities ? (
-            <Section>
-              <SectionHeader title="Capacidades" showDivider />
-              <div class="character-page__capabilities">
-                {capabilityActions.map((capability) => (
-                  <CapabilityCard
-                    action={capability.action}
-                    triggers={capability.triggers}
-                    notes={capability.notes}
-                    filters={capability.filters}
-                  />
-                ))}
-              </div>
-            </Section>
-          ) : null}
-          {relatedGroups.length > 0 ? (
-            <Section>
-              <SectionHeader title="Relaciones" showDivider />
-              <div class="character-page__relations">
-                {relatedGroups.map((group) => (
-                  <div class="character-page__relation-group">
-                    <h3 class="character-page__relation-title">{group.label}</h3>
-                    <ul class="character-page__relation-items tag-list">
-                      {group.items.map((item) => (
-                        <li>
-                          <EntityLink
-                            label={item.text}
-                            href={item.href}
-                            missing={item.missing}
+                </Section>
+              ) : null}
+              {hasMemoryProfile ? (
+                <Section>
+                  <SectionHeader title="Perfil de memoria" showDivider />
+                  <div class="character-page__memory">
+                    {memoryProfile ? (
+                      <MemoryTags
+                        interestTags={memoryInterestTags}
+                        relationshipTags={memoryRelationshipTags}
+                        allowedTags={memoryAllowedTags}
+                        blockedTags={memoryBlockedTags}
+                      />
+                    ) : null}
+                    {hasProvenancePolicy || hasRetrievalLimits ? (
+                      <div class="character-page__memory-grid">
+                        {memoryProfile?.provenancePolicy && hasProvenancePolicy ? (
+                          <MemoryProvenancePolicy
+                            allowed={memoryProfile.provenancePolicy.allowed}
+                            defaultValue={memoryProfile.provenancePolicy.default}
                           />
-                        </li>
-                      ))}
-                    </ul>
+                        ) : null}
+                        {memoryProfile?.retrievalLimits && hasRetrievalLimits ? (
+                          <MemoryRetrievalLimits
+                            maxItems={memoryProfile.retrievalLimits.maxItems}
+                            maxTokensSummary={
+                              memoryProfile.retrievalLimits.maxTokensSummary
+                            }
+                          />
+                        ) : null}
+                      </div>
+                    ) : null}
                   </div>
-                ))}
-              </div>
-            </Section>
-          ) : null}
-          <Section>
-            <SectionHeader title="Eventos relacionados" showDivider>
-              <a slot="action" href="/events">
-                Ver linea de tiempo
-              </a>
-            </SectionHeader>
-            {events.length === 0 ? (
-              <p>Sin eventos.</p>
-            ) : (
-              <div class="character-page__events">
-                {events.map((event) => (
-                  <EventSummaryCard
-                    title={event.title}
-                    date={event.date}
-                    href={`/events/${event.id}`}
-                  />
-                ))}
-              </div>
-            )}
-          </Section>
+                </Section>
+              ) : null}
+              {hasEmotionsProfile ? (
+                <Section>
+                  <SectionHeader title="Perfil emocional" showDivider />
+                  <div class="character-page__emotions">
+                    <div class="character-page__emotions-grid">
+                      {hasItems(baselineMoodItems) ? (
+                        <EmotionsBaselineMood items={baselineMoodItems} />
+                      ) : null}
+                      {hasTowardPlayer ? (
+                        <EmotionsTowardPlayer
+                          stance={towardPlayerStance}
+                          note={towardPlayerNote}
+                        />
+                      ) : null}
+                    </div>
+                    {hasSensitivities || hasManipulability ? (
+                      <EmotionsSensitivities
+                        angersIf={sensitivities?.angersIf ?? []}
+                        calmsIf={sensitivities?.calmsIf ?? []}
+                        manipulability={manipulability}
+                      />
+                    ) : null}
+                  </div>
+                </Section>
+              ) : null}
+              {hasGoals ? (
+                <Section>
+                  <SectionHeader title="Objetivos" showDivider />
+                  <div class="character-page__goals">
+                    {hasItems(goalsLongTerm) ? (
+                      <GoalList
+                        label="Objetivos a largo plazo"
+                        items={goalsLongTerm}
+                        icon="flag"
+                        itemIcon="ads_click"
+                      />
+                    ) : null}
+                    {hasItems(goalsPriorities) ? (
+                      <PriorityList
+                        label="Prioridades habituales"
+                        items={goalsPriorities}
+                        icon="list_alt"
+                        itemIcon="priority_high"
+                      />
+                    ) : null}
+                  </div>
+                </Section>
+              ) : null}
+              {hasCapabilities ? (
+                <Section>
+                  <SectionHeader title="Capacidades" showDivider />
+                  <div class="character-page__capabilities">
+                    {capabilityActions.map((capability) => (
+                      <CapabilityCard
+                        action={capability.action}
+                        triggers={capability.triggers}
+                        notes={capability.notes}
+                        filters={capability.filters}
+                      />
+                    ))}
+                  </div>
+                </Section>
+              ) : null}
+            </div>
+
+            <div data-tab-panel="relations" hidden>
+              {relatedGroups.length > 0 ? (
+                <Section>
+                  <SectionHeader title="Relaciones" showDivider />
+                  <div class="character-page__relations">
+                    {relatedGroups.map((group) => (
+                      <div class="character-page__relation-group">
+                        <h3 class="character-page__relation-title">{group.label}</h3>
+                        <ul class="character-page__relation-items tag-list">
+                          {group.items.map((item) => (
+                            <li>
+                              <EntityLink
+                                label={item.text}
+                                href={item.href}
+                                missing={item.missing}
+                              />
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </Section>
+              ) : (
+                <p>No se conocen relaciones directas.</p>
+              )}
+            </div>
+
+            <div data-tab-panel="events" hidden>
+              <Section>
+                <SectionHeader title="Eventos relacionados" showDivider>
+                  <a slot="action" href="/events">
+                    Ver linea de tiempo completa
+                  </a>
+                </SectionHeader>
+                {events.length === 0 ? (
+                  <p>Sin eventos.</p>
+                ) : (
+                  <div class="timeline-list">
+                    {events.map((event) => (
+                      <EventSummaryCard
+                        title={event.title}
+                        date={event.date}
+                        href={`/events/${event.id}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </Section>
+            </div>
+          </Tabs>
         </div>
       </div>
     </div>

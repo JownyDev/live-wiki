@@ -131,7 +131,7 @@ export async function listEvents(baseDir?: string): Promise<Array<EventListItem>
     events.push({ id, title, date });
   }
 
-  events.sort((a, b) => a.id.localeCompare(b.id));
+  events.sort((a, b) => a.date.localeCompare(b.date));
   return events;
 }
 

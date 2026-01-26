@@ -1,28 +1,29 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
-import EntityLink from '../../components/EntityLink.astro';
 import Section from '../../components/Section.astro';
+import EventSummaryCard from '../../components/EventSummaryCard.astro';
 import { listEvents } from '../../lib/content/events';
 
 const title = 'Eventos';
 const events = await listEvents();
 ---
 
-<BaseLayout title={title} lang="en">
+<BaseLayout title={title} lang="es">
   <Header title={title} icon="event" />
   <Section>
     {events.length === 0 ? (
       <p>No hay eventos todavía.</p>
     ) : (
-      <ul>
+      <div class="timeline-list">
         {events.map((event) => (
-          <li>
-            <EntityLink href={`/events/${event.id}`} label={event.title} />
-            <span> ({event.date})</span>
-          </li>
+          <EventSummaryCard
+            title={event.title}
+            date={event.date}
+            href={`/events/${event.id}`}
+          />
         ))}
-      </ul>
+      </div>
     )}
   </Section>
 </BaseLayout>
