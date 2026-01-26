@@ -1,9 +1,6 @@
 ---
-import searchScript from '../scripts/search-island.ts?url';
-
 const searchEndpoint = '/search.json';
 const resultLimit = 12;
-const scriptSrc = searchScript;
 ---
 
 <div
@@ -32,7 +29,9 @@ const scriptSrc = searchScript;
   </div>
   <ul id="search-results" class="search__results" data-search-results hidden></ul>
 </div>
-<script type="module" src={scriptSrc}></script>
+<script>
+  import '../scripts/search-island.ts';
+</script>
 
 <style>
   .search {
