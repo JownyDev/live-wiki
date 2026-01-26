@@ -57,7 +57,8 @@
 ### Campos Opcionales
 | Campo | UI Component / Visualización | Notas |
 |-------|------------------------------|-------|
-| `image` | **EntityImage** (Hero) | Imagen de fondo o cabecera del lugar. |
+| `planetId` | **Section** ("Planeta") | Link al planeta padre (ej. `planet:id`). Solo para `type: place`. |
+| `locationType` | **Section** ("Planeta") | Texto fallback si no hay planeta (`space` | `planet` | `unknown`). |
 
 ---
 
