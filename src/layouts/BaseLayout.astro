@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import PrimaryNav from '../components/PrimaryNav.astro';
 import SearchIsland from '../components/SearchIsland.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
 
 type Props = {
   title: string;
@@ -19,6 +20,15 @@ const layoutClass = pageClass ? `layout ${pageClass}` : 'layout';
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>{title}</title>
+    <script is:inline>
+      const theme = localStorage.getItem('theme');
+      if (
+        theme === 'light' ||
+        (!theme && window.matchMedia('(prefers-color-scheme: light)').matches)
+      ) {
+        document.documentElement.classList.add('light');
+      }
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#content">Saltar al contenido</a>
@@ -28,7 +38,10 @@ const layoutClass = pageClass ? `layout ${pageClass}` : 'layout';
           <a href="/">Live-Wiki</a>
         </div>
         <PrimaryNav />
-        <SearchIsland />
+        <div class="layout__actions">
+          <SearchIsland />
+          <ThemeToggle />
+        </div>
       </header>
       <main id="content" class="layout__main">
         <slot />
@@ -78,6 +91,12 @@ const layoutClass = pageClass ? `layout ${pageClass}` : 'layout';
     position: sticky;
     top: 0;
     z-index: 20;
+  }
+  
+  .layout__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
   }
 
   .layout__brand a {

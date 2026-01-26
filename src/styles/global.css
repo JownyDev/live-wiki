@@ -32,6 +32,19 @@
   --max-width: 75rem;
 }
 
+:root.light {
+  color-scheme: light;
+  --color-bg: #ffffff;
+  --color-surface: #f6f8fa;
+  --color-surface-muted: #eaeef2;
+  --color-text: #1f2328;
+  --color-muted: #656d76;
+  --color-border: #d0d7de;
+  --color-accent: #0969da;
+  --color-accent-strong: #0550ae;
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
 *,
 *::before,
 *::after {
