@@ -8,13 +8,14 @@ type Props = {
 };
 
 const { action, triggers, notes = [], filters = [], icon } = Astro.props as Props;
+const formattedAction = action.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase());
 const hasNotes = notes.length > 0;
 const hasFilters = filters.length > 0;
 ---
 
 <article class="capability-card">
   <header class="capability-card__header">
-    <h3 class="capability-card__title">{action}</h3>
+    <h3 class="capability-card__title">{formattedAction}</h3>
     {icon ? (
       <span class="material-symbols-outlined capability-card__icon" aria-hidden="true">
         {icon}

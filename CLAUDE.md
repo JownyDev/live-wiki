@@ -6,6 +6,12 @@
 
 ---
 
+## Regla de Oro (Análisis de Skills)
+
+Antes de realizar cualquier acción o modificación, **analiza siempre** si existe una skill en la sección "Skills disponibles" que aplique a la tarea actual. Si existe, **invócala obligatoriamente** antes de proceder para asegurar el cumplimiento de los flujos técnicos.
+
+---
+
 ## Skills disponibles
 
 Usa estas skills para instrucciones y flujos detallados cuando apliquen.
@@ -31,6 +37,7 @@ Cuando realices estas acciones, SIEMPRE invoca la skill correspondiente primero:
 | Creating new skills | `skill-creator` |
 | Creating or editing lore content | `content-creator` |
 | Extending an existing entity type | `schema-extender` |
+| Implementing UI from reference views | `ui-developer` |
 | Regenerate AGENTS.md Auto-invoke tables (sync.sh) | `skill-sync` |
 | Troubleshoot why a skill is missing from AGENTS.md auto-invoke | `skill-sync` |
 

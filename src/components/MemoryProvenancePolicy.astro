@@ -40,15 +40,20 @@ const columnCount = allowed.length;
     background: var(--color-surface-muted);
     border-radius: var(--radius-md);
     padding: var(--space-1);
+    flex-grow: 1;
   }
 
   .memory-provenance__item {
     text-align: center;
-    padding: 0.4rem 0.6rem;
+    padding: 0.75rem 0.6rem;
     font-size: 0.7rem;
     font-weight: 600;
     color: var(--color-muted);
     border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
   }
 
   .memory-provenance__item--active {
