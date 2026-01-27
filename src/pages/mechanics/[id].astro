@@ -1,8 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/Header.astro';
+import Breadcrumbs, { type BreadcrumbItem } from '../../components/Breadcrumbs.astro';
+import CharacterHero from '../../components/CharacterHero.astro';
+import DataPanel, { type DataPanelItem } from '../../components/DataPanel.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
 import Section from '../../components/Section.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import Tabs, { type TabItem } from '../../components/Tabs.astro';
 import { getMechanicById, listMechanics } from '../../lib/content/mechanics';
 
 export async function getStaticPaths() {
@@ -14,24 +18,69 @@ export async function getStaticPaths() {
 
 const id = Astro.params.id;
 const mechanic = typeof id === 'string' ? await getMechanicById(id) : null;
-const title = mechanic ? mechanic.name : 'Mecanica no encontrada';
+const title = mechanic ? mechanic.name : 'Mecánica no encontrada';
+
+const breadcrumbs: BreadcrumbItem[] = mechanic
+  ? [
+      { label: 'Inicio', href: '/' },
+      { label: 'Mecánicas', href: '/mechanics' },
+      { label: mechanic.name, current: true },
+    ]
+  : [
+      { label: 'Inicio', href: '/' },
+      { label: 'Mecánicas', href: '/mechanics' },
+      { label: 'Mecánica no encontrada', current: true },
+    ];
+
+const mechanicMeta = mechanic ? [{ label: 'ID', value: `#${mechanic.id}` }] : [];
+
+const dataItems: DataPanelItem[] = [];
+if (mechanic) {
+  dataItems.push({ label: 'Tipo', value: 'Mecánica de Juego', icon: 'settings_input_component' });
+}
+
+const tabItems: TabItem[] = [
+  { id: 'info', label: 'Funcionamiento', icon: 'description' },
+];
 ---
 
-<BaseLayout title={title}>
+<BaseLayout title={title} lang="es">
   {mechanic ? (
-    <>
-      <Header title={mechanic.name} icon="tune" />
-      <MarkdownDescription content={mechanic.body} />
-    </>
+    <div class="character-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero
+        name={mechanic.name}
+        meta={mechanicMeta}
+        imageUrl={mechanic.image}
+      />
+
+      <div class="character-page__grid">
+        <aside class="character-page__sidebar">
+          <DataPanel title="Datos técnicos" items={dataItems} />
+        </aside>
+
+        <div class="character-page__content">
+          <Tabs items={tabItems} defaultTab="info">
+            <div data-tab-panel="info" class="animate-fadeIn">
+              <Section>
+                <SectionHeader title="Reglas y Sistemas" showDivider />
+                <MarkdownDescription content={mechanic.body} />
+              </Section>
+            </div>
+          </Tabs>
+        </div>
+      </div>
+    </div>
   ) : (
-    <>
-      <Header title="Mecanica no encontrada" icon="tune" />
+    <div class="character-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero name="Mecánica no encontrada" />
       <Section>
-        <p>La mecanica solicitada no existe.</p>
+        <p>La mecánica solicitada no existe.</p>
         <p>
-          <a href="/mechanics">Volver a mecanicas</a>
+          <a href="/mechanics">Volver a mecánicas</a>
         </p>
       </Section>
-    </>
+    </div>
   )}
 </BaseLayout>

@@ -4,7 +4,7 @@ import { getStringField, parseFrontmatter } from './frontmatter';
 import { listMarkdownFiles } from './markdown-files';
 
 export type SimpleEntityListItem = { id: string; name: string };
-export type SimpleEntity = { id: string; name: string; body: string };
+export type SimpleEntity = { id: string; name: string; image?: string; body: string };
 
 type NodeErrorWithCode = Error & { code?: string };
 
@@ -19,8 +19,9 @@ const parseAndValidateSimpleEntityMarkdown = (
 
   const id = getStringField(data, 'id');
   const name = getStringField(data, 'name');
+  const image = typeof data.image === 'string' ? data.image : undefined;
 
-  return { id, name, body: content };
+  return { id, name, image, body: content };
 };
 
 const isEnoentError = (error: unknown): error is NodeErrorWithCode =>

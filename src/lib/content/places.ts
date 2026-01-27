@@ -55,10 +55,11 @@ const parseAndValidatePlaceMarkdown = (markdown: string): Place => {
 
   const id = getStringField(data, 'id');
   const name = getStringField(data, 'name');
+  const image = typeof data.image === 'string' ? data.image : undefined;
   const planetId = parsePlanetId(data.planetId);
   const locationType = parseLocationType(data.locationType);
 
-  return { id, name, planetId, locationType, body: content };
+  return { id, name, image, planetId, locationType, body: content };
 };
 
 const isEnoentError = (error: unknown): error is NodeErrorWithCode =>

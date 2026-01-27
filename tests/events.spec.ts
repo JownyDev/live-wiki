@@ -49,7 +49,12 @@ describe('content/events contract', () => {
     const { listEvents } = await loadEventsModule();
 
     await expect(listEvents(baseDir)).resolves.toEqual([
-      { id: 'first-contact', title: 'First Contact', date: '2023-07-19' },
+      {
+        id: 'first-contact',
+        title: 'First Contact',
+        date: '2023-07-19',
+        preview: 'The crew encountered the signal at the edge of the nebula.',
+      },
     ]);
   });
 

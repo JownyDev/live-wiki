@@ -1,9 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/Header.astro';
+import Breadcrumbs, { type BreadcrumbItem } from '../../components/Breadcrumbs.astro';
+import CharacterHero from '../../components/CharacterHero.astro';
+import DataPanel, { type DataPanelItem } from '../../components/DataPanel.astro';
+import EntityList from '../../components/EntityList.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
-import RelationList, { type RelationItem } from '../../components/RelationList.astro';
 import Section from '../../components/Section.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import Tabs, { type TabItem } from '../../components/Tabs.astro';
 import { getCardById, listCards } from '../../lib/content/cards';
 import { getElementById } from '../../lib/content/elements';
 import { getCharacterById } from '../../lib/content/characters';
@@ -92,39 +96,97 @@ const represents: LinkView[] =
         }),
       )
     : [];
-const elementItems: RelationItem[] = elements.map((element) => ({
-  text: element.text,
-  href: element.href,
+
+const breadcrumbs: BreadcrumbItem[] = card
+  ? [
+      { label: 'Inicio', href: '/' },
+      { label: 'Cartas', href: '/cards' },
+      { label: card.name, current: true },
+    ]
+  : [
+      { label: 'Inicio', href: '/' },
+      { label: 'Cartas', href: '/cards' },
+      { label: 'Carta no encontrada', current: true },
+    ];
+
+const cardMeta = card ? [{ label: 'ID', value: `#${card.id}` }] : [];
+
+const dataItems: DataPanelItem[] = [];
+if (card) {
+  dataItems.push({ label: 'Tipo', value: 'Carta de Artefacto', icon: 'style' });
+}
+
+const tabItems: TabItem[] = [
+  { id: 'info', label: 'Información', icon: 'description' },
+  { id: 'connections', label: 'Conexiones', icon: 'hub' },
+];
+
+const elementItems = elements.map(e => ({
+  label: e.text,
+  href: e.href
 }));
-const representsItems: RelationItem[] = represents.map((entry) => ({
-  text: entry.text,
-  href: entry.href,
+
+const representsItems = represents.map(r => ({
+  label: r.text,
+  href: r.href
 }));
 ---
 
-<BaseLayout title={title}>
+<BaseLayout title={title} lang="es">
   {card ? (
-    <>
-      <Header title={card.name} icon="style" />
-      <Section>
-        <RelationList label="Elementos" items={elementItems} emptyText="Sin elementos." />
-      </Section>
-      {representsItems.length > 0 ? (
-        <Section>
-          <RelationList label="Representa" items={representsItems} />
-        </Section>
-      ) : null}
-      <MarkdownDescription content={card.body} />
-    </>
+    <div class="character-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero
+        name={card.name}
+        meta={cardMeta}
+        imageUrl={card.image ?? undefined}
+      />
+
+      <div class="character-page__grid">
+        <aside class="character-page__sidebar">
+          <DataPanel title="Datos de la carta" items={dataItems} />
+        </aside>
+
+        <div class="character-page__content">
+          <Tabs items={tabItems} defaultTab="info">
+            <div data-tab-panel="info" class="animate-fadeIn">
+              <Section>
+                <SectionHeader title="Descripción del Artefacto" showDivider />
+                <MarkdownDescription content={card.body} />
+              </Section>
+            </div>
+
+            <div data-tab-panel="connections" class="animate-fadeIn" hidden>
+              <Section>
+                <SectionHeader title="Elementos Afines" showDivider />
+                {elementItems.length === 0 ? (
+                  <p>No hay elementos asociados.</p>
+                ) : (
+                  <EntityList items={elementItems} />
+                )}
+              </Section>
+
+              {representsItems.length > 0 ? (
+                <Section>
+                  <SectionHeader title="Representación" showDivider />
+                  <EntityList items={representsItems} />
+                </Section>
+              ) : null}
+            </div>
+          </Tabs>
+        </div>
+      </div>
+    </div>
   ) : (
-    <>
-      <Header title="Carta no encontrada" icon="style" />
+    <div class="character-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero name="Carta no encontrada" />
       <Section>
         <p>La carta solicitada no existe.</p>
         <p>
           <a href="/cards">Volver a cartas</a>
         </p>
       </Section>
-    </>
+    </div>
   )}
 </BaseLayout>

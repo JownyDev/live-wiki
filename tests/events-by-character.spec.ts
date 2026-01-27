@@ -26,8 +26,18 @@ describe('content/events by character query', () => {
     const result = await listEventsByCharacterId('kael-nyx', baseDir);
 
     expect(result).toEqual([
-      { id: 'relay-run', title: 'Relay Run', date: '2023-05-10' },
-      { id: 'alpha-sighting', title: 'Alpha Sighting', date: '2024-01-03' },
+      {
+        id: 'relay-run',
+        title: 'Relay Run',
+        date: '2023-05-10',
+        preview: 'Kael and Arina secured the relay.',
+      },
+      {
+        id: 'alpha-sighting',
+        title: 'Alpha Sighting',
+        date: '2024-01-03',
+        preview: 'Kael reported the first signal.',
+      },
     ]);
   });
 

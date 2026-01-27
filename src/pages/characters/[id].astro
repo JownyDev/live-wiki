@@ -149,7 +149,7 @@ const buildRelatedCharacters = async (
       id: relatedCharacter.id,
       name: relatedCharacter.name,
       image: relatedCharacter.image,
-      archetype: relatedCharacter.archetype,
+      archetype: relatedCharacter.persona?.archetype ?? undefined,
       origin: relatedCharacter.origin,
       relationship: label,
       href: `/characters/${relatedCharacter.id}`,

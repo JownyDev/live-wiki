@@ -46,8 +46,18 @@ describe('content/events by location queries', () => {
     const result = await listEventsByPlaceId('harbor-south', baseDir);
 
     expect(result).toEqual([
-      { id: 'double-sighting', title: 'Double Sighting', date: '2024-01-20' },
-      { id: 'market-uprising', title: 'Market Uprising', date: '2024-03-01' },
+      {
+        id: 'double-sighting',
+        title: 'Double Sighting',
+        date: '2024-01-20',
+        preview: 'Witnesses reported the same flare twice.',
+      },
+      {
+        id: 'market-uprising',
+        title: 'Market Uprising',
+        date: '2024-03-01',
+        preview: 'Street stalls burned after the first signal.',
+      },
     ]);
   });
 
@@ -73,10 +83,30 @@ describe('content/events by location queries', () => {
     const result = await listEventsByPlanetId('aurora', baseDir);
 
     expect(result).toEqual([
-      { id: 'plaza-accord', title: 'Plaza Accord', date: '2023-12-15' },
-      { id: 'double-sighting', title: 'Double Sighting', date: '2024-01-20' },
-      { id: 'aurora-summit', title: 'Aurora Summit', date: '2024-02-05' },
-      { id: 'market-uprising', title: 'Market Uprising', date: '2024-03-01' },
+      {
+        id: 'plaza-accord',
+        title: 'Plaza Accord',
+        date: '2023-12-15',
+        preview: 'The pact was signed in the open air.',
+      },
+      {
+        id: 'double-sighting',
+        title: 'Double Sighting',
+        date: '2024-01-20',
+        preview: 'Witnesses reported the same flare twice.',
+      },
+      {
+        id: 'aurora-summit',
+        title: 'Aurora Summit',
+        date: '2024-02-05',
+        preview: 'Delegates gathered in the high orbit ring.',
+      },
+      {
+        id: 'market-uprising',
+        title: 'Market Uprising',
+        date: '2024-03-01',
+        preview: 'Street stalls burned after the first signal.',
+      },
     ]);
   });
 

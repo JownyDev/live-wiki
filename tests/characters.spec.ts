@@ -99,7 +99,14 @@ describe('content/characters contract', () => {
     const { listCharacters } = await loadCharactersModule();
 
     await expect(listCharacters(baseDir)).resolves.toEqual([
-      { id: 'kael-nyx', name: 'Kael Nyx' },
+      {
+        id: 'kael-nyx',
+        name: 'Kael Nyx',
+        origin: null,
+        image: null,
+        archetype: null,
+        status: 'desconocido',
+      },
     ]);
   });
 

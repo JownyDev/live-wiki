@@ -1,10 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs, { type BreadcrumbItem } from '../../components/Breadcrumbs.astro';
+import CharacterHero from '../../components/CharacterHero.astro';
 import DataPanel, { type DataPanelItem } from '../../components/DataPanel.astro';
-import EntityImage from '../../components/EntityImage.astro';
-import Header from '../../components/Header.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
 import Section from '../../components/Section.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import Tabs, { type TabItem } from '../../components/Tabs.astro';
 import { getElementById, listElements } from '../../lib/content/elements';
 import { getPlaceById } from '../../lib/content/places';
 import { getPlanetById } from '../../lib/content/planets';
@@ -21,6 +23,7 @@ export async function getStaticPaths() {
 const id = Astro.params.id;
 const element = typeof id === 'string' ? await getElementById(id) : null;
 const title = element ? element.name : 'Elemento no encontrado';
+
 const originView = await (async () => {
   if (!element?.origin) {
     return null;
@@ -44,40 +47,73 @@ const originView = await (async () => {
       return { text: 'Desconocido' };
   }
 })();
-const dataItems: DataPanelItem[] = [];
 
+const breadcrumbs: BreadcrumbItem[] = element
+  ? [
+      { label: 'Inicio', href: '/' },
+      { label: 'Elementos', href: '/elements' },
+      { label: element.name, current: true },
+    ]
+  : [
+      { label: 'Inicio', href: '/' },
+      { label: 'Elementos', href: '/elements' },
+      { label: 'Elemento no encontrado', current: true },
+    ];
+
+const elementMeta = element ? [{ label: 'ID', value: `#${element.id}` }] : [];
+
+const dataItems: DataPanelItem[] = [];
 if (originView) {
-  dataItems.push({ label: 'Origen', value: originView.text, href: originView.href });
+  dataItems.push({ 
+    label: 'Origen Primario', 
+    value: originView.text, 
+    href: originView.href,
+    icon: 'location_on' 
+  });
 }
+
+const tabItems: TabItem[] = [
+  { id: 'info', label: 'Información', icon: 'description' },
+];
 ---
 
-<BaseLayout title={title}>
+<BaseLayout title={title} lang="es">
   {element ? (
     <div class="element-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero
+        name={element.name}
+        meta={elementMeta}
+        imageUrl={element.image ?? undefined}
+      />
+
       <div class="element-page__grid">
         <aside class="element-page__sidebar">
-          {element.image ? (
-            <EntityImage src={element.image} alt={element.name} />
-          ) : null}
           <DataPanel title="Datos del elemento" items={dataItems} />
         </aside>
+
         <div class="element-page__content">
-          <Header title={element.name} icon="auto_awesome" />
-          <Section>
-            <MarkdownDescription content={element.body} />
-          </Section>
+          <Tabs items={tabItems} defaultTab="info">
+            <div data-tab-panel="info" class="animate-fadeIn">
+              <Section>
+                <SectionHeader title="Esencia y Propiedades" showDivider />
+                <MarkdownDescription content={element.body} />
+              </Section>
+            </div>
+          </Tabs>
         </div>
       </div>
     </div>
   ) : (
-    <>
-      <Header title="Elemento no encontrado" icon="auto_awesome" />
+    <div class="element-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero name="Elemento no encontrado" />
       <Section>
         <p>El elemento solicitado no existe.</p>
         <p>
           <a href="/elements">Volver a elementos</a>
         </p>
       </Section>
-    </>
+    </div>
   )}
 </BaseLayout>

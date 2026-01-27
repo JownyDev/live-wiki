@@ -14,6 +14,7 @@ export type Card = {
   name: string;
   elements: string[];
   represents: string[];
+  image: string | null;
   body: string;
 };
 
@@ -105,8 +106,9 @@ const parseAndValidateCardMarkdown = (
   const name = getStringField(data, 'name');
   const elements = parseElementsField(data, 'elements', elementIds);
   const represents = parseRepresentsField(data, 'represents');
+  const image = typeof data.image === 'string' ? data.image : null;
 
-  return { id, name, elements, represents, body: content };
+  return { id, name, elements, represents, image, body: content };
 };
 
 const isEnoentError = (error: unknown): error is NodeErrorWithCode =>

@@ -1,11 +1,15 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/Header.astro';
+import Breadcrumbs, { type BreadcrumbItem } from '../../components/Breadcrumbs.astro';
+import CharacterHero from '../../components/CharacterHero.astro';
+import DataPanel, { type DataPanelItem } from '../../components/DataPanel.astro';
+import EventSummaryCard from '../../components/EventSummaryCard.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
-import RelationList, { type RelationItem } from '../../components/RelationList.astro';
 import Section from '../../components/Section.astro';
-import EntityLink from '../../components/EntityLink.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import Tabs, { type TabItem } from '../../components/Tabs.astro';
 import { getPlaceById, listPlaces } from '../../lib/content/places';
+import { getPlanetById } from '../../lib/content/planets';
 import { listEventsByPlaceId } from '../../lib/content/events';
 
 export async function getStaticPaths() {
@@ -19,56 +23,121 @@ const id = Astro.params.id;
 const place = typeof id === 'string' ? await getPlaceById(id) : null;
 const events =
   place && typeof id === 'string' ? await listEventsByPlaceId(id) : [];
-const eventItems: RelationItem[] = events.map((event) => ({
-  text: `${event.title} (${event.date})`,
-  href: `/events/${event.id}`,
-}));
+
+const planet = place?.planetId ? await getPlanetById(place.planetId) : null;
+
 const title = place ? place.name : 'Lugar no encontrado';
-const planetLabel = (() => {
-  if (!place) {
-    return 'Desconocido';
+
+const breadcrumbs: BreadcrumbItem[] = place
+  ? [
+      { label: 'Inicio', href: '/' },
+      { label: 'Lugares', href: '/places' },
+      { label: place.name, current: true },
+    ]
+  : [
+      { label: 'Inicio', href: '/' },
+      { label: 'Lugares', href: '/places' },
+      { label: 'Lugar no encontrado', current: true },
+    ];
+
+const placeMeta = place ? [{ label: 'ID', value: `#${place.id}` }] : [];
+
+const dataItems: DataPanelItem[] = [];
+if (place) {
+  if (planet) {
+    dataItems.push({
+      label: 'Planeta',
+      value: planet.name,
+      href: `/planets/${planet.id}`,
+      icon: 'public',
+    });
+  } else if (place.planetId) {
+    dataItems.push({
+      label: 'Planeta',
+      value: place.planetId,
+      href: `/planets/${place.planetId}`,
+      icon: 'public',
+    });
   }
-  if (place.planetId) {
-    return { text: place.planetId, href: `/planets/${place.planetId}` };
+
+  if (place.locationType) {
+    const typeLabels = {
+      space: 'Espacio Exterior',
+      planet: 'Superficie Planetaria',
+      unknown: 'Desconocido',
+    };
+    dataItems.push({
+      label: 'Tipo de Ubicación',
+      value: typeLabels[place.locationType],
+      icon: 'category',
+    });
   }
-  if (place.locationType === 'space') {
-    return 'Espacio';
-  }
-  if (place.locationType === 'planet') {
-    return 'Planeta';
-  }
-  if (place.locationType === 'unknown') {
-    return 'Desconocido';
-  }
-  return 'Desconocido';
-})();
+}
+
+const tabItems: TabItem[] = [
+  { id: 'info', label: 'Información', icon: 'description' },
+  { id: 'events', label: 'Eventos', icon: 'event' },
+];
 ---
 
-<BaseLayout title={title}>
+<BaseLayout title={title} lang="es">
   {place ? (
-    <>
-      <Header title={place.name} icon="place" />
-      <Section title="Planeta">
-        {typeof planetLabel === 'string' ? (
-          <p>{planetLabel}</p>
-        ) : (
-          <EntityLink href={planetLabel.href} label={planetLabel.text} />
-        )}
-      </Section>
-      <Section>
-        <RelationList label="Eventos aqui" items={eventItems} emptyText="Sin eventos." />
-      </Section>
-      <MarkdownDescription content={place.body} />
-    </>
+    <div class="character-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero
+        name={place.name}
+        meta={placeMeta}
+        imageUrl={place.image}
+      />
+
+      <div class="character-page__grid">
+        <aside class="character-page__sidebar">
+          <DataPanel title="Datos del lugar" items={dataItems} />
+        </aside>
+
+        <div class="character-page__content">
+          <Tabs items={tabItems} defaultTab="info">
+            <div data-tab-panel="info" class="animate-fadeIn">
+              <Section>
+                <SectionHeader title="Descripción" showDivider />
+                <MarkdownDescription content={place.body} />
+              </Section>
+            </div>
+
+            <div data-tab-panel="events" class="animate-fadeIn" hidden>
+              <Section>
+                <SectionHeader title="Eventos en este lugar" showDivider />
+                {events.length === 0 ? (
+                  <p>No hay eventos registrados en esta ubicación.</p>
+                ) : (
+                  <div class="relative space-y-16 py-8 before:content-[''] before:absolute before:left-1/2 before:top-0 before:-translate-x-1/2 before:w-px before:h-full before:bg-gradient-to-b before:from-transparent before:via-accent before:to-transparent before:opacity-30">
+                    {events.map((event, index) => (
+                      <EventSummaryCard
+                        title={event.title}
+                        date={event.date}
+                        preview={event.preview}
+                        href={`/events/${event.id}`}
+                        side={index % 2 === 0 ? 'right' : 'left'}
+                      />
+                    ))}
+                  </div>
+                )}
+              </Section>
+            </div>
+          </Tabs>
+        </div>
+      </div>
+    </div>
   ) : (
-    <>
-      <Header title="Lugar no encontrado" icon="place" />
+    <div class="character-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero name="Lugar no encontrado" />
       <Section>
         <p>El lugar solicitado no existe.</p>
         <p>
           <a href="/places">Volver a lugares</a>
         </p>
       </Section>
-    </>
+    </div>
   )}
 </BaseLayout>

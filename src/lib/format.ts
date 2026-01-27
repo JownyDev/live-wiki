@@ -16,7 +16,8 @@ export const formatOrigin = (origin: string | null | undefined): string => {
   if (!origin || origin === 'unknown') return 'Desconocido';
   
   // Extrae el ID (lo que está después de ':') o usa el string completo
-  const id = origin.includes(':') ? origin.split(':').pop()! : origin;
+  const parts = origin.split(':');
+  const id = parts[parts.length - 1] || origin;
   
   return formatEntityId(id);
 };
