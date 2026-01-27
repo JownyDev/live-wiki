@@ -13,3 +13,6 @@ coverage/
 .astro/
 dist/
 node_modules/
+.gemini/skills
+.codex/skills
+.claude/skills
