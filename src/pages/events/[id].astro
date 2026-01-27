@@ -8,6 +8,7 @@ import { parseLocationRef } from '../../lib/content/location-refs';
 import DataPanel, { type DataPanelItem } from '../../components/DataPanel.astro';
 import EntityImage from '../../components/EntityImage.astro';
 import Header from '../../components/Header.astro';
+import type { BadgeVariant } from '../../components/Badge.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
 import RelationList, { type RelationItem } from '../../components/RelationList.astro';
 import Section from '../../components/Section.astro';
@@ -22,9 +23,9 @@ export async function getStaticPaths() {
 const id = Astro.params.id;
 const event = typeof id === 'string' ? await getEventById(id) : null;
 const title = event ? event.title : 'Evento no encontrado';
-const meta = event
+const meta: Array<{ label: string; value: string; variant?: BadgeVariant }> = event
   ? [
-      { label: 'Type', value: 'event', variant: 'muted' },
+      { label: 'Type', value: 'event', variant: 'muted' as BadgeVariant },
       { label: 'Id', value: event.id },
     ]
   : [];

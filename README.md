@@ -1,62 +1,85 @@
 # Live-Wiki
 
-Live-Wiki is a text-first wiki for a game universe, built on Markdown + Git.
-It renders static pages per entity type, keeps relations via stable IDs, and
-validates lore consistency with a linter.
+## Descripción general
+Live-Wiki es una wiki "text-first" para un universo de juego, construida sobre Markdown + Git. Renderiza páginas estáticas por tipo de entidad, mantiene relaciones mediante IDs estables y valida la consistencia del lore con un linter.
 
 ---
 
-## Quickstart
+## Instalación y ejecución
 
-Requirements:
-- Node.js LTS (20 recommended)
+Requisitos:
+- Node.js LTS (se recomienda v20)
 - pnpm
 
-One-liner (install + run):
+Comando rápido (instalar + ejecutar):
 ```bash
 pnpm install && pnpm dev
 ```
 
-Useful commands:
+Comandos útiles:
 ```bash
-pnpm quality
-pnpm test --run
-pnpm wiki:check
-pnpm build
+pnpm quality      # Ejecuta lint, typecheck y tests
+pnpm test --run   # Ejecuta los tests una sola vez
+pnpm wiki:check   # Ejecuta el linter de lore
+pnpm build        # Construye el sitio estático
+```
+
+### Configuración de Asistentes IA
+
+El proyecto incluye scripts para configurar asistentes de IA (Claude, Gemini, Copilot, etc.) con el contexto del proyecto y las skills disponibles.
+
+Para configurarlos, ejecuta:
+```bash
+bash skills/setup.sh
 ```
 
 ---
 
-## Technologies and packages
+## Stack tecnológico
 
-- Node.js (LTS): runtime for tooling, builds, and scripts
-- TypeScript (strict): safer parsing and validation logic
-- pnpm: fast, disk-efficient monorepo dependency management
-- Astro: static site generation for content-first pages
-- Vitest: unit/integration tests for core logic
-- Playwright (optional): end-to-end checks for critical flows
-- ESLint + Prettier: consistent code quality and formatting
-
----
-
-## What you get (MVP)
-
-- 7 entity types: character, event, place, planet, element, card, mechanic
-- Static pages: `/characters/:id`, `/events/:id`, `/places/:id`, `/planets/:id`,
-  `/elements/:id`, `/cards/:id`, `/mechanics/:id`
-- Lists per type: `/characters`, `/events`, `/places`, etc.
-- Auto relations (timelines and links)
-- Lore linter: schema, date checks, duplicate IDs, broken refs
-- CLI helpers to create/check/build and CI pipeline
+- **Node.js (LTS):** entorno de ejecución para herramientas, builds y scripts.
+- **TypeScript (strict):** lógica de validación y parsing más segura.
+- **pnpm:** gestión de dependencias monorepo rápida y eficiente en disco.
+- **Astro:** generación de sitios estáticos para páginas centradas en contenido.
+- **Vitest:** tests unitarios/integración para lógica central.
+- **ESLint + Prettier:** calidad de código y formateo consistente.
 
 ---
 
-## Content format
+## Funcionalidades
 
-Each entity is a single Markdown file under `content/<type>/`.
-Frontmatter defines minimal fields; body is free Markdown.
+- **7 tipos de entidades:** character, event, place, planet, element, card, mechanic.
+- **Páginas estáticas:** `/characters/:id`, `/events/:id`, `/places/:id`, etc.
+- **Listados por tipo:** `/characters`, `/events`, `/places`, etc.
+- **Relaciones automáticas:** líneas de tiempo y enlaces entre entidades.
+- **Lore linter:** validación de esquema, comprobación de fechas, detección de IDs duplicados y referencias rotas.
+- **Herramientas CLI:** para crear contenido, verificar integridad y construir el proyecto.
 
-Example (character):
+---
+
+## Estructura
+
+```text
+content/               Fuente de la verdad en Markdown
+src/                   Sitio Astro (pages/layouts/components)
+packages/lore-linter/  Motor de validación (sin dependencias de UI)
+packages/wiki-cli/     Herramientas de desarrollo y checks
+templates/             Plantillas Markdown por tipo
+docs/design/           Documentos de diseño técnico
+```
+
+Dirección de dependencias:
+- `wiki-cli -> lore-linter -> shared`
+- `site (src) -> shared`
+
+---
+
+## Formato de contenido
+
+Cada entidad es un único archivo Markdown bajo `content/<tipo>/`.
+El frontmatter define los campos mínimos; el cuerpo es Markdown libre.
+
+Ejemplo (character):
 ```md
 ---
 type: character
@@ -65,10 +88,10 @@ name: Arina Mora
 origin: place:haven-docks
 ---
 
-Short bio in Markdown.
+Biografía corta en Markdown.
 ```
 
-Example (event):
+Ejemplo (event):
 ```md
 ---
 type: event
@@ -82,23 +105,21 @@ locations:
 ---
 ```
 
-Rules:
-- IDs are kebab-case and stable
-- References use prefixes like `character:`, `place:`, `planet:`, `element:`
+Reglas:
+- Los IDs usan `kebab-case` y son estables.
+- Las referencias usan prefijos como `character:`, `place:`, `planet:`, `element:`.
 
 ---
 
-## No database by design
+## Sin base de datos (por diseño)
 
-Live-Wiki does not use a conventional database. The repository is the source
-of truth: content lives as Markdown files under `content/` so humans and AI can
-work directly in the repo and iterate creative ideas without migrations.
+Live-Wiki no utiliza una base de datos convencional. El repositorio es la fuente de verdad: el contenido vive como archivos Markdown bajo `content/`, permitiendo que humanos e IA trabajen directamente en el repositorio e iteren ideas creativas sin migraciones.
 
 ---
 
 ## CLI
 
-These commands use the local `wiki-cli` package:
+Estos comandos utilizan el paquete local `wiki-cli`:
 
 ```bash
 pnpm wiki:new <type> <id>
@@ -108,39 +129,22 @@ pnpm wiki:build
 
 ---
 
-## Project layout
-
-```text
-content/          Markdown source of truth
-src/              Astro site (pages/layouts/components)
-packages/lore-linter/  Validation engine (no UI deps)
-packages/wiki-cli/     Dev tools and checks
-templates/        Markdown templates per type
-docs/design/      Technical design docs
-```
-
-Dependency direction:
-`wiki-cli -> lore-linter -> shared`
-`site (src) -> shared`
-
----
-
 ## CI
 
-GitHub Actions runs on push/PR:
-- install deps (pnpm)
-- quality checks
-- tests
-- pnpm wiki:check
-- build
+GitHub Actions se ejecuta en push/PR:
+- Instalación de dependencias (pnpm)
+- Comprobaciones de calidad (lint, types)
+- Tests (Vitest)
+- `pnpm wiki:check` (Lore Linter)
+- Build del sitio
 
 Workflow: `.github/workflows/ci.yml`
 
 ---
 
-## Contributing
+## Contribución
 
-Read `AGENTS.md` for project rules and conventions.
+Lee `AGENTS.md` para las reglas y convenciones del proyecto.
 
-Design references:
+Referencias de diseño:
 - `docs/`

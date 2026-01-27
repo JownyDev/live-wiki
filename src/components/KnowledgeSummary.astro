@@ -11,32 +11,3 @@ const { summary, label = 'Resumen' } = Astro.props as Props;
   <h3 class="knowledge-summary__label">{label}</h3>
   <p class="knowledge-summary__text">{summary}</p>
 </div>
-
-<style>
-  .knowledge-summary {
-    grid-column: 1 / -1;
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    background: var(--color-surface);
-    display: grid;
-    gap: var(--space-2);
-  }
-
-  .knowledge-summary__label {
-    margin: 0;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-muted);
-  }
-
-  .knowledge-summary__text {
-    margin: 0;
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: var(--color-text);
-    line-height: 1.5;
-  }
-</style>

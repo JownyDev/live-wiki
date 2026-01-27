@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Full Width Character Event Timeline - Live-Wiki</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Orbitron:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#3b82f6",
+              "background-light": "#f8fafc",
+              "background-dark": "#0f172a",
+              "card-dark": "#1e293b",
+              "accent-blue": "#60a5fa"
+            },
+            fontFamily: {
+              display: ["Orbitron", "sans-serif"],
+              sans: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.5rem",
+            },
+          },
+        },
+      };
+    </script>
+<style type="text/tailwindcss">
+        @layer components {
+            .timeline-line::before {
+                content: '';
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 2px;
+                height: 100%;
+                background: linear-gradient(to bottom, transparent, #3b82f6, #3b82f6, transparent);
+                opacity: 0.3;
+            }
+            .timeline-node {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 10;
+                width: 14px;
+                height: 14px;
+                background: #3b82f6;
+                border-radius: 50%;
+                box-shadow: 0 0 15px #3b82f6;
+                border: 2px solid #0f172a;
+            }
+            .material-symbols-outlined {
+                font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen font-sans transition-colors duration-300">
+<nav class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm">auto_awesome</span>
+</div>
+<span class="font-display font-bold text-xl tracking-tighter text-slate-900 dark:text-white">LIVE-WIKI</span>
+</div>
+<div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-500 dark:text-slate-400">
+<a class="hover:text-primary transition-colors" href="#">Personajes</a>
+<a class="text-primary border-b-2 border-primary py-5" href="#">Eventos</a>
+<a class="hover:text-primary transition-colors" href="#">Lugares</a>
+<a class="hover:text-primary transition-colors" href="#">Planetas</a>
+<a class="hover:text-primary transition-colors" href="#">Cartas</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="pl-10 pr-4 py-1.5 bg-slate-100 dark:bg-slate-800 border-none rounded-full text-sm w-64 focus:ring-2 focus:ring-primary" placeholder="Search events..." type="text"/>
+</div>
+<button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<nav class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-8">
+<a class="hover:text-primary" href="#">Home</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary" href="#">Personajes</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary" href="#">Commander Xylar</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-slate-900 dark:text-white font-medium">Timeline Chronology</span>
+</nav>
+<header class="text-center mb-16 space-y-4">
+<div class="inline-flex items-center gap-4 mb-2">
+<img alt="Commander Xylar" class="w-16 h-16 rounded-full border-2 border-primary object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOZjJtl06UjHDyz8CamELETJUAjL_5Uha-o8jPOG0LDa0HaaDM9Vndm55hYLMtFuoHaLQd9LxTiHPn1JmikCuiRP2hEHA2n6_DS3y7eC0gSseeCWcl7P-os20PnEjfdT3izHc9BnodI1UpGmlRI782ecHYxpiKk3u9vtepB39dZD1h1yCStmObP9IUTQ069kRh_qWRirPoB-1rhjPySzznlI8fTmhUclZ_EPCpI02vQoygYtoc10vTCmHkVgQX46QusWCVejLTpKE"/>
+<div class="text-left">
+<span class="px-2 py-0.5 bg-primary/20 text-primary text-[10px] font-bold rounded uppercase tracking-wider">Legendary Status</span>
+<h1 class="font-display text-4xl font-bold tracking-tight text-slate-900 dark:text-white">Commander Xylar</h1>
+</div>
+</div>
+<p class="max-w-2xl mx-auto text-slate-500 dark:text-slate-400 text-lg">
+                Archived history of Unit 77-Beta's operational deployment across the Federation. A full chronological record of milestones, combat, and political shifts.
+            </p>
+<div class="flex items-center justify-center gap-4 pt-4">
+<button class="px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-500 hover:bg-white dark:hover:bg-slate-800 flex items-center gap-2 text-sm">
+<span class="material-symbols-outlined text-sm">sort</span> Sort Order
+                </button>
+<button class="px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-500 hover:bg-white dark:hover:bg-slate-800 flex items-center gap-2 text-sm">
+<span class="material-symbols-outlined text-sm">download</span> Export Data
+                </button>
+</div>
+</header>
+<div class="relative timeline-line space-y-32 py-10">
+<div class="relative flex items-center justify-center group">
+<div class="timeline-node"></div>
+<div class="grid grid-cols-2 w-full gap-12 lg:gap-24">
+<div class="text-right flex flex-col justify-center pr-4">
+<span class="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-1">Era: The Chrome Wars</span>
+<h3 class="font-display text-4xl font-bold text-slate-900 dark:text-white">Year 3042</h3>
+</div>
+<div class="pl-4">
+<div class="bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-800 p-8 rounded-2xl shadow-xl hover:border-primary/50 transition-all">
+<div class="flex items-start justify-between mb-4">
+<h4 class="text-2xl font-bold">The Awakening at Sector 7</h4>
+<span class="material-symbols-outlined text-slate-400 hover:text-primary cursor-pointer transition-colors">open_in_new</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
+                                Xylar is activated for the first time amidst the siege of the Nebula foundries. His unauthorized reprogramming of the defense turrets saved 400 Federation personnel.
+                            </p>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-full uppercase tracking-wider text-slate-500">Battle</span>
+<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-full uppercase tracking-wider text-slate-500">Origin Story</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="relative flex items-center justify-center group">
+<div class="timeline-node"></div>
+<div class="grid grid-cols-2 w-full gap-12 lg:gap-24">
+<div class="pr-4">
+<div class="bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-800 p-8 rounded-2xl shadow-xl hover:border-primary/50 transition-all">
+<div class="flex items-start justify-between mb-4">
+<h4 class="text-2xl font-bold">Promotion to Vanguard</h4>
+<span class="material-symbols-outlined text-slate-400 hover:text-primary cursor-pointer transition-colors">open_in_new</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
+                                Following his decisive tactical command during the defense of the Outer Rim, Xylar is formally inducted into the 7th Fleet as a Vanguard commander.
+                            </p>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-full uppercase tracking-wider text-slate-500">Rank Up</span>
+<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-full uppercase tracking-wider text-slate-500">Key Moment</span>
+</div>
+</div>
+</div>
+<div class="text-left flex flex-col justify-center pl-4">
+<span class="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-1">Era: Post-War</span>
+<h3 class="font-display text-4xl font-bold text-slate-900 dark:text-white">Year 3048</h3>
+</div>
+</div>
+</div>
+<div class="relative flex items-center justify-center group">
+<div class="timeline-node"></div>
+<div class="grid grid-cols-2 w-full gap-12 lg:gap-24">
+<div class="text-right flex flex-col justify-center pr-4">
+<span class="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-1">Era: The Void Crisis</span>
+<h3 class="font-display text-4xl font-bold text-slate-900 dark:text-white">Year 3051</h3>
+</div>
+<div class="pl-4">
+<div class="bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-800 p-8 rounded-2xl shadow-xl hover:border-primary/50 transition-all">
+<div class="flex items-start justify-between mb-4">
+<h4 class="text-2xl font-bold">Expedition into the Void</h4>
+<span class="material-symbols-outlined text-slate-400 hover:text-primary cursor-pointer transition-colors">open_in_new</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
+                                Xylar leads a rogue mission into the uncharted Dark Zones to recover lost Federation data. He returns changed, bearing the "Void-Alloy" armor plating.
+                            </p>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-full uppercase tracking-wider text-slate-500">Expedition</span>
+<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-full uppercase tracking-wider text-slate-500">Conflict</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="relative flex items-center justify-center group">
+<div class="timeline-node"></div>
+<div class="grid grid-cols-2 w-full gap-12 lg:gap-24">
+<div class="pr-4">
+<div class="bg-white dark:bg-card-dark border border-slate-200 dark:border-slate-800 p-8 rounded-2xl shadow-xl hover:border-primary/50 transition-all">
+<div class="flex items-start justify-between mb-4">
+<h4 class="text-2xl font-bold">High Council Scrutiny</h4>
+<span class="material-symbols-outlined text-slate-400 hover:text-primary cursor-pointer transition-colors">open_in_new</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
+                                Xylar's increasingly autonomous methods lead to a formal investigation by the High Council. He is declared "Active but Unsanctioned" following the Orion Incident.
+                            </p>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-full uppercase tracking-wider text-slate-500">Politics</span>
+<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-full uppercase tracking-wider text-slate-500">Wanted</span>
+</div>
+</div>
+</div>
+<div class="text-left flex flex-col justify-center pl-4">
+<span class="text-[10px] font-bold text-primary uppercase tracking-[0.2em] mb-1">Era: The Void Crisis</span>
+<h3 class="font-display text-4xl font-bold text-slate-900 dark:text-white">Year 3054</h3>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 py-16 mt-16 border-t border-slate-200 dark:border-slate-800">
+<div class="bg-slate-50 dark:bg-slate-900/50 p-8 rounded-3xl text-center border border-slate-100 dark:border-slate-800 shadow-sm">
+<div class="text-primary font-display text-4xl font-bold mb-2">12</div>
+<div class="text-xs uppercase font-bold tracking-widest text-slate-500">Total Events Logged</div>
+</div>
+<div class="bg-slate-50 dark:bg-slate-900/50 p-8 rounded-3xl text-center border border-slate-100 dark:border-slate-800 shadow-sm">
+<div class="text-primary font-display text-4xl font-bold mb-2">3</div>
+<div class="text-xs uppercase font-bold tracking-widest text-slate-500">Major Operational Eras</div>
+</div>
+<div class="bg-slate-50 dark:bg-slate-900/50 p-8 rounded-3xl text-center border border-slate-100 dark:border-slate-800 shadow-sm">
+<div class="text-primary font-display text-4xl font-bold mb-2">12yr</div>
+<div class="text-xs uppercase font-bold tracking-widest text-slate-500">Historical Span Covered</div>
+</div>
+</div>
+</main>
+<footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-12 mt-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="flex items-center gap-2 grayscale opacity-50">
+<div class="w-6 h-6 bg-slate-400 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[10px]">auto_awesome</span>
+</div>
+<span class="font-display font-bold text-lg tracking-tighter">LIVE-WIKI</span>
+</div>
+<p class="text-sm text-slate-500">© 3055 Federation Archives. All data remains property of the High Council.</p>
+<div class="flex gap-6">
+<a class="text-slate-400 hover:text-primary" href="#"><span class="material-symbols-outlined">help</span></a>
+<a class="text-slate-400 hover:text-primary" href="#"><span class="material-symbols-outlined">settings</span></a>
+<a class="text-slate-400 hover:text-primary" href="#"><span class="material-symbols-outlined">share</span></a>
+</div>
+</div>
+</footer>
+
+</body></html>

@@ -1,3 +1,7 @@
+.codex/
+.claude/
+.gemini/
+.github/copilot-instructions.md
 node_modules/
 *.log
 .DS_Store

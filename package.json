@@ -1,13 +1,16 @@
 {
   "name": "live-wiki",
+  "author": "live-wiki",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "lint": "eslint . --ext .ts,.astro",
     "format": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
+    "test:e2e": "playwright test",
     "quality": "pnpm lint && pnpm typecheck && pnpm test --run",
     "dev": "astro dev",
     "build": "astro build",
@@ -15,10 +18,12 @@
     "verify": "pnpm quality && pnpm build",
     "wiki:check": "pnpm -C packages/wiki-cli build && pnpm exec wiki check",
     "wiki:build": "pnpm -C packages/wiki-cli build && pnpm exec wiki build",
-    "wiki:new": "pnpm -C packages/wiki-cli build && pnpm exec wiki new"
+    "wiki:new": "pnpm -C packages/wiki-cli build && pnpm exec wiki new",
+    "build:docs": "typedoc"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
+    "@playwright/test": "^1.58.0",
     "@types/node": "^25.0.3",
     "@typescript-eslint/eslint-plugin": "^8.44.0",
     "@typescript-eslint/parser": "^8.44.0",
@@ -28,12 +33,16 @@
     "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-astro": "^1.5.0",
     "prettier": "^3.7.0",
+    "typedoc": "^0.28.16",
+    "typedoc-plugin-markdown": "^4.9.0",
     "typescript": "^5.5.4",
     "vitest": "^3.2.4",
     "wiki-cli": "workspace:*"
   },
   "dependencies": {
+    "@astrojs/tailwind": "^6.0.2",
     "gray-matter": "^4.0.3",
-    "marked": "^17.0.1"
+    "marked": "^17.0.1",
+    "tailwindcss": "^3.4.19"
   }
 }

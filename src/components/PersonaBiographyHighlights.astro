@@ -10,30 +10,14 @@ const hasItems = items.length > 0;
 ---
 
 {hasItems ? (
-  <PersonaCard title="Hitos biograficos" span="full" icon="menu_book">
-    <ul class="persona-highlights">
+  <PersonaCard title="Hitos biográficos" span="full" icon="menu_book">
+    <ul class="persona-highlights m-0 p-0 list-none columns-1 md:columns-2 lg:columns-3 gap-x-8 text-[0.85rem] text-text">
       {items.map((item) => (
-        <li>{item}</li>
+        <li class="flex items-start gap-2 mb-2 break-inside-avoid-column">
+          <span class="text-accent mt-1.5 w-1.5 h-1.5 rounded-full bg-accent shrink-0"></span>
+          <span>{item}</span>
+        </li>
       ))}
     </ul>
   </PersonaCard>
 ) : null}
-
-<style>
-  .persona-highlights {
-    margin: 0;
-    padding-left: 1.1rem;
-    list-style: disc;
-    list-style-position: inside;
-    display: grid;
-    gap: var(--space-2);
-    font-size: var(--text-sm);
-    color: var(--color-text);
-  }
-
-  @media (min-width: 720px) {
-    .persona-highlights {
-      grid-template-columns: minmax(0, 1fr);
-    }
-  }
-</style>

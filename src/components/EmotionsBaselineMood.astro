@@ -30,6 +30,13 @@ const normalizeTone = (tone?: string): string | null => {
   };
   return toneMap[normalized] ?? null;
 };
+
+const barColorStyles: Record<string, string> = {
+  calm: 'bg-[#34d399]',
+  trust: 'bg-accent',
+  irritation: 'bg-[#f59e0b]',
+};
+
 ---
 
 {hasItems ? (
@@ -42,10 +49,9 @@ const normalizeTone = (tone?: string): string | null => {
     </h3>
     <div class="emotions-baseline__list">
       {items.map((item) => {
-        const toneClass = normalizeTone(item.tone);
-        const className = toneClass
-          ? `emotions-baseline__bar emotions-baseline__bar--${toneClass}`
-          : 'emotions-baseline__bar';
+        const toneKey = normalizeTone(item.tone);
+        const colorClass = toneKey ? (barColorStyles[toneKey] ?? 'bg-accent') : 'bg-accent';
+        const className = `emotions-baseline__bar h-full rounded-pill ${colorClass}`;
         return (
           <div class="emotions-baseline__item">
             <div class="emotions-baseline__meta">
@@ -61,77 +67,3 @@ const normalizeTone = (tone?: string): string | null => {
     </div>
   </div>
 ) : null}
-
-<style>
-  .emotions-baseline {
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    background: var(--color-surface);
-    display: grid;
-    gap: var(--space-3);
-  }
-
-  .emotions-baseline__title {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin: 0;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-accent);
-  }
-
-  .emotions-baseline__icon {
-    font-size: 0.9rem;
-  }
-
-  .emotions-baseline__list {
-    display: grid;
-    gap: var(--space-3);
-  }
-
-  .emotions-baseline__meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.75rem;
-  }
-
-  .emotions-baseline__label {
-    color: var(--color-muted);
-    font-weight: 600;
-  }
-
-  .emotions-baseline__value {
-    color: var(--color-text);
-    font-weight: 700;
-  }
-
-  .emotions-baseline__track {
-    height: 0.45rem;
-    border-radius: var(--radius-pill);
-    background: var(--color-surface-muted);
-    overflow: hidden;
-  }
-
-  .emotions-baseline__bar {
-    height: 100%;
-    border-radius: var(--radius-pill);
-    background: var(--color-accent);
-  }
-
-  .emotions-baseline__bar--calm {
-    background: #34d399;
-  }
-
-  .emotions-baseline__bar--trust {
-    background: var(--color-accent);
-  }
-
-  .emotions-baseline__bar--irritation {
-    background: #f59e0b;
-  }
-</style>

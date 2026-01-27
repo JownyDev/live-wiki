@@ -9,7 +9,7 @@ Este documento define **cómo crear y modificar lore** en la live-wiki de forma:
 - **creativa pero plausible** (fantasía con lógica interna)
 - **verificable** (cada cambio pasa checks y revisión de impacto)
 
-> Este archivo está pensado para agentes (Codex/LLM) y humanos.
+> Este archivo está pensado para agentes y humanos.
 > 
 
 ---
@@ -21,7 +21,10 @@ Aplicar estas reglas cuando se cree o modifique cualquier entidad del lore:
 - `type: character`
 - `type: event`
 - `type: place`
+- `type: planet`
 - `type: element`
+- `type: mechanic`
+- `type: card`
 - relaciones (`related_*`, refs)
 - cualquier otro `type:*` del universo
 
@@ -53,6 +56,7 @@ Aunque sea fantasía, el lector debe pensar: “esto podría pasar aquí”.
 - **Frontmatter**:
     - Es la **ficha técnica** (datos exportables, UI, validación).
     - Evita “párrafos de novela” en YAML.
+    - [Ver referencia completa de campos](./packages/lore-linter/LORE_SCHEMA.md).
 - **Body (markdown)**:
     - Es la **descripción humana**.
     - Formato libre mientras sea Markdown; mejor si aprovecha recursos del formato (listas, énfasis, etc.).
@@ -65,6 +69,8 @@ Aunque sea fantasía, el lector debe pensar: “esto podría pasar aquí”.
 ## ✅ Reglas de coherencia por tipo
 
 ### 👤 Characters (`type: character`)
+
+**Obligatorio:** `id`, `name`.
 
 - Mantén la descripción **breve y accionable**:
     - “Lo que eres”: rasgos + voz + valores + tabúes + bullets de historia si aportan.
@@ -79,25 +85,46 @@ Aunque sea fantasía, el lector debe pensar: “esto podría pasar aquí”.
 
 ### 🗓️ Events (`type: event`)
 
+**Obligatorio:** `id`, `title`, `date`, `who`.
+
 - Un evento debe responder:
     - qué pasó, dónde, quién participó, consecuencias.
 - Si un evento implica cambios de estado del mundo:
-    - crea/actualiza refs necesarias (lugares, personajes, facciones).
-- Evita eventos “gigantes” si no hay soporte en el resto del lore.
+    - crea/actualiza refs necesarias (lugares, personajes, facciones...).
 
-### 🗺️ Places (`type: place`)
+### 🗺️ Places (`type: place`) / 🪐 Planets (`type: planet`)
+
+**Obligatorio:** `id`, `name`.
 
 - Define una identidad clara:
     - propósito del lugar, ambiente, qué lo hace único, peligros.
 - Si el lugar aparece en eventos, asegúrate de que:
     - el tono y escala coinciden con lo descrito.
+- **Planets:**
+    - Usar para cuerpos celestes o mundos enteros.
+    - Definir si son habitables o no.
 
-### 🧩 Elements / Mechanics
+### 🧩 Elements (`type: element`) / ⚙️ Mechanics (`type: mechanic`)
 
-- Si hay mecánicas, deben ser:
-    - consistentes con lo ya establecido
-    - comprensibles en 1 lectura
-- Si no aplica a este juego/prototipo, manténlo en lore “soft”.
+**Obligatorio:** `id`, `name`.
+
+- **Elements:**
+    - Elementos fundamentales del sistema mágico/físico (fuego, vacío, eco, etc.).
+    - Define claramente su origen (`origin`) si aplica.
+- **Mechanics:**
+    - Explicación de reglas del juego o leyes físicas específicas.
+    - Si hay mecánicas, deben ser:
+        - consistentes con lo ya establecido
+        - comprensibles en 1 lectura
+    - Si no aplica a este juego/prototipo, manténlo en lore “soft”.
+
+### 🃏 Cards (`type: card`)
+
+**Obligatorio:** `id`, `name`, `elements`.
+
+- Representan cartas jugables o habilidades encapsuladas.
+- Requiere `elements` (array de 2 refs a `element:*`) y `represents` (refs a character, place, event, etc.).
+- Descripción clara del efecto o la representación simbólica.
 
 ---
 
@@ -108,7 +135,7 @@ Cada vez que se crea/modifica una entidad:
 ### 1) Impacto y referencias
 
 - [ ]  ¿Estoy introduciendo un concepto nuevo que afecta a otros textos?
-- [ ]  ¿He actualizado entidades relacionadas (personajes, eventos, lugares)?
+- [ ]  ¿He actualizado entidades relacionadas (personajes, eventos, lugares...)?
 - [ ]  ¿Hay referencias rotas o inconsistentes (ids, slugs, prefijos)?
 
 ### 2) Cronología
@@ -170,7 +197,7 @@ Si durante la creación/modificación detectas una posible inconsistencia (lore,
 Después de cualquier cambio de lore:
 
 - Ejecuta el comando estándar del repo para validar:
-    - `pnpm wiki:check` y/o `pnpm verify`
+    - `pnpm wiki:check` y `pnpm verify`
 - Corrige:
     - errores de frontmatter
     - refs rotas
@@ -216,3 +243,40 @@ Si un cambio afecta a muchas entidades (ej. una guerra, un cambio de era, un ret
 - agrupa el trabajo en una mini-iteración:
     - “cambio base” + “actualización de afectados” + “validación”
 - evita dejar el repo en un estado intermedio incoherente.
+
+---
+
+## 🏷️ Estándar de Tags
+
+Para mantener la consistencia en `memory_profile` y sistemas de búsqueda, usa estos tags estándar. Si necesitas nuevos, intenta seguir el patrón `categoria:subcategoria.*`.
+
+### Interest Tags (Temas de memoria)
+- `zona:atrio.mapa.*` (Eventos en zona mapa)
+- `zona:atrio.brasero.*` (Eventos en zona brasero)
+- `zona:atrio.puerta.*` (Eventos en zona puerta)
+- `mapa.*` / `agua.*` / `fuego.*`
+- `puerta.*` / `mecanismo.*`
+- `ritual.*` / `divino.*`
+- `todo.*` (Omnisciencia)
+
+### Relationship Tags (Relación con jugador/NPCs)
+- `jugador.*` (General con el jugador)
+- `jugador.pide_ayuda`
+- `jugador.amenaza`
+- `jugador.confesion`
+
+### Allowed/Blocked Tags (Filtros de memoria)
+- `ayuda.*`
+- `reparacion.*`
+- `confesion.*`
+- `violencia.*`
+- `soborno.*`
+- `mentira.*`
+
+### Related Characters (Tipos de relación)
+- `friend` / `ally`
+- `enemy` / `rival`
+- `family`
+- `mentor` / `student`
+- `superior` / `subordinate`
+

@@ -8,61 +8,25 @@ type Props = {
 };
 
 const { title, icon, span } = Astro.props as Props;
-const className = span ? `persona-card persona-card--${span}` : 'persona-card';
+
+const spanStyles: Record<PersonaCardSpan, string> = {
+  wide: 'md:col-span-2',
+  full: 'col-span-full',
+};
+
+const className = `persona-card p-space-5 rounded-md border border-border bg-surface grid gap-space-3 ${span ? spanStyles[span] : ''}`;
 ---
 
 <div class={className}>
-  <h3 class="persona-card__label">
+  <h3 class="persona-card__label flex items-center gap-space-2 m-0 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-accent">
     {icon ? (
-      <span class="material-symbols-outlined persona-card__icon" aria-hidden="true">
+      <span class="material-symbols-outlined persona-card__icon text-[0.9rem]" aria-hidden="true">
         {icon}
       </span>
     ) : null}
     {title}
   </h3>
-  <div class="persona-card__content">
+  <div class="persona-card__content grid gap-space-3">
     <slot />
   </div>
 </div>
-
-<style>
-  .persona-card {
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    background: var(--color-surface);
-    display: grid;
-    gap: var(--space-2);
-  }
-
-  .persona-card__label {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin: 0;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-accent);
-  }
-
-  .persona-card__icon {
-    font-size: 0.9rem;
-  }
-
-  .persona-card__content {
-    display: grid;
-    gap: var(--space-2);
-  }
-
-  @media (min-width: 720px) {
-    .persona-card--wide {
-      grid-column: span 2 / span 2;
-    }
-  }
-
-  .persona-card--full {
-    grid-column: 1 / -1;
-  }
-</style>

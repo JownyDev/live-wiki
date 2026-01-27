@@ -20,37 +20,3 @@ const { title, icon } = Astro.props as Props;
     <slot />
   </div>
 </div>
-
-<style>
-  .memory-card {
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    background: var(--color-surface);
-    display: grid;
-    gap: var(--space-3);
-    align-content: start;
-    align-items: start;
-  }
-
-  .memory-card__title {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin: 0;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-accent);
-  }
-
-  .memory-card__icon {
-    font-size: 0.9rem;
-  }
-
-  .memory-card__content {
-    display: grid;
-    gap: var(--space-3);
-  }
-</style>

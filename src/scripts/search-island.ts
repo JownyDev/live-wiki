@@ -7,7 +7,7 @@ if (!root) {
   throw new Error('Search root not found');
 }
 
-const input = root.querySelector<HTMLInputElement>('.search__input');
+const input = root.querySelector<HTMLInputElement>('#search-input');
 const status = root.querySelector<HTMLElement>('[data-search-status]');
 const results = root.querySelector<HTMLUListElement>('[data-search-results]');
 
@@ -32,8 +32,12 @@ const typeLabels: TypeLabelMap = {
 let index: SearchIndexEntry[] = [];
 let loadPromise: Promise<boolean> | null = null;
 
-const setStatus = (message: string): void => {
-  status.textContent = message;
+const setStatus = (message: string, isHtml = false): void => {
+  if (isHtml) {
+    status.innerHTML = message;
+  } else {
+    status.textContent = message;
+  }
 };
 
 const renderResults = (entries: SearchIndexEntry[]): void => {
@@ -67,7 +71,10 @@ const loadIndex = async (): Promise<boolean> => {
     return loadPromise;
   }
 
-  setStatus('Cargando indice...');
+  setStatus(
+    '<span class="material-symbols-outlined animate-spin text-sm align-middle">progress_activity</span> <span class="align-middle">Cargando...</span>',
+    true,
+  );
   loadPromise = (async () => {
     try {
       const response = await fetch(searchEndpoint);
@@ -77,11 +84,11 @@ const loadIndex = async (): Promise<boolean> => {
       const data: unknown = await response.json();
       index = Array.isArray(data) ? (data as SearchIndexEntry[]) : [];
       if (!input.value.trim()) {
-        setStatus('Escribe para buscar.');
+        setStatus('Escribe para buscar...');
       }
       return true;
     } catch {
-      setStatus('No se pudo cargar el indice.');
+      setStatus('Error al cargar.');
       return false;
     }
   })();
@@ -94,7 +101,7 @@ const updateResults = async (): Promise<void> => {
   if (!query.trim()) {
     results.innerHTML = '';
     results.hidden = true;
-    setStatus('Escribe para buscar.');
+    setStatus('Escribe para buscar...');
     return;
   }
 

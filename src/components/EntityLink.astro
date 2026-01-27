@@ -4,42 +4,36 @@ export type EntityLinkProps = {
   href?: string;
   missing?: boolean;
   icon?: string;
+  className?: string;
+  iconClassName?: string;
 };
 
-const { label, href, missing = false, icon } = Astro.props as EntityLinkProps;
+const { label, href, missing = false, icon, className, iconClassName } =
+  Astro.props as EntityLinkProps;
 const isMissing = missing || !href;
-const className = isMissing ? 'entity-link entity-link--missing' : 'entity-link';
+
+const baseClasses = 'entity-link';
+const missingClasses = 'entity-link--missing';
+const resolvedClassName = `${baseClasses}${isMissing ? ` ${missingClasses}` : ''}${className ? ` ${className}` : ''}`;
+const resolvedIconClassName = `material-symbols-outlined entity-link__icon${iconClassName ? ` ${iconClassName}` : ''}`;
 ---
 
 {isMissing ? (
-  <span class={className} aria-disabled="true">
+  <span class={resolvedClassName} aria-disabled="true">
     {icon ? (
-      <span class="material-symbols-outlined entity-link__icon" aria-hidden="true">
+      <span class={resolvedIconClassName} aria-hidden="true">
         {icon}
       </span>
     ) : null}
     <span class="entity-link__label">{label}</span>
   </span>
 ) : (
-  <a class={className} href={href}>
+  <a class={resolvedClassName} href={href}>
     {icon ? (
-      <span class="material-symbols-outlined entity-link__icon" aria-hidden="true">
+      <span class={resolvedIconClassName} aria-hidden="true">
         {icon}
       </span>
     ) : null}
     <span class="entity-link__label">{label}</span>
   </a>
 )}
-
-<style>
-  .entity-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-  }
-
-  .entity-link__icon {
-    font-size: 1rem;
-    color: currentColor;
-  }
-</style>

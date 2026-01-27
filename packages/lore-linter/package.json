@@ -1,7 +1,9 @@
 {
   "name": "lore-linter",
+  "author": "live-wiki",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache-2.0",
   "type": "commonjs",
   "scripts": {
     "build": "tsc -p tsconfig.build.json"
