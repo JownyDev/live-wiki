@@ -51,13 +51,13 @@
   }
 
   body {
-    @apply m-0 font-sans text-text bg-bg;
+    @apply m-0 font-sans text-text bg-bg transition-colors duration-300;
     font-size: var(--text-base);
     line-height: 1.6;
   }
 
   a {
-    @apply text-accent no-underline hover:text-accent-strong hover:underline transition-colors;
+    @apply text-accent no-underline hover:text-accent-strong transition-all;
   }
 
   h1, h2, h3, h4 {

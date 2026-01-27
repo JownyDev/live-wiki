@@ -52,7 +52,7 @@ if (date) {
       <div class="bg-surface border border-border p-6 lg:p-8 rounded-2xl shadow-xl hover:border-accent/50 transition-all">
         <div class="flex items-start justify-between mb-4">
           <h4 class="text-xl lg:text-2xl font-bold text-text">
-            {href ? <a href={href} class="hover:text-accent transition-colors">{title}</a> : title}
+            {href ? <a href={href} class="text-text hover:text-accent hover:bg-transparent transition-colors">{title}</a> : title}
           </h4>
           {href ? (
             <a href={href} class="text-muted hover:text-accent transition-colors">
