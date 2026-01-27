@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs, { type BreadcrumbItem } from '../../components/Breadcrumbs.astro';
 import CharacterHero from '../../components/CharacterHero.astro';
+import CharacterList from '../../components/CharacterList.astro';
 import DataPanel, { type DataPanelItem } from '../../components/DataPanel.astro';
 import EventSummaryCard from '../../components/EventSummaryCard.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
@@ -35,7 +36,7 @@ import { getPlaceById } from '../../lib/content/places';
 import { getPlanetById } from '../../lib/content/planets';
 import { listEventsByCharacterId } from '../../lib/content/events';
 import { parseLocationRef } from '../../lib/content/location-refs';
-import { formatEntityId } from '../../lib/format';
+import { formatEntityId, formatOrigin } from '../../lib/format';
 
 export async function getStaticPaths() {
   const characters = await listCharacters();
@@ -74,7 +75,16 @@ const originView = await (async () => {
 })();
 
 type LinkView = { text: string; href?: string };
-type RelationView = LinkView & { missing?: boolean };
+type RelationView = {
+  id: string;
+  name: string;
+  image?: string;
+  archetype?: string;
+  origin?: string;
+  relationship?: string;
+  href?: string;
+  missing?: boolean;
+};
 type RelatedGroup = { label: string; items: RelationView[] };
 
 const hasItems = <T,>(items: readonly T[]): boolean => items.length > 0;
@@ -105,48 +115,54 @@ const resolveAffinityView = async (value: string): Promise<LinkView> => {
     : { text: `${elementId} (no encontrado)` };
 };
 
-const buildRelatedGroups = async (
+const buildRelatedCharacters = async (
   entries: Array<{ type: string; character: string }>,
-): Promise<RelatedGroup[]> => {
-  const groups: RelatedGroup[] = [];
-  const indexByLabel = new Map<string, number>();
+): Promise<RelationView[]> => {
+  const items: RelationView[] = [];
 
   for (const entry of entries) {
     const label = entry.type;
-    const existingIndex = indexByLabel.get(label);
-    const groupIndex =
-      typeof existingIndex === 'number'
-        ? existingIndex
-        : (() => {
-            const nextIndex = groups.length;
-            groups.push({ label, items: [] });
-            indexByLabel.set(label, nextIndex);
-            return nextIndex;
-          })();
-
     const characterId = parseWithPrefix(entry.character, 'character:');
+    
     if (!characterId) {
-      groups[groupIndex].items.push({ text: 'no encontrado', missing: true });
+      items.push({
+        id: 'unknown',
+        name: 'no encontrado',
+        relationship: label,
+        missing: true,
+      });
       continue;
     }
+
     const relatedCharacter = await getCharacterById(characterId);
     if (!relatedCharacter) {
-      groups[groupIndex].items.push({ text: 'no encontrado', missing: true });
+      items.push({
+        id: characterId,
+        name: 'no encontrado',
+        relationship: label,
+        missing: true,
+      });
       continue;
     }
-    groups[groupIndex].items.push({
-      text: relatedCharacter.name,
+
+    items.push({
+      id: relatedCharacter.id,
+      name: relatedCharacter.name,
+      image: relatedCharacter.image,
+      archetype: relatedCharacter.archetype,
+      origin: relatedCharacter.origin,
+      relationship: label,
       href: `/characters/${relatedCharacter.id}`,
     });
   }
 
-  return groups;
+  return items;
 };
 
 const affinityView = character?.affinity
   ? await resolveAffinityView(character.affinity)
   : null;
-const relatedGroups = character ? await buildRelatedGroups(character.relatedCharacters) : [];
+const allRelatedCharacters = character ? await buildRelatedCharacters(character.relatedCharacters) : [];
 const knowledge = character?.knowledge ?? null;
 const knowledgeSummary = knowledge?.summary ?? null;
 const knowledgeKnowsAbout = knowledge?.knowsAbout ?? [];
@@ -461,26 +477,11 @@ const tabItems: TabItem[] = [
             </div>
 
             <div data-tab-panel="relations" class="animate-fadeIn" hidden>
-              {relatedGroups.length > 0 ? (
+              {allRelatedCharacters.length > 0 ? (
                 <Section>
                   <SectionHeader title="Relaciones" showDivider />
                   <div class="character-page__relations">
-                    {relatedGroups.map((group) => (
-                      <div class="character-page__relation-group">
-                        <h3 class="character-page__relation-title">{group.label}</h3>
-                        <ul class="character-page__relation-items tag-list">
-                          {group.items.map((item) => (
-                            <li>
-                              <EntityLink
-                                label={item.text}
-                                href={item.href}
-                                missing={item.missing}
-                              />
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
+                    <CharacterList characters={allRelatedCharacters} variant="relations" />
                   </div>
                 </Section>
               ) : (

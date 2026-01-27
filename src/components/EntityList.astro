@@ -1,0 +1,38 @@
+---
+export type EntityListItem = {
+  label: string;
+  href?: string;
+  missing?: boolean;
+};
+
+type Props = {
+  items: EntityListItem[];
+};
+
+const { items } = Astro.props;
+---
+
+<div class="entity-list space-y-1">
+  {items.map((item) => {
+    const isMissing = item.missing || !item.href;
+    
+    return (
+      <div class="group flex items-center transition-colors">
+        {isMissing ? (
+          <div class="flex items-center gap-3 py-2 text-lg font-medium text-muted/50 w-full cursor-not-allowed">
+            <span class="h-1.5 w-1.5 rounded-full bg-border/50"></span>
+            <span class="line-through">{item.label}</span>
+          </div>
+        ) : (
+          <a 
+            href={item.href} 
+            class="flex items-center gap-3 py-2 text-lg font-medium text-text/80 dark:text-muted hover:text-accent dark:hover:text-text transition-colors w-full no-underline"
+          >
+            <span class="h-1.5 w-1.5 rounded-full bg-border group-hover:bg-accent transition-colors"></span>
+            {item.label}
+          </a>
+        )}
+      </div>
+    );
+  })}
+</div>

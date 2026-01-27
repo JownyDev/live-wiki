@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Live-Wiki - Elements Index</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6", // Vibrant Blue
+                        "background-light": "#f8fafc", // Slate 50
+                        "background-dark": "#000000", // Pitch Black
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#000000", // Pure black for seamless look
+                        "border-light": "#e2e8f0",
+                        "border-dark": "#333333", // Slightly lighter for subtle separation if needed, or remove borders entirely as requested
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>html { scroll-behavior: smooth; }::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #333333;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 font-sans min-h-screen flex flex-col transition-colors duration-300">
+<header class="sticky top-0 z-50 bg-surface-light/80 dark:bg-black/80 backdrop-blur-md border-b border-border-light dark:border-zinc-800/50">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center gap-8">
+<a class="text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2" href="#">
+<span class="material-icons text-primary">auto_stories</span>
+                        Live-Wiki
+                    </a>
+<nav class="hidden md:flex items-center gap-1">
+<a class="px-3 py-2 text-sm font-medium text-slate-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Personajes</a>
+<a class="px-3 py-2 text-sm font-medium text-slate-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Eventos</a>
+<a class="px-3 py-2 text-sm font-medium text-slate-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Lugares</a>
+<a class="px-3 py-2 text-sm font-medium text-slate-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Planetas</a>
+<a class="px-3 py-2 text-sm font-medium text-primary border-b-2 border-primary" href="#">Elementos</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group hidden sm:block">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-icons text-slate-400 text-lg group-focus-within:text-primary transition-colors">search</span>
+</div>
+<input class="block w-64 pl-10 pr-3 py-1.5 border border-border-light dark:border-zinc-800 rounded-full leading-5 bg-slate-100 dark:bg-zinc-900 text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition-all shadow-sm" placeholder="Buscar..." type="text"/>
+</div>
+<button class="p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors focus:outline-none" id="theme-toggle">
+<span class="material-icons dark:hidden">light_mode</span>
+<span class="material-icons hidden dark:block text-yellow-400">dark_mode</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-purple-500 p-[2px] cursor-pointer">
+<img alt="User Profile" class="rounded-full bg-background-dark h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9lOwYsRPnUX8erHgEWXfquGO-PgtzJni1GV-c1a89Mc85zbfxqnUc86PGZFD1yyxQIqwqZkzctNUU2PKNqXLBBU79Atyz7BR6RLCjMcuQ93e-37msW29FA6dk9m_AwUWiNTCIECE57Ez-tRFqaJSX_jdt186zWLTwYfWCSDBfVQ7b3Geo5Og32g2Q2whZZ0QIYLKw7DV2V3gJyDDXD0YYECVq9lKmxwYTnZbK3A1ckGtTcJoD1bZlahrU-Xh_MBWn3n_7nOw7Mw"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+<section class="min-w-0 max-w-3xl mx-auto">
+<div class="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="material-icons text-primary text-2xl">category</span>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Elementos</h1>
+</div>
+<p class="text-slate-500 dark:text-zinc-500 text-sm">Lista de elementos fundamentales conocidos en el universo.</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="group flex items-center transition-colors">
+<a class="flex items-center gap-3 py-2 text-lg font-medium text-slate-700 dark:text-zinc-300 hover:text-primary dark:hover:text-white transition-colors w-full" href="#">
+<span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-zinc-700 group-hover:bg-primary transition-colors"></span>
+                        Aether
+                        <span class="material-icons text-sm opacity-0 group-hover:opacity-100 transition-opacity text-primary ml-auto">arrow_forward</span>
+</a>
+</div>
+<div class="group flex items-center transition-colors">
+<a class="flex items-center gap-3 py-2 text-lg font-medium text-slate-700 dark:text-zinc-300 hover:text-primary dark:hover:text-white transition-colors w-full" href="#">
+<span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-zinc-700 group-hover:bg-primary transition-colors"></span>
+                        Dark Matter
+                        <span class="material-icons text-sm opacity-0 group-hover:opacity-100 transition-opacity text-primary ml-auto">arrow_forward</span>
+</a>
+</div>
+<div class="group flex items-center transition-colors">
+<a class="flex items-center gap-3 py-2 text-lg font-medium text-slate-700 dark:text-zinc-300 hover:text-primary dark:hover:text-white transition-colors w-full" href="#">
+<span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-zinc-700 group-hover:bg-primary transition-colors"></span>
+                        Plasma
+                        <span class="material-icons text-sm opacity-0 group-hover:opacity-100 transition-opacity text-primary ml-auto">arrow_forward</span>
+</a>
+</div>
+<div class="group flex items-center transition-colors">
+<a class="flex items-center gap-3 py-2 text-lg font-medium text-slate-700 dark:text-zinc-300 hover:text-primary dark:hover:text-white transition-colors w-full" href="#">
+<span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-zinc-700 group-hover:bg-primary transition-colors"></span>
+                        Void Essence
+                        <span class="material-icons text-sm opacity-0 group-hover:opacity-100 transition-opacity text-primary ml-auto">arrow_forward</span>
+</a>
+</div>
+<div class="group flex items-center transition-colors">
+<a class="flex items-center gap-3 py-2 text-lg font-medium text-slate-700 dark:text-zinc-300 hover:text-primary dark:hover:text-white transition-colors w-full" href="#">
+<span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-zinc-700 group-hover:bg-primary transition-colors"></span>
+                        Stardust
+                        <span class="material-icons text-sm opacity-0 group-hover:opacity-100 transition-opacity text-primary ml-auto">arrow_forward</span>
+</a>
+</div>
+<div class="group flex items-center transition-colors">
+<a class="flex items-center gap-3 py-2 text-lg font-medium text-slate-700 dark:text-zinc-300 hover:text-primary dark:hover:text-white transition-colors w-full" href="#">
+<span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-zinc-700 group-hover:bg-primary transition-colors"></span>
+                        Quantum Flux
+                        <span class="material-icons text-sm opacity-0 group-hover:opacity-100 transition-opacity text-primary ml-auto">arrow_forward</span>
+</a>
+</div>
+<div class="group flex items-center transition-colors">
+<a class="flex items-center gap-3 py-2 text-lg font-medium text-slate-700 dark:text-zinc-300 hover:text-primary dark:hover:text-white transition-colors w-full" href="#">
+<span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-zinc-700 group-hover:bg-primary transition-colors"></span>
+                        Neutronium
+                        <span class="material-icons text-sm opacity-0 group-hover:opacity-100 transition-opacity text-primary ml-auto">arrow_forward</span>
+</a>
+</div>
+<div class="group flex items-center transition-colors">
+<a class="flex items-center gap-3 py-2 text-lg font-medium text-slate-700 dark:text-zinc-300 hover:text-primary dark:hover:text-white transition-colors w-full" href="#">
+<span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-zinc-700 group-hover:bg-primary transition-colors"></span>
+                        Solarite
+                        <span class="material-icons text-sm opacity-0 group-hover:opacity-100 transition-opacity text-primary ml-auto">arrow_forward</span>
+</a>
+</div>
+</div>
+<div class="mt-12 flex justify-center">
+<div class="flex gap-4">
+<button class="text-sm font-medium text-slate-400 hover:text-primary dark:text-zinc-600 dark:hover:text-zinc-300 transition-colors disabled:opacity-50">Previous</button>
+<span class="text-sm text-slate-300 dark:text-zinc-800">|</span>
+<button class="text-sm font-medium text-slate-400 hover:text-primary dark:text-zinc-600 dark:hover:text-zinc-300 transition-colors">Next</button>
+</div>
+</div>
+</section>
+</main>
+<script>
+        // Simple dark mode toggle logic
+        const toggleBtn = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        // Check local storage or system preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+        toggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+        });
+    </script>
+</body></html>

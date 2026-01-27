@@ -1,0 +1,80 @@
+---
+import { formatOrigin } from '../lib/format';
+
+export interface CharacterListItem {
+  id: string;
+  name: string;
+  image?: string;
+  archetype?: string;
+  origin?: string;
+  relationship?: string;
+  href?: string;
+}
+
+interface Props {
+  characters: CharacterListItem[];
+  variant?: 'default' | 'relations';
+}
+
+const { characters, variant = 'default' } = Astro.props;
+const isRelations = variant === 'relations';
+---
+
+<div class="bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
+  {/* Table Header */}
+  <div class="grid grid-cols-12 gap-4 px-6 py-3 border-b border-border bg-surface-muted">
+    <div class="col-span-8 sm:col-span-6 text-xs font-medium text-muted uppercase tracking-wider">Personaje</div>
+    <div class="col-span-4 sm:col-span-4 text-xs font-medium text-muted uppercase tracking-wider">Origen</div>
+    {isRelations ? (
+      <div class="col-span-2 hidden sm:block text-xs font-medium text-muted uppercase tracking-wider">Relación</div>
+    ) : (
+      <div class="col-span-2 hidden sm:block text-xs font-medium text-muted uppercase tracking-wider">Clase</div>
+    )}
+  </div>
+
+  {/* Table Body */}
+  <div class="divide-y divide-border">
+    {characters.length === 0 ? (
+      <div class="p-6 text-center text-muted">No hay personajes todavía.</div>
+    ) : (
+      characters.map((character) => (
+        <a href={character.href || `/characters/${character.id}`} class="group grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-surface-muted/50 transition-colors cursor-pointer no-underline">
+          
+          {/* Character Column */}
+          <div class="col-span-8 sm:col-span-6 flex items-center gap-4">
+            <div class="h-10 w-10 rounded-full border border-border overflow-hidden bg-surface-muted flex-shrink-0">
+              {character.image ? (
+                <img src={character.image} alt={character.name} class="h-full w-full object-cover relative" loading="lazy" />
+              ) : (
+                <div class="h-full w-full flex items-center justify-center bg-surface-muted text-muted">
+                  <span class="material-symbols-outlined text-sm">person</span>
+                </div>
+              )}
+            </div>
+            <div class="min-w-0">
+              <p class="text-sm font-semibold text-text group-hover:text-accent transition-colors truncate">{character.name}</p>
+              <p class="text-xs text-muted sm:hidden truncate">
+                {isRelations ? (character.relationship || 'Desconocida') : (character.archetype || 'Desconocido')}
+              </p>
+            </div>
+          </div>
+
+          {/* Origin Column */}
+          <div class="col-span-4 sm:col-span-4">
+            <span class="text-sm text-muted truncate block">{formatOrigin(character.origin)}</span>
+          </div>
+
+          {/* Third Column (Desktop) */}
+          <div class="col-span-2 hidden sm:block">
+            {isRelations ? (
+              <span class="text-sm text-muted truncate block">{character.relationship || '-'}</span>
+            ) : (
+              <span class="text-sm text-muted truncate block">{character.archetype || '-'}</span>
+            )}
+          </div>
+
+        </a>
+      ))
+    )}
+  </div>
+</div>

@@ -1,10 +1,8 @@
 ---
-import EntityLink from './EntityLink.astro';
+import EntityList, { type EntityListItem } from './EntityList.astro';
 
-export type RelationItem = {
+export type RelationItem = EntityListItem & {
   text: string;
-  href?: string;
-  missing?: boolean;
 };
 
 type Props = {
@@ -16,19 +14,18 @@ type Props = {
 const { label, items, emptyText } = Astro.props;
 const hasItems = items.length > 0;
 const shouldRender = hasItems || typeof emptyText === 'string';
+
+const normalizedItems = items.map(item => ({
+  ...item,
+  label: item.text
+}));
 ---
 
 {shouldRender ? (
   <div class="relation-list">
-    <h2>{label}</h2>
+    <h3 class="text-xs font-bold uppercase tracking-[0.14em] text-accent mb-4">{label}</h3>
     {hasItems ? (
-      <ul>
-        {items.map((item) => (
-          <li>
-            <EntityLink label={item.text} href={item.href} missing={item.missing} />
-          </li>
-        ))}
-      </ul>
+      <EntityList items={normalizedItems} />
     ) : (
       <p class="relation-list__empty">{emptyText}</p>
     )}

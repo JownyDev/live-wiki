@@ -64,7 +64,7 @@
     @apply font-serif leading-tight tracking-tight;
   }
 
-  h1 { font-size: 2.1rem; }
+  h1 { font-size: 2.1rem; font-weight: 700; }
   h2 { font-size: 1.5rem; }
   h3 { font-size: 1.2rem; }
   h4 { font-size: 1rem; }
@@ -362,6 +362,19 @@
 
   .entity-image__frame img {
     @apply w-full h-full object-cover block;
+    position: relative;
+  }
+
+  /* Style for broken image */
+  .entity-image__frame img::after,
+  img.relative[alt]::after {
+    content: "\e3f4" "\A" attr(alt);
+    @apply absolute inset-0 flex flex-col items-center justify-center text-center p-2 bg-surface-muted text-muted;
+    font-family: 'Material Symbols Outlined', var(--font-sans);
+    font-size: 0.75rem;
+    white-space: pre-wrap;
+    line-height: 1.4;
+    z-index: 1;
   }
 
   .entity-image__caption {
@@ -402,11 +415,11 @@
   }
 
   .page-header__title {
-    @apply inline-flex items-center gap-space-2 m-0 text-[2.1rem];
+    @apply inline-flex items-center gap-space-2 m-0 text-[2.1rem] font-bold;
   }
 
   .page-header__title-icon {
-    @apply text-[1.35rem] text-accent;
+    @apply text-[1.875rem] text-accent;
   }
 
   .page-header__meta {

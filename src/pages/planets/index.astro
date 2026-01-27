@@ -1,27 +1,27 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
-import EntityLink from '../../components/EntityLink.astro';
+import EntityList from '../../components/EntityList.astro';
 import Section from '../../components/Section.astro';
 import { listPlanets } from '../../lib/content/planets';
 
 const title = 'Planetas';
 const planets = await listPlanets();
+
+const planetItems = planets.map(p => ({
+  label: p.name,
+  href: `/planets/${p.id}`
+}));
 ---
 
 <BaseLayout title={title}>
   <Header title={title} icon="public" />
   <Section>
+    <p class="text-muted text-sm mb-12">Planetas y astros descubiertos en la red de resonancia.</p>
     {planets.length === 0 ? (
       <p>No hay planetas todavía.</p>
     ) : (
-      <ul>
-        {planets.map((planet) => (
-          <li>
-            <EntityLink href={`/planets/${planet.id}`} label={planet.name} />
-          </li>
-        ))}
-      </ul>
+      <EntityList items={planetItems} />
     )}
   </Section>
 </BaseLayout>
