@@ -31,8 +31,11 @@ import Tabs, { type TabItem } from '../../components/Tabs.astro';
 import { type InlineMetaItem } from '../../components/InlineMetaList.astro';
 import { getCharacterById, listCharacters } from '../../lib/content/characters';
 import { getElementById } from '../../lib/content/elements';
+import { getPlaceById } from '../../lib/content/places';
+import { getPlanetById } from '../../lib/content/planets';
 import { listEventsByCharacterId } from '../../lib/content/events';
 import { parseLocationRef } from '../../lib/content/location-refs';
+import { formatEntityId } from '../../lib/format';
 
 export async function getStaticPaths() {
   const characters = await listCharacters();
@@ -46,7 +49,7 @@ const characterId = typeof id === 'string' ? id : null;
 const character = characterId ? await getCharacterById(characterId) : null;
 const events = characterId && character ? await listEventsByCharacterId(characterId) : [];
 const title = character ? character.name : 'Personaje no encontrado';
-const originView = (() => {
+const originView = await (async () => {
   if (!character?.origin) {
     return null;
   }
@@ -55,12 +58,16 @@ const originView = (() => {
     return null;
   }
   switch (parsed.kind) {
-    case 'place':
-      return { text: parsed.id, href: `/places/${parsed.id}` };
-    case 'planet':
-      return { text: parsed.id, href: `/planets/${parsed.id}` };
+    case 'place': {
+      const place = await getPlaceById(parsed.id);
+      return { text: place?.name ?? formatEntityId(parsed.id), href: `/places/${parsed.id}` };
+    }
+    case 'planet': {
+      const planet = await getPlanetById(parsed.id);
+      return { text: planet?.name ?? formatEntityId(parsed.id), href: `/planets/${parsed.id}` };
+    }
     case 'space':
-      return { text: parsed.id };
+      return { text: formatEntityId(parsed.id) };
     case 'unknown':
       return { text: 'Desconocido' };
   }

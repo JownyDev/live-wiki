@@ -6,7 +6,10 @@ import Header from '../../components/Header.astro';
 import MarkdownDescription from '../../components/MarkdownDescription.astro';
 import Section from '../../components/Section.astro';
 import { getElementById, listElements } from '../../lib/content/elements';
+import { getPlaceById } from '../../lib/content/places';
+import { getPlanetById } from '../../lib/content/planets';
 import { parseLocationRef } from '../../lib/content/location-refs';
+import { formatEntityId } from '../../lib/format';
 
 export async function getStaticPaths() {
   const elements = await listElements();
@@ -18,7 +21,7 @@ export async function getStaticPaths() {
 const id = Astro.params.id;
 const element = typeof id === 'string' ? await getElementById(id) : null;
 const title = element ? element.name : 'Elemento no encontrado';
-const originView = (() => {
+const originView = await (async () => {
   if (!element?.origin) {
     return null;
   }
@@ -27,12 +30,16 @@ const originView = (() => {
     return null;
   }
   switch (parsed.kind) {
-    case 'place':
-      return { text: parsed.id, href: `/places/${parsed.id}` };
-    case 'planet':
-      return { text: parsed.id, href: `/planets/${parsed.id}` };
+    case 'place': {
+      const place = await getPlaceById(parsed.id);
+      return { text: place?.name ?? formatEntityId(parsed.id), href: `/places/${parsed.id}` };
+    }
+    case 'planet': {
+      const planet = await getPlanetById(parsed.id);
+      return { text: planet?.name ?? formatEntityId(parsed.id), href: `/planets/${parsed.id}` };
+    }
     case 'space':
-      return { text: parsed.id };
+      return { text: formatEntityId(parsed.id) };
     case 'unknown':
       return { text: 'Desconocido' };
   }

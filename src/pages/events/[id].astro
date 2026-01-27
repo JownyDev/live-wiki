@@ -5,6 +5,7 @@ import { getCharacterById } from '../../lib/content/characters';
 import { getPlaceById } from '../../lib/content/places';
 import { getPlanetById } from '../../lib/content/planets';
 import { parseLocationRef } from '../../lib/content/location-refs';
+import { formatEntityId } from '../../lib/format';
 import DataPanel, { type DataPanelItem } from '../../components/DataPanel.astro';
 import EntityImage from '../../components/EntityImage.astro';
 import Header from '../../components/Header.astro';
@@ -66,19 +67,19 @@ const resolveLocationView = async (location: string): Promise<LocationView> => {
     case 'place': {
       const place = await getPlaceById(parsed.id);
       if (!place) {
-        return { text: `${parsed.id} (no encontrado)`, missing: true };
+        return { text: `${formatEntityId(parsed.id)} (no encontrado)`, missing: true };
       }
       return { text: place.name, href: `/places/${place.id}` };
     }
     case 'planet': {
       const planet = await getPlanetById(parsed.id);
       if (!planet) {
-        return { text: `${parsed.id} (no encontrado)`, missing: true };
+        return { text: `${formatEntityId(parsed.id)} (no encontrado)`, missing: true };
       }
       return { text: planet.name, href: `/planets/${planet.id}` };
     }
     case 'space':
-      return { text: parsed.id };
+      return { text: formatEntityId(parsed.id) };
     case 'unknown':
       return { text: 'Desconocido' };
   }

@@ -1,27 +1,85 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/Header.astro';
-import EntityLink from '../../components/EntityLink.astro';
-import Section from '../../components/Section.astro';
 import { listCharacters } from '../../lib/content/characters';
+import { formatOrigin } from '../../lib/format';
 
 const title = 'Personajes';
 const characters = await listCharacters();
+
+const getStatusColor = (status: string | null) => {
+  const s = status?.toLowerCase() || 'neutral';
+  if (['friendly', 'amable', 'active'].includes(s)) return 'text-success bg-success/10 border-success/20';
+  if (['wary', 'reservado', 'cauteloso'].includes(s)) return 'text-warning bg-warning/10 border-warning/20';
+  if (['hostile', 'hostil', 'wanted'].includes(s)) return 'text-danger bg-danger/10 border-danger/20';
+  return 'text-muted bg-surface-muted border-border';
+};
+
+const getStatusDotColor = (status: string | null) => {
+  const s = status?.toLowerCase() || 'neutral';
+  if (['friendly', 'amable', 'active'].includes(s)) return 'bg-success';
+  if (['wary', 'reservado', 'cauteloso'].includes(s)) return 'bg-warning';
+  if (['hostile', 'hostil', 'wanted'].includes(s)) return 'bg-danger';
+  return 'bg-muted';
+};
 ---
 
 <BaseLayout title={title} lang="es">
-  <Header title={title} icon="group" />
-  <Section>
-    {characters.length === 0 ? (
-      <p>No hay personajes todavía.</p>
-    ) : (
-      <ul>
-        {characters.map((character) => (
-          <li>
-            <EntityLink href={`/characters/${character.id}`} label={character.name} />
-          </li>
-        ))}
-      </ul>
-    )}
-  </Section>
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="material-symbols-outlined text-accent text-3xl">group</span>
+        <h1 class="text-3xl font-bold text-text tracking-tight">{title}</h1>
+      </div>
+      <p class="text-muted text-sm">Explora los personajes del universo.</p>
+    </div>
+  </div>
+
+  <div class="bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
+    {/* Table Header */}
+    <div class="grid grid-cols-12 gap-4 px-6 py-3 border-b border-border bg-surface-muted">
+      <div class="col-span-8 sm:col-span-6 text-xs font-medium text-muted uppercase tracking-wider">Personaje</div>
+      <div class="col-span-4 sm:col-span-4 text-xs font-medium text-muted uppercase tracking-wider">Origen</div>
+      <div class="col-span-2 hidden sm:block text-xs font-medium text-muted uppercase tracking-wider">Clase</div>
+    </div>
+
+    {/* Table Body */}
+    <div class="divide-y divide-border">
+      {characters.length === 0 ? (
+        <div class="p-6 text-center text-muted">No hay personajes todavía.</div>
+      ) : (
+        characters.map((character) => (
+          <a href={`/characters/${character.id}`} class="group grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-surface-muted/50 transition-colors cursor-pointer no-underline">
+            
+            {/* Character Column */}
+            <div class="col-span-8 sm:col-span-6 flex items-center gap-4">
+              <div class="h-10 w-10 rounded-full border border-border overflow-hidden bg-surface-muted flex-shrink-0">
+                {character.image ? (
+                  <img src={character.image} alt={character.name} class="h-full w-full object-cover" loading="lazy" />
+                ) : (
+                  <div class="h-full w-full flex items-center justify-center bg-surface-muted text-muted">
+                    <span class="material-symbols-outlined text-sm">person</span>
+                  </div>
+                )}
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-text group-hover:text-accent transition-colors truncate">{character.name}</p>
+                <p class="text-xs text-muted sm:hidden truncate">{character.archetype || 'Desconocido'}</p>
+              </div>
+            </div>
+
+            {/* Origin Column */}
+            <div class="col-span-4 sm:col-span-4">
+              <span class="text-sm text-muted truncate block">{formatOrigin(character.origin)}</span>
+            </div>
+
+            {/* Class Column (Desktop) */}
+            <div class="col-span-2 hidden sm:block">
+              <span class="text-sm text-muted truncate block">{character.archetype || '-'}</span>
+            </div>
+
+          </a>
+        ))
+      )}
+    </div>
+  </div>
 </BaseLayout>

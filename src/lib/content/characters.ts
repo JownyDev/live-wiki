@@ -7,36 +7,44 @@ import {
   getStringArrayField,
   parseFrontmatter,
 } from './frontmatter';
-import {
-  listSimpleEntities,
-  type SimpleEntityListItem,
-} from './simple-entities';
+import { listMarkdownFiles } from './markdown-files';
 
-export type CharacterListItem = { id: string; name: string };
+export type CharacterListItem = {
+  id: string;
+  name: string;
+  origin: string | null;
+  image: string | null;
+  archetype: string | null;
+  status: string | null;
+};
 export type RelatedCharacter = { type: string; character: string };
+
 export type CharacterKnowledge = {
   summary: string | null;
   knowsAbout: string[];
   blindspots: string[];
   canReveal: string[];
 };
+
 export type CharacterGoals = {
   longTerm: string[];
   typicalPriorities: string[];
 };
-export type CharacterCapabilityAction = {
-  action: string;
-  triggers: string[];
-  notes: string[];
-  filters: string[];
-};
+
 export type CharacterCapabilities = {
-  actions: CharacterCapabilityAction[];
+  actions: Array<{
+    action: string;
+    triggers: string[];
+    notes: string[];
+    filters: string[];
+  }>;
 };
+
 export type CharacterPersonaVoice = {
   tone: string | null;
   styleNotes: string[];
 };
+
 export type CharacterPersona = {
   archetype: string | null;
   traits: string[];
@@ -45,6 +53,7 @@ export type CharacterPersona = {
   biographyHighlights: string[];
   voice: CharacterPersonaVoice | null;
 };
+
 export type CharacterMemoryProfile = {
   interestTags: string[];
   relationshipTags: string[];
@@ -59,6 +68,7 @@ export type CharacterMemoryProfile = {
     maxTokensSummary: number | null;
   } | null;
 };
+
 export type CharacterEmotionsProfile = {
   baselineMood: Record<string, number>;
   towardPlayer: {
@@ -77,6 +87,7 @@ export type CharacterEmotionsProfile = {
     notes: string[];
   } | null;
 };
+
 export type Character = {
   id: string;
   name: string;
@@ -102,10 +113,37 @@ const getCharactersDir = (baseDir?: string): string => {
   return path.join(resolvedBaseDir, 'characters');
 };
 
-const toCharacterListItem = (entity: SimpleEntityListItem): CharacterListItem => ({
-  id: entity.id,
-  name: entity.name,
-});
+const readCharacterFromFile = async (
+  charactersDir: string,
+  filename: string,
+): Promise<Character> => {
+  const filePath = path.join(charactersDir, filename);
+  const markdown = await readFile(filePath, 'utf8');
+  return parseAndValidateCharacterMarkdown(markdown);
+};
+
+export async function listCharacters(
+  baseDir?: string,
+): Promise<Array<CharacterListItem>> {
+  const charactersDir = getCharactersDir(baseDir);
+  const markdownFiles = await listMarkdownFiles(charactersDir);
+
+  const characters: CharacterListItem[] = [];
+  for (const filename of markdownFiles) {
+    const character = await readCharacterFromFile(charactersDir, filename);
+    characters.push({
+      id: character.id,
+      name: character.name,
+      origin: character.origin,
+      image: character.image,
+      archetype: character.persona?.archetype ?? null,
+      status: character.emotionsProfile?.towardPlayer?.stance ?? 'desconocido',
+    });
+  }
+
+  characters.sort((a, b) => a.name.localeCompare(b.name));
+  return characters;
+}
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
@@ -450,14 +488,7 @@ const parseAndValidateCharacterMarkdown = (markdown: string): Character => {
 const isEnoentError = (error: unknown): error is NodeErrorWithCode =>
   error instanceof Error && (error as NodeErrorWithCode).code === 'ENOENT';
 
-export async function listCharacters(
-  baseDir?: string,
-): Promise<Array<CharacterListItem>> {
-  const charactersDir = getCharactersDir(baseDir);
-  // Adaptador para preservar el tipo público y permitir ampliar Character más adelante.
-  const entities = await listSimpleEntities(charactersDir, 'character');
-  return entities.map(toCharacterListItem);
-}
+
 
 export async function getCharacterById(
   id: string,

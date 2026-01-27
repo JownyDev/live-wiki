@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Live-Wiki - Character Index</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6", // Vibrant Blue
+                        "background-light": "#f8fafc", // Slate 50
+                        "background-dark": "#000000", // Pitch Black
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#000000", // Pure black for seamless look
+                        "border-light": "#e2e8f0",
+                        "border-dark": "#27272a", // Zinc 800 - Thin gray border
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>html { scroll-behavior: smooth; }::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #333333;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 font-sans min-h-screen flex flex-col transition-colors duration-300">
+<header class="sticky top-0 z-50 bg-surface-light/80 dark:bg-black/80 backdrop-blur-md border-b border-border-light dark:border-border-dark">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center gap-8">
+<a class="text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2" href="#">
+<span class="material-icons text-primary">auto_stories</span>
+                        Live-Wiki
+                    </a>
+<nav class="hidden md:flex items-center gap-1">
+<a class="px-3 py-2 text-sm font-medium text-primary border-b-2 border-primary" href="#">Personajes</a>
+<a class="px-3 py-2 text-sm font-medium text-slate-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Eventos</a>
+<a class="px-3 py-2 text-sm font-medium text-slate-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Lugares</a>
+<a class="px-3 py-2 text-sm font-medium text-slate-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Planetas</a>
+<a class="px-3 py-2 text-sm font-medium text-slate-500 dark:text-zinc-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Elementos</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group hidden sm:block">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-icons text-slate-400 text-lg group-focus-within:text-primary transition-colors">search</span>
+</div>
+<input class="block w-64 pl-10 pr-3 py-1.5 border border-border-light dark:border-border-dark rounded-full leading-5 bg-slate-100 dark:bg-zinc-900 text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition-all shadow-sm" placeholder="Buscar por nombre, id o texto..." type="text"/>
+</div>
+<button class="p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors focus:outline-none" id="theme-toggle">
+<span class="material-icons dark:hidden">light_mode</span>
+<span class="material-icons hidden dark:block text-yellow-400">dark_mode</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-purple-500 p-[2px] cursor-pointer">
+<img alt="User Profile" class="rounded-full bg-background-dark h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9lOwYsRPnUX8erHgEWXfquGO-PgtzJni1GV-c1a89Mc85zbfxqnUc86PGZFD1yyxQIqwqZkzctNUU2PKNqXLBBU79Atyz7BR6RLCjMcuQ93e-37msW29FA6dk9m_AwUWiNTCIECE57Ez-tRFqaJSX_jdt186zWLTwYfWCSDBfVQ7b3Geo5Og32g2Q2whZZ0QIYLKw7DV2V3gJyDDXD0YYECVq9lKmxwYTnZbK3A1ckGtTcJoD1bZlahrU-Xh_MBWn3n_7nOw7Mw"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+<section class="min-w-0 max-w-5xl mx-auto">
+<div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="material-icons text-primary text-2xl">group</span>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Personajes</h1>
+</div>
+<p class="text-slate-500 dark:text-zinc-400 text-sm">Browse and manage character entries across the universe.</p>
+</div>
+</div>
+<div class="bg-surface-light dark:bg-black border border-border-light dark:border-border-dark rounded-xl shadow-sm overflow-hidden">
+<div class="grid grid-cols-12 gap-4 px-6 py-3 border-b border-border-light dark:border-border-dark bg-slate-50/50 dark:bg-black">
+<div class="col-span-5 sm:col-span-4 text-xs font-medium text-slate-500 dark:text-zinc-500 uppercase tracking-wider">Character</div>
+<div class="col-span-3 sm:col-span-3 text-xs font-medium text-slate-500 dark:text-zinc-500 uppercase tracking-wider">Origin</div>
+<div class="col-span-2 hidden sm:block text-xs font-medium text-slate-500 dark:text-zinc-500 uppercase tracking-wider">Class</div>
+<div class="col-span-4 sm:col-span-3 text-xs font-medium text-slate-500 dark:text-zinc-500 uppercase tracking-wider text-right">Status</div>
+</div>
+<div class="divide-y divide-border-light dark:divide-border-dark">
+<div class="group grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-slate-50 dark:hover:bg-zinc-900/40 transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary">
+<div class="col-span-5 sm:col-span-4 flex items-center gap-4">
+<img alt="Bran Kett Avatar" class="h-10 w-10 rounded-full border border-slate-200 dark:border-zinc-800 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6zQd0A2lOlkYlAmraOlMVvcbmmHE_7uF2dMuYF7sdAHRw3eTlRZCKij5FoVLvMvSnV0k7Li0adbvcaDd35hqsajdrASqi1ZaMJ2zanoxy-wLSXAX0VB9kEKb7le_1fd-IoQXrMfmKXAM6H5te9ppl0csEQoZaDQ0qY4amWBatCXfTa5BAlx32vPfc6k95MVD-Ey9rCki6lh-SETSy_wctDrRSfSSiofnTKgBwM6uqZM7QhlsMgItCqA9jIoAfYSQiHWTvTe9K2A"/>
+<div>
+<p class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors">Bran Kett</p>
+<p class="text-xs text-slate-500 sm:hidden">Pilot</p>
+</div>
+</div>
+<div class="col-span-3 sm:col-span-3">
+<span class="text-sm text-slate-600 dark:text-zinc-400">Terra Prime</span>
+</div>
+<div class="col-span-2 hidden sm:block">
+<span class="text-sm text-slate-600 dark:text-zinc-400">
+                                Pilot
+                            </span>
+</div>
+<div class="col-span-4 sm:col-span-3 text-right">
+<div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+<span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+<span class="text-xs font-medium text-emerald-600 dark:text-emerald-400">Active</span>
+</div>
+</div>
+</div>
+<div class="group grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-slate-50 dark:hover:bg-zinc-900/40 transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary">
+<div class="col-span-5 sm:col-span-4 flex items-center gap-4">
+<img alt="Elara Vance Avatar" class="h-10 w-10 rounded-full border border-slate-200 dark:border-zinc-800 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDt4MviM1YH-BMTk0AhrIyPH77QL0PZciwciG6ghBZCgD0QJ9qGvM8uvpVrOfbUX_2THO9IP2R7LiyK6fyr6Ppr17PX7FNTGXRKStd3BHa4hoxsJcgD26BaOQ4J3ckJqKtb24-BKGNkADX6T5UGjv8Osca3rwaQh-Ttmo9UhvtCBAqIFZbbzWmXehuwADjWXMr-7Y1E3bsCQEadML58z7AjrTdk8m-9cMVz2NU17igZ7acKVkxWS2taYdo5ik3YGNRN62GDJ5WSmg"/>
+<div>
+<p class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors">Elara Vance</p>
+<p class="text-xs text-slate-500 sm:hidden">Engineer</p>
+</div>
+</div>
+<div class="col-span-3 sm:col-span-3">
+<span class="text-sm text-slate-600 dark:text-zinc-400">Mars Colony 4</span>
+</div>
+<div class="col-span-2 hidden sm:block">
+<span class="text-sm text-slate-600 dark:text-zinc-400">
+                                Engineer
+                            </span>
+</div>
+<div class="col-span-4 sm:col-span-3 text-right">
+<div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+<span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+<span class="text-xs font-medium text-emerald-600 dark:text-emerald-400">Active</span>
+</div>
+</div>
+</div>
+<div class="group grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-slate-50 dark:hover:bg-zinc-900/40 transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary">
+<div class="col-span-5 sm:col-span-4 flex items-center gap-4">
+<img alt="Kellen Ward Avatar" class="h-10 w-10 rounded-full border border-slate-200 dark:border-zinc-800 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhpPHjZRXYzVd1chBKdevOPQJmDG7hXq7cRnVUvyuTvMhH7rzU6Y3Bh2o9cu4QVfWFec1FTHa2UBkmD2hjiQmmieRf60qYk_HHwXNCCghIP0jHD5JtueRkm-NHunLNaM3QkJGMYYOxt5RIHv9s8LakKbXYIht_x6U5iIhpFFN0JYJggheF6TewFHcFdS9fOMOR-KuFOds8HwWmkOaZDatczE505rfds_pZ6KaQMMtldJP85vsmgyPCv3nnM8q1kIeNjqTNaLMNVg"/>
+<div>
+<p class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors">Kellen Ward</p>
+<p class="text-xs text-slate-500 sm:hidden">Smuggler</p>
+</div>
+</div>
+<div class="col-span-3 sm:col-span-3">
+<span class="text-sm text-slate-600 dark:text-zinc-400">The Belt</span>
+</div>
+<div class="col-span-2 hidden sm:block">
+<span class="text-sm text-slate-600 dark:text-zinc-400">
+                                Smuggler
+                            </span>
+</div>
+<div class="col-span-4 sm:col-span-3 text-right">
+<div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-red-500/10 border border-red-500/20">
+<span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>
+<span class="text-xs font-medium text-red-600 dark:text-red-400">Wanted</span>
+</div>
+</div>
+</div>
+<div class="group grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-slate-50 dark:hover:bg-zinc-900/40 transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary">
+<div class="col-span-5 sm:col-span-4 flex items-center gap-4">
+<img alt="Mira Lane Avatar" class="h-10 w-10 rounded-full border border-slate-200 dark:border-zinc-800 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDova8XxUXOTofLCKpPTFFMfteJ9gnv0w9_BMiG2HCivQOp8CIP9kwGEIi9l5rOczSOU4P66SRrZa51vctg5G0Rbewrbu2C6b6OoN1wca2pZNFKFKHz7e6QkgMYlxW8QP-_GY9K4gEeIQOUcGZZOHWJCu2hpa8JepTcUu6xQmk9GDrh8fp_MQIMUFd_bzwQNPd11r-EdiIhJz0I_zDeD-LF79xJpmPEy_AiLQpvnLRpX4BbGR2a1MoENYWkQcXbQLupIa_eEKsSzA"/>
+<div>
+<p class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors">Mira Lane</p>
+<p class="text-xs text-slate-500 sm:hidden">Medic</p>
+</div>
+</div>
+<div class="col-span-3 sm:col-span-3">
+<span class="text-sm text-slate-600 dark:text-zinc-400">Lunar Outpost</span>
+</div>
+<div class="col-span-2 hidden sm:block">
+<span class="text-sm text-slate-600 dark:text-zinc-400">
+                                Medic
+                            </span>
+</div>
+<div class="col-span-4 sm:col-span-3 text-right">
+<div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-slate-500/10 border border-slate-500/20">
+<span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
+<span class="text-xs font-medium text-slate-700 dark:text-slate-400">Inactive</span>
+</div>
+</div>
+</div>
+<div class="group grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-slate-50 dark:hover:bg-zinc-900/40 transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary">
+<div class="col-span-5 sm:col-span-4 flex items-center gap-4">
+<img alt="Veyr Avatar" class="h-10 w-10 rounded-full border border-slate-200 dark:border-zinc-800 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3o3w3eOAVYFpVkSa7_gJ_djqUyvyu8vMbokFQOlS9VuUCDKfttlTcTCRZovrWKx1QLlzxVeCuQcBD8Sr8p_RKDDn0frDmFMgvDPf2vQ2FLDEdKvq1gYw6fwX5vOrZEEs-nX17JafRuZYbTkIkoXamHy2Z0Cq9RGkGLIYyuwVWWu5j8dpdwbs3zhf9zbvGfXAKtiHfuWRfz8KeN3N5SktdGYVbRvYe7xW7prmSC7u46MWSZk4TWgB4PBQ-aLDS5i1o4eg7ICsPRQ"/>
+<div>
+<p class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors">Veyr</p>
+<p class="text-xs text-slate-500 sm:hidden">Psion</p>
+</div>
+</div>
+<div class="col-span-3 sm:col-span-3">
+<span class="text-sm text-slate-600 dark:text-zinc-400 italic">Unknown</span>
+</div>
+<div class="col-span-2 hidden sm:block">
+<span class="text-sm text-slate-600 dark:text-zinc-400">
+                                Psion
+                            </span>
+</div>
+<div class="col-span-4 sm:col-span-3 text-right">
+<div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+<span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+<span class="text-xs font-medium text-emerald-600 dark:text-emerald-400">Active</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-slate-50 dark:bg-black px-6 py-4 border-t border-border-light dark:border-border-dark flex items-center justify-between">
+<div class="text-xs text-slate-500 dark:text-zinc-500">
+                        Showing <span class="font-medium text-slate-900 dark:text-white">1</span> to <span class="font-medium text-slate-900 dark:text-white">5</span> of <span class="font-medium text-slate-900 dark:text-white">1,240</span> results
+                    </div>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 text-xs font-medium text-slate-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-border-light dark:border-border-dark rounded hover:bg-slate-50 dark:hover:bg-zinc-800 disabled:opacity-50 transition-colors">Previous</button>
+<button class="px-3 py-1.5 text-xs font-medium text-slate-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-border-light dark:border-border-dark rounded hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors">Next</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<script>
+        // Simple dark mode toggle logic
+        const toggleBtn = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        // Check local storage or system preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+        toggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+        });
+    </script>
+
+</body></html>
