@@ -4,7 +4,6 @@ import {
   getDateField,
   getEventParticipantsField,
   getLocationsField,
-  getStringArrayField,
   getStringField,
   parseFrontmatter,
   type EventParticipant,
@@ -12,14 +11,38 @@ import {
 import { parseLocationRef } from './location-refs';
 import { listMarkdownFiles } from './markdown-files';
 
+const generatePreview = (markdown: string): string => {
+  // Remove headers
+  let text = markdown.replace(/^#+\s+/gm, '');
+  // Remove images
+  text = text.replace(/!\[.*?\]\(.*?\)/g, '');
+  // Remove links, keeping text
+  text = text.replace(/\[([^\]]+)\]\(.*?\)/g, '$1');
+  // Remove bold/italic
+  text = text.replace(/[*_]{1,2}([^*_]+)[*_]{1,2}/g, '$1');
+  // Remove blockquotes
+  text = text.replace(/^>\s+/gm, '');
+  // Remove code blocks
+  text = text.replace(/```[\s\S]*?```/g, '');
+  
+  // Clean whitespace
+  text = text.trim();
+  
+  // Get first paragraph or limited chars
+  const firstParagraph = text.split(/\n\s*\n/)[0];
+  if (firstParagraph.length > 200) {
+    return firstParagraph.slice(0, 197) + '...';
+  }
+  return firstParagraph;
+};
+
 type EventListItem = {
   id: string;
   title: string;
   date: string;
-  era?: string | null;
-  summary?: string | null;
-  tags?: string[];
+  preview: string;
 };
+
 type Event = {
   id: string;
   title: string;
@@ -28,9 +51,6 @@ type Event = {
   locations: string[];
   image: string | null;
   body: string;
-  era: string | null;
-  summary: string | null;
-  tags: string[];
 };
 
 type NodeErrorWithCode = Error & { code?: string };
@@ -71,11 +91,8 @@ const parseAndValidateEventMarkdown = (markdown: string): Event => {
   const who = getEventParticipantsField(data, 'who');
   const locations = getLocationsField(data, 'locations');
   const image = getOptionalStringField(data, 'image');
-  const era = getOptionalStringField(data, 'era');
-  const summary = getOptionalStringField(data, 'summary');
-  const tags = getStringArrayField(data, 'tags');
 
-  return { id, title, date, who, locations, image, body: content, era, summary, tags };
+  return { id, title, date, who, locations, image, body: content };
 };
 
 const isEnoentError = (error: unknown): error is NodeErrorWithCode =>
@@ -141,8 +158,8 @@ export async function listEvents(baseDir?: string): Promise<Array<EventListItem>
 
   const events: EventListItem[] = [];
   for (const filename of markdownFiles) {
-    const { id, title, date, era, summary, tags } = await readEventFromFile(eventsDir, filename);
-    events.push({ id, title, date, era, summary, tags });
+    const { id, title, date, body } = await readEventFromFile(eventsDir, filename);
+    events.push({ id, title, date, preview: generatePreview(body) });
   }
 
   events.sort((a, b) => a.date.localeCompare(b.date));
@@ -178,9 +195,9 @@ export async function listEventsByCharacterId(
 
   const events: EventListItem[] = [];
   for (const filename of markdownFiles) {
-    const { id, title, date, who, era, summary, tags } = await readEventFromFile(eventsDir, filename);
+    const { id, title, date, who, body } = await readEventFromFile(eventsDir, filename);
     if (who.some((participant) => participant.character === characterId)) {
-      events.push({ id, title, date, era, summary, tags });
+      events.push({ id, title, date, preview: generatePreview(body) });
     }
   }
 
@@ -199,9 +216,9 @@ export async function listEventsByPlaceId(
 
   const events: EventListItem[] = [];
   for (const filename of markdownFiles) {
-    const { id, title, date, locations, era, summary, tags } = await readEventFromFile(eventsDir, filename);
+    const { id, title, date, locations, body } = await readEventFromFile(eventsDir, filename);
     if (locations.includes(targetLocation)) {
-      events.push({ id, title, date, era, summary, tags });
+      events.push({ id, title, date, preview: generatePreview(body) });
     }
   }
 
@@ -222,7 +239,7 @@ export async function listEventsByPlanetId(
   // Evita duplicados cuando un evento coincide por planet directo y por place derivado.
   const eventsById = new Map<string, EventListItem>();
   for (const filename of markdownFiles) {
-    const { id, title, date, locations, era, summary, tags } = await readEventFromFile(eventsDir, filename);
+    const { id, title, date, locations, body } = await readEventFromFile(eventsDir, filename);
     const hasDirectPlanet = locations.includes(targetLocation);
     const hasDerivedPlanet = locations.some((location) => {
       const placeRef = getPlaceIdFromLocation(location);
@@ -233,7 +250,7 @@ export async function listEventsByPlanetId(
     });
 
     if (hasDirectPlanet || hasDerivedPlanet) {
-      eventsById.set(id, { id, title, date, era, summary, tags });
+      eventsById.set(id, { id, title, date, preview: generatePreview(body) });
     }
   }
 

@@ -16,14 +16,87 @@ const items: NavItem[] = [
   { href: '/cards', label: 'Cartas', icon: 'style' },
   { href: '/mechanics', label: 'Mecanicas', icon: 'tune' },
 ];
+
+const { pathname } = Astro.url;
+// Normalize pathname to ensure leading slash and handle potential trailing slashes
+const normalizedPath = pathname.replace(/\/$/, '') || '/';
+
+const isActive = (href: string) => {
+  if (href === '/') return normalizedPath === '/';
+  // Check if current path starts with href (e.g. /characters/mira-lane matches /characters)
+  return normalizedPath.startsWith(href);
+};
 ---
 
-<nav class="primary-nav" aria-label="Navegacion principal">
-  <ul class="primary-nav__list">
-    {items.map((item) => (
-      <li>
-        <EntityLink href={item.href} label={item.label} icon={item.icon} />
-      </li>
-    ))}
+<nav class="primary-nav flex items-center" aria-label="Navegacion principal">
+  {/* Desktop Menu */}
+  <ul class="primary-nav__list hidden md:flex items-center gap-x-space-3 gap-y-space-2 list-none m-0 p-0 text-[0.85rem] whitespace-nowrap">
+    {items.map((item) => {
+      const active = isActive(item.href);
+      return (
+        <li>
+          <EntityLink 
+            href={item.href} 
+            label={item.label} 
+            icon={item.icon} 
+            className={active ? '!text-accent font-bold border-b-2 border-accent pb-1' : ''} 
+          />
+        </li>
+      );
+    })}
   </ul>
+
+  {/* Mobile Hamburger Button */}
+  <button 
+    id="mobile-menu-toggle" 
+    class="md:hidden p-2 text-muted hover:text-text focus:outline-none"
+    aria-label="Abrir menú"
+    aria-expanded="false"
+    aria-controls="mobile-menu"
+  >
+    <span class="material-symbols-outlined text-2xl">menu</span>
+  </button>
+
+  {/* Mobile Menu Overlay */}
+  <div 
+    id="mobile-menu" 
+    class="fixed inset-0 top-[60px] bg-bg z-50 hidden flex-col p-6 overflow-y-auto border-t border-border animate-fadeIn"
+  >
+    <ul class="flex flex-col gap-6 text-[1.1rem]">
+      {items.map((item) => {
+        const active = isActive(item.href);
+        return (
+          <li>
+            <EntityLink 
+              href={item.href} 
+              label={item.label} 
+              icon={item.icon} 
+              className={`flex items-center gap-3 ${active ? '!text-accent font-bold' : 'text-text'}`}
+              iconClassName="text-[1.3rem]"
+            />
+          </li>
+        );
+      })}
+    </ul>
+  </div>
 </nav>
+
+<script>
+  const toggleBtn = document.getElementById('mobile-menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const icon = toggleBtn?.querySelector('.material-symbols-outlined');
+
+  if (toggleBtn && mobileMenu && icon) {
+    toggleBtn.addEventListener('click', () => {
+      const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+      toggleBtn.setAttribute('aria-expanded', (!isExpanded).toString());
+      mobileMenu.classList.toggle('hidden');
+      
+      // Toggle icon
+      icon.textContent = isExpanded ? 'menu' : 'close';
+      
+      // Prevent body scroll when menu is open
+      document.body.style.overflow = isExpanded ? '' : 'hidden';
+    });
+  }
+</script>

@@ -20,9 +20,7 @@ const events = await listEvents();
           <EventSummaryCard
             title={event.title}
             date={event.date}
-            era={event.era}
-            summary={event.summary}
-            tags={event.tags}
+            preview={event.preview}
             href={`/events/${event.id}`}
             side={index % 2 === 0 ? 'right' : 'left'}
           />

@@ -1,19 +1,27 @@
 ---
 type Props = {
   title: string;
-  summary?: string | null;
+  preview?: string;
   href?: string;
-  era?: string | null;
   date?: string;
-  tags?: string[];
   side?: 'left' | 'right';
 };
 
-const { title, summary, href, era, date, tags = [], side = 'right' } = Astro.props as Props;
-const hasTags = tags.length > 0;
+const { title, preview, href, date, side = 'right' } = Astro.props as Props;
 
-// Extract year for the big label if possible
-const year = date ? (date.includes('-') ? date.split('-')[0] : date) : null;
+// Extract year and rest of date
+let year = null;
+let restOfDate = null;
+
+if (date) {
+  if (date.includes('-')) {
+    const parts = date.split('-');
+    year = parts[0];
+    restOfDate = parts.slice(1).join('-');
+  } else {
+    year = date;
+  }
+}
 ---
 
 <div class="relative flex items-center justify-center group w-full">
@@ -23,16 +31,20 @@ const year = date ? (date.includes('-') ? date.split('-')[0] : date) : null;
   <div class="grid grid-cols-2 w-full gap-8 lg:gap-24">
     {/* Left Side */}
     <div class={`flex flex-col justify-center ${side === 'left' ? 'order-2 pl-4 text-left' : 'order-1 pr-4 text-right'}`}>
-      {era ? (
+      {year ? (
         <span class="text-[10px] font-bold text-accent uppercase tracking-[0.2em] mb-1">
-          Era: {era}
+          Año: {year}
         </span>
       ) : null}
-      {year ? (
+      {restOfDate ? (
         <h3 class="font-serif text-3xl lg:text-4xl font-bold text-text">
-          {year}
+          {restOfDate}
         </h3>
-      ) : null}
+      ) : (year ? null : (
+        <h3 class="font-serif text-3xl lg:text-4xl font-bold text-text">
+          {date}
+        </h3>
+      ))}
     </div>
 
     {/* Right Side (The Card) */}
@@ -40,7 +52,7 @@ const year = date ? (date.includes('-') ? date.split('-')[0] : date) : null;
       <div class="bg-surface border border-border p-6 lg:p-8 rounded-2xl shadow-xl hover:border-accent/50 transition-all">
         <div class="flex items-start justify-between mb-4">
           <h4 class="text-xl lg:text-2xl font-bold text-text">
-            {title}
+            {href ? <a href={href} class="hover:text-accent transition-colors">{title}</a> : title}
           </h4>
           {href ? (
             <a href={href} class="text-muted hover:text-accent transition-colors">
@@ -49,20 +61,10 @@ const year = date ? (date.includes('-') ? date.split('-')[0] : date) : null;
           ) : null}
         </div>
         
-        {summary ? (
-          <p class="text-muted leading-relaxed mb-6 text-sm lg:text-base">
-            {summary}
+        {preview ? (
+          <p class="text-muted leading-relaxed text-sm lg:text-base">
+            {preview}
           </p>
-        ) : null}
-        
-        {hasTags ? (
-          <div class="flex flex-wrap gap-2">
-            {tags.map((tag) => (
-              <span class="px-3 py-1 bg-surface-muted text-[10px] font-bold rounded-full uppercase tracking-wider text-muted">
-                {tag}
-              </span>
-            ))}
-          </div>
         ) : null}
       </div>
     </div>

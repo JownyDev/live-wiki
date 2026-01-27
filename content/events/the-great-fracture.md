@@ -3,11 +3,6 @@ type: event
 id: the-great-fracture
 title: The Great Fracture
 date: 2999-12-31
-era: The Silence
-summary: The cataclysmic event that shattered the crust of Xylos Prime.
-tags:
-  - Catastrophe
-  - Crystalline
 image: /img/great-fracture.webp
 who:
   - character: elara-vance

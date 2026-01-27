@@ -18,7 +18,7 @@ const activeTabId = defaultTab || items[0]?.id;
   <nav class="flex gap-space-1 border-b border-border pb-px overflow-x-auto no-scrollbar" role="tablist">
     {items.map((item) => (
       <button
-        class={`flex items-center gap-space-2 px-space-4 py-space-3 bg-transparent border-none border-b-2 border-transparent text-muted text-[0.9rem] font-semibold cursor-pointer transition-all hover:text-text hover:bg-white/5 rounded-t-sm ${item.id === activeTabId ? 'text-accent border-b-accent' : ''}`}
+        class={`flex items-center gap-space-2 px-space-4 py-space-3 bg-transparent border-none border-b-2 border-transparent text-muted text-[0.9rem] font-semibold cursor-pointer transition-all hover:text-text hover:bg-white/5 rounded-t-sm ${item.id === activeTabId ? '!text-accent border-b-accent font-bold' : ''}`}
         role="tab"
         aria-selected={item.id === activeTabId}
         aria-controls={`panel-${item.id}`}
@@ -39,31 +39,50 @@ const activeTabId = defaultTab || items[0]?.id;
 <script>
   function initTabs() {
     const containers = document.querySelectorAll('[data-tabs-container]');
+    const hash = window.location.hash.slice(1); // remove '#'
     
     containers.forEach(container => {
       const buttons = container.querySelectorAll('[data-tab-target]');
       const panels = container.querySelectorAll('[data-tab-panel]');
 
+      // Determine initial active tab: Hash > Default (aria-selected=true from server)
+      let initialTabId = null;
+      if (hash) {
+        const targetBtn = Array.from(buttons).find(btn => btn.getAttribute('data-tab-target') === hash);
+        if (targetBtn) initialTabId = hash;
+      }
+
+      if (initialTabId) {
+        activateTab(initialTabId, buttons, panels);
+      }
+
       buttons.forEach(button => {
         button.addEventListener('click', () => {
           const targetId = button.getAttribute('data-tab-target');
-
-          // Update buttons
-          buttons.forEach(btn => {
-            const isActive = btn === button;
-            btn.classList.toggle('text-accent', isActive);
-            btn.classList.toggle('border-b-accent', isActive);
-            btn.classList.toggle('border-transparent', !isActive);
-            btn.setAttribute('aria-selected', isActive.toString());
-          });
-
-          // Update panels
-          panels.forEach(panel => {
-            const isTarget = panel.getAttribute('data-tab-panel') === targetId;
-            (panel as HTMLElement).hidden = !isTarget;
-          });
+          if (targetId) {
+            activateTab(targetId, buttons, panels);
+            window.history.replaceState(null, '', `#${targetId}`);
+          }
         });
       });
+    });
+  }
+
+  function activateTab(targetId: string, buttons: NodeListOf<Element>, panels: NodeListOf<Element>) {
+    // Update buttons
+    buttons.forEach(btn => {
+      const isTarget = btn.getAttribute('data-tab-target') === targetId;
+      btn.classList.toggle('!text-accent', isTarget);
+      btn.classList.toggle('border-b-accent', isTarget);
+      btn.classList.toggle('font-bold', isTarget);
+      btn.classList.toggle('border-transparent', !isTarget);
+      btn.setAttribute('aria-selected', isTarget.toString());
+    });
+
+    // Update panels
+    panels.forEach(panel => {
+      const isTarget = panel.getAttribute('data-tab-panel') === targetId;
+      (panel as HTMLElement).hidden = !isTarget;
     });
   }
 
