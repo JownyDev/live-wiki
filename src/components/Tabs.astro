@@ -14,95 +14,27 @@ const { items, defaultTab } = Astro.props as Props;
 const activeTabId = defaultTab || items[0]?.id;
 ---
 
-<div class="tabs" data-tabs-container>
-  <nav class="tabs__nav" role="tablist">
+<div class="flex flex-col gap-space-5 w-full" data-tabs-container>
+  <nav class="flex gap-space-1 border-b border-border pb-px overflow-x-auto no-scrollbar" role="tablist">
     {items.map((item) => (
       <button
-        class={`tabs__button ${item.id === activeTabId ? 'tabs__button--active' : ''}`}
+        class={`flex items-center gap-space-2 px-space-4 py-space-3 bg-transparent border-none border-b-2 border-transparent text-muted text-[0.9rem] font-semibold cursor-pointer transition-all hover:text-text hover:bg-white/5 rounded-t-sm ${item.id === activeTabId ? 'text-accent border-b-accent' : ''}`}
         role="tab"
         aria-selected={item.id === activeTabId}
         aria-controls={`panel-${item.id}`}
         id={`tab-${item.id}`}
         data-tab-target={item.id}
       >
-        {item.icon && <span class="material-symbols-outlined tabs__icon">{item.icon}</span>}
-        <span class="tabs__label">{item.label}</span>
+        {item.icon && <span class="material-symbols-outlined text-[1.1rem]">{item.icon}</span>}
+        <span class="whitespace-nowrap">{item.label}</span>
       </button>
     ))}
   </nav>
 
-  <div class="tabs__content">
+  <div class="w-full">
     <slot />
   </div>
 </div>
-
-<style>
-  .tabs {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-5);
-    width: 100%;
-  }
-
-  .tabs__nav {
-    display: flex;
-    gap: var(--space-1);
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 1px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .tabs__nav::-webkit-scrollbar {
-    display: none;
-  }
-
-  .tabs__button {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-3) var(--space-4);
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: var(--color-muted);
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-  }
-
-  .tabs__button:hover {
-    color: var(--color-text);
-    background: rgba(255, 255, 255, 0.03);
-  }
-
-  .tabs__button--active {
-    color: var(--color-accent);
-    border-bottom-color: var(--color-accent);
-  }
-
-  .tabs__icon {
-    font-size: 1.1rem;
-  }
-
-  /* We expect children to have data-tab-panel attribute */
-  :global([data-tab-panel]) {
-    animation: fadeIn 0.3s ease;
-  }
-
-  :global([data-tab-panel][hidden]) {
-    display: none !important;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-</style>
 
 <script>
   function initTabs() {
@@ -119,7 +51,9 @@ const activeTabId = defaultTab || items[0]?.id;
           // Update buttons
           buttons.forEach(btn => {
             const isActive = btn === button;
-            btn.classList.toggle('tabs__button--active', isActive);
+            btn.classList.toggle('text-accent', isActive);
+            btn.classList.toggle('border-b-accent', isActive);
+            btn.classList.toggle('border-transparent', !isActive);
             btn.setAttribute('aria-selected', isActive.toString());
           });
 
@@ -133,7 +67,6 @@ const activeTabId = defaultTab || items[0]?.id;
     });
   }
 
-  // Handle both initial load and view transitions if enabled
   initTabs();
   document.addEventListener('astro:after-swap', initTabs);
 </script>

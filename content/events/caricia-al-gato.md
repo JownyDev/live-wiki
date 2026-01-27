@@ -3,6 +3,11 @@ type: event
 id: caricia-al-gato
 title: Caricia al gato del mapa
 date: 2024-02-05
+era: Ritual de la Cancion
+summary: El jugador acaricia al gato que ronda el mapa del atrio, relajando a Mira Lane.
+tags:
+  - Interaccion
+  - Gatos
 who:
   - character: mira-lane
 locations:

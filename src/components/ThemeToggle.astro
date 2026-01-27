@@ -6,46 +6,6 @@
   <span class="material-symbols-outlined theme-toggle__icon theme-toggle__icon--dark">dark_mode</span>
 </button>
 
-<style>
-  .theme-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    color: var(--color-muted);
-    padding: 0.4rem;
-    transition: color 0.2s, background-color 0.2s, border-color 0.2s;
-  }
-
-  .theme-toggle:hover {
-    color: var(--color-text);
-    background-color: var(--color-surface);
-    border-color: var(--color-accent);
-  }
-
-  .theme-toggle__icon {
-    font-size: 1.25rem;
-  }
-
-  /* Default state (Dark Mode) - Show Sun (to switch to light) */
-  .theme-toggle__icon--light {
-    display: block;
-  }
-  .theme-toggle__icon--dark {
-    display: none;
-  }
-
-  /* Light Mode State - Show Moon (to switch to dark) */
-  :global(html.light) .theme-toggle__icon--light {
-    display: none;
-  }
-  :global(html.light) .theme-toggle__icon--dark {
-    display: block;
-  }
-</style>
 
 <script>
   const handleToggleClick = () => {

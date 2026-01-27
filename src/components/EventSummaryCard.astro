@@ -1,224 +1,70 @@
 ---
 type Props = {
   title: string;
-  summary?: string;
+  summary?: string | null;
   href?: string;
-  era?: string;
+  era?: string | null;
   date?: string;
   tags?: string[];
+  side?: 'left' | 'right';
 };
 
-const { title, summary, href, era, date, tags = [] } = Astro.props as Props;
+const { title, summary, href, era, date, tags = [], side = 'right' } = Astro.props as Props;
 const hasTags = tags.length > 0;
+
+// Extract year for the big label if possible
+const year = date ? (date.includes('-') ? date.split('-')[0] : date) : null;
 ---
 
-<div class="event-timeline-item">
-  <div class="event-timeline-item__node"></div>
+<div class="relative flex items-center justify-center group w-full">
+  {/* The Node on the line */}
+  <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[14px] height-[14px] bg-accent rounded-full border-2 border-bg shadow-[0_0_15px_var(--color-accent)] h-[14px]"></div>
   
-  <div class="event-timeline-item__grid">
-    <div class="event-timeline-item__side-info">
-      {era ? <span class="event-timeline-item__era">{era}</span> : null}
-      {date ? <h3 class="event-timeline-item__date">{date}</h3> : null}
+  <div class="grid grid-cols-2 w-full gap-8 lg:gap-24">
+    {/* Left Side */}
+    <div class={`flex flex-col justify-center ${side === 'left' ? 'order-2 pl-4 text-left' : 'order-1 pr-4 text-right'}`}>
+      {era ? (
+        <span class="text-[10px] font-bold text-accent uppercase tracking-[0.2em] mb-1">
+          Era: {era}
+        </span>
+      ) : null}
+      {year ? (
+        <h3 class="font-serif text-3xl lg:text-4xl font-bold text-text">
+          {year}
+        </h3>
+      ) : null}
     </div>
 
-    <article class="event-timeline-item__card">
-      <header class="event-timeline-item__card-header">
-        <h4 class="event-timeline-item__card-title">
-          {href ? <a href={href}>{title}</a> : title}
-        </h4>
-        {href ? (
-          <span class="material-symbols-outlined event-timeline-item__link-icon" aria-hidden="true">
-            open_in_new
-          </span>
+    {/* Right Side (The Card) */}
+    <div class={`${side === 'left' ? 'order-1 pr-4' : 'order-2 pl-4'}`}>
+      <div class="bg-surface border border-border p-6 lg:p-8 rounded-2xl shadow-xl hover:border-accent/50 transition-all">
+        <div class="flex items-start justify-between mb-4">
+          <h4 class="text-xl lg:text-2xl font-bold text-text">
+            {title}
+          </h4>
+          {href ? (
+            <a href={href} class="text-muted hover:text-accent transition-colors">
+              <span class="material-symbols-outlined">open_in_new</span>
+            </a>
+          ) : null}
+        </div>
+        
+        {summary ? (
+          <p class="text-muted leading-relaxed mb-6 text-sm lg:text-base">
+            {summary}
+          </p>
         ) : null}
-      </header>
-      
-      {summary ? <p class="event-timeline-item__summary">{summary}</p> : null}
-      
-      {hasTags ? (
-        <ul class="event-timeline-item__tags">
-          {tags.map((tag) => (
-            <li class="event-timeline-item__tag">{tag}</li>
-          ))}
-        </ul>
-      ) : null}
-    </article>
+        
+        {hasTags ? (
+          <div class="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <span class="px-3 py-1 bg-surface-muted text-[10px] font-bold rounded-full uppercase tracking-wider text-muted">
+                {tag}
+              </span>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </div>
   </div>
 </div>
-
-<style>
-  .event-timeline-item {
-    position: relative;
-    padding: var(--space-6) 0;
-  }
-
-  /* The vertical line */
-  .event-timeline-item::before {
-    content: '';
-    position: absolute;
-    left: 1rem;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: linear-gradient(to bottom, transparent, var(--color-accent), var(--color-accent), transparent);
-    opacity: 0.2;
-  }
-
-  .event-timeline-item__node {
-    position: absolute;
-    left: 1rem;
-    top: var(--space-8);
-    transform: translate(-50%, -50%);
-    width: 12px;
-    height: 12px;
-    background: var(--color-accent);
-    border-radius: var(--radius-pill);
-    box-shadow: 0 0 10px var(--color-accent);
-    border: 2px solid var(--color-bg);
-    z-index: 2;
-  }
-
-  .event-timeline-item__grid {
-    display: grid;
-    gap: var(--space-4);
-    padding-left: var(--space-7);
-  }
-
-  .event-timeline-item__side-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .event-timeline-item__era {
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: var(--color-accent);
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    margin-bottom: var(--space-1);
-  }
-
-  .event-timeline-item__date {
-    margin: 0;
-    font-family: var(--font-mono);
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--color-text);
-  }
-
-  .event-timeline-item__card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    padding: var(--space-5);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-soft);
-    transition: all 0.3s ease;
-  }
-
-  .event-timeline-item__card:hover {
-    border-color: rgba(43, 108, 238, 0.5);
-    transform: translateY(-2px);
-  }
-
-  .event-timeline-item__card-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--space-3);
-    margin-bottom: var(--space-3);
-  }
-
-  .event-timeline-item__card-title {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--color-text);
-    line-height: 1.2;
-  }
-
-  .event-timeline-item__card-title a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .event-timeline-item__link-icon {
-    font-size: 1rem;
-    color: var(--color-muted);
-    opacity: 0.5;
-  }
-
-  .event-timeline-item__card:hover .event-timeline-item__link-icon {
-    color: var(--color-accent);
-    opacity: 1;
-  }
-
-  .event-timeline-item__summary {
-    margin: 0 0 var(--space-4);
-    font-size: 0.95rem;
-    color: var(--color-muted);
-    line-height: 1.6;
-  }
-
-  .event-timeline-item__tags {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-
-  .event-timeline-item__tag {
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 0.2rem 0.5rem;
-    border-radius: var(--radius-pill);
-    background: var(--color-surface-muted);
-    color: var(--color-muted);
-  }
-
-  /* Desktop Styles: Alternating Zig-Zag */
-  @media (min-width: 900px) {
-    .event-timeline-item::before {
-      left: 50%;
-    }
-
-    .event-timeline-item__node {
-      left: 50%;
-    }
-
-    .event-timeline-item__grid {
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-8);
-      padding-left: 0;
-      align-items: center;
-    }
-
-    /* Odd items: Info on Left, Card on Right */
-    :global(.event-timeline-item:nth-child(odd) .event-timeline-item__side-info) {
-      text-align: right;
-      padding-right: var(--space-4);
-    }
-
-    :global(.event-timeline-item:nth-child(odd) .event-timeline-item__card) {
-      grid-column: 2;
-    }
-
-    /* Even items: Card on Left, Info on Right (Reverse) */
-    :global(.event-timeline-item:nth-child(even) .event-timeline-item__grid) {
-      direction: rtl; /* Flip columns */
-    }
-
-    :global(.event-timeline-item:nth-child(even) .event-timeline-item__grid > *) {
-      direction: ltr; /* Restore text direction */
-    }
-
-    :global(.event-timeline-item:nth-child(even) .event-timeline-item__side-info) {
-      text-align: left;
-      padding-left: var(--space-4);
-    }
-  }
-</style>

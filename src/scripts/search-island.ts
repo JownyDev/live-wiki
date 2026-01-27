@@ -7,7 +7,7 @@ if (!root) {
   throw new Error('Search root not found');
 }
 
-const input = root.querySelector<HTMLInputElement>('.search__input');
+const input = root.querySelector<HTMLInputElement>('#search-input');
 const status = root.querySelector<HTMLElement>('[data-search-status]');
 const results = root.querySelector<HTMLUListElement>('[data-search-results]');
 

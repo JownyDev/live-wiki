@@ -25,7 +25,7 @@ const hasFilters = filters.length > 0;
   <div class="capability-card__body">
     <div class="capability-card__section">
       <p class="capability-card__label">Disparadores</p>
-        <div class="capability-card__tags tag-list">
+      <div class="capability-card__tags tag-list">
         {triggers.map((trigger) => (
           <span class="capability-card__tag">{trigger}</span>
         ))}
@@ -56,95 +56,3 @@ const hasFilters = filters.length > 0;
     ) : null}
   </div>
 </article>
-
-<style>
-  .capability-card {
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    background: var(--color-surface);
-    display: grid;
-    gap: var(--space-3);
-  }
-
-  .capability-card__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
-  }
-
-  .capability-card__title {
-    margin: 0;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--color-text);
-  }
-
-  .capability-card__icon {
-    font-size: 1.1rem;
-    color: var(--color-muted);
-  }
-
-  .capability-card__body {
-    display: grid;
-    gap: var(--space-3);
-  }
-
-  .capability-card__section {
-    display: grid;
-    gap: var(--space-2);
-  }
-
-  .capability-card__label {
-    margin: 0;
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--color-muted);
-  }
-
-  .capability-card__tag {
-    padding: 0.15rem 0.5rem;
-    border-radius: var(--radius-pill);
-    border: 1px solid rgba(43, 108, 238, 0.35);
-    background: rgba(43, 108, 238, 0.12);
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: var(--color-accent-strong);
-  }
-
-  .capability-card__notes {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: var(--space-2);
-    color: var(--color-muted);
-    font-size: var(--text-sm);
-    font-style: italic;
-  }
-
-  .capability-card__filter {
-    padding: var(--space-3);
-    border-radius: var(--radius-md);
-    border: 1px solid rgba(245, 177, 74, 0.35);
-    background: rgba(245, 177, 74, 0.08);
-  }
-
-  .capability-card__filter-text {
-    margin: 0;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #f5b14a;
-  }
-
-  .capability-card__filter-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: var(--space-2);
-  }
-</style>

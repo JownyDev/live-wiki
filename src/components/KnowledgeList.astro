@@ -11,7 +11,9 @@ type Props = {
 const { label, items, variant = 'knows', emptyText } = Astro.props as Props;
 const hasItems = items.length > 0;
 const shouldRender = hasItems || typeof emptyText === 'string';
+
 const className = `knowledge-list knowledge-list--${variant}`;
+
 const iconName = (() => {
   switch (variant) {
     case 'blindspots':
@@ -22,128 +24,57 @@ const iconName = (() => {
       return 'visibility';
   }
 })();
+
+const containerStyles = {
+  knows: 'knowledge-list p-space-5 rounded-md border border-border bg-surface grid gap-space-4',
+  blindspots: 'knowledge-list p-space-5 rounded-md border border-border bg-surface grid gap-space-4 opacity-70',
+  reveal: 'knowledge-list p-space-5 rounded-md border-2 border-accent/35 bg-accent/8 grid gap-space-4',
+};
+
+const labelStyles = {
+  knows: 'flex items-center gap-space-2 m-0 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-accent',
+  blindspots: 'flex items-center gap-space-2 m-0 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-muted',
+  reveal: 'flex items-center gap-space-2 m-0 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-accent',
+};
+
+const itemStyles = {
+  knows: 'flex items-center gap-space-2 px-3 py-2 rounded-md border border-border bg-surface-muted',
+  blindspots: 'flex items-center gap-space-2 px-3 py-2 rounded-md border border-border bg-[#1e232e]/35 border-dashed',
+  reveal: 'flex items-center gap-space-2 px-3 py-2 rounded-md border border-accent/30 bg-accent/12',
+};
+
+const dotStyles = {
+  knows: 'w-[0.45rem] h-[0.45rem] rounded-pill bg-accent shrink-0',
+  blindspots: 'w-[0.45rem] h-[0.45rem] rounded-pill bg-muted shrink-0',
+  reveal: 'w-[0.45rem] h-[0.45rem] rounded-pill bg-accent shrink-0',
+};
+
+const textStyles = {
+  knows: 'text-[0.85rem] text-text',
+  blindspots: 'text-[0.85rem] text-muted italic',
+  reveal: 'text-[0.85rem] text-accent-strong font-semibold',
+};
 ---
 
 {shouldRender ? (
-  <div class={className}>
-    <h3 class="knowledge-list__label">
-      <span class="material-symbols-outlined knowledge-list__icon" aria-hidden="true">
+  <div class={containerStyles[variant]}>
+    <h3 class={labelStyles[variant]}>
+      <span class="material-symbols-outlined knowledge-list__icon text-[0.95rem]" aria-hidden="true">
         {iconName}
       </span>
       {label}
     </h3>
     {hasItems ? (
-      <ul class="knowledge-list__items">
+      <ul class="knowledge-list__items list-none m-0 p-0 grid gap-space-2">
         {items.map((item) => (
-          <li class="knowledge-list__item">
-            <span class="knowledge-list__dot" aria-hidden="true"></span>
-            <span class="knowledge-list__text">{item}</span>
+          <li class={itemStyles[variant]}>
+            <span class={dotStyles[variant]} aria-hidden="true"></span>
+            <span class={textStyles[variant]}>{item}</span>
           </li>
         ))}
       </ul>
     ) : (
-      <p class="knowledge-list__empty">{emptyText}</p>
+      <p class="knowledge-list__empty m-0 text-[0.9rem] text-muted">{emptyText}</p>
     )}
   </div>
 ) : null}
-
-<style>
-  .knowledge-list {
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    background: var(--color-surface);
-    display: grid;
-    gap: var(--space-3);
-  }
-
-  .knowledge-list__label {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin: 0;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-accent);
-  }
-
-  .knowledge-list__icon {
-    font-size: 0.9rem;
-  }
-
-  .knowledge-list__items {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: var(--space-2);
-  }
-
-  .knowledge-list__item {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: 0.45rem 0.7rem;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    background: var(--color-surface-muted);
-  }
-
-  .knowledge-list__dot {
-    width: 0.45rem;
-    height: 0.45rem;
-    border-radius: var(--radius-pill);
-    background: var(--color-accent);
-    flex-shrink: 0;
-  }
-
-  .knowledge-list__text {
-    font-size: var(--text-sm);
-    color: var(--color-text);
-  }
-
-  .knowledge-list__empty {
-    margin: 0;
-    font-size: var(--text-sm);
-    color: var(--color-muted);
-  }
-
-  .knowledge-list--blindspots {
-    opacity: 0.75;
-  }
-
-  .knowledge-list--blindspots .knowledge-list__label {
-    color: var(--color-muted);
-  }
-
-  .knowledge-list--blindspots .knowledge-list__item {
-    border-style: dashed;
-    background: rgba(30, 35, 46, 0.35);
-  }
-
-  .knowledge-list--blindspots .knowledge-list__dot {
-    background: var(--color-muted);
-  }
-
-  .knowledge-list--blindspots .knowledge-list__text {
-    color: var(--color-muted);
-    font-style: italic;
-  }
-
-  .knowledge-list--reveal {
-    border-color: rgba(43, 108, 238, 0.35);
-    background: rgba(43, 108, 238, 0.08);
-  }
-
-  .knowledge-list--reveal .knowledge-list__item {
-    border-color: rgba(43, 108, 238, 0.3);
-    background: rgba(43, 108, 238, 0.12);
-  }
-
-  .knowledge-list--reveal .knowledge-list__text {
-    color: var(--color-accent-strong);
-    font-weight: 600;
-  }
-</style>

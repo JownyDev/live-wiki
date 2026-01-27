@@ -15,12 +15,16 @@ const events = await listEvents();
     {events.length === 0 ? (
       <p>No hay eventos todavía.</p>
     ) : (
-      <div class="timeline-list">
-        {events.map((event) => (
+      <div class="relative space-y-24 py-10 before:content-[''] before:absolute before:left-1/2 before:top-0 before:-translate-x-1/2 before:w-px before:h-full before:bg-gradient-to-b before:from-transparent before:via-accent before:to-transparent before:opacity-30">
+        {events.map((event, index) => (
           <EventSummaryCard
             title={event.title}
             date={event.date}
+            era={event.era}
+            summary={event.summary}
+            tags={event.tags}
             href={`/events/${event.id}`}
+            side={index % 2 === 0 ? 'right' : 'left'}
           />
         ))}
       </div>

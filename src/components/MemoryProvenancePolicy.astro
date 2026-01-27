@@ -31,34 +31,3 @@ const columnCount = allowed.length;
     </div>
   </MemoryProfileCard>
 ) : null}
-
-<style>
-  .memory-provenance {
-    display: grid;
-    grid-template-columns: repeat(var(--memory-provenance-columns), minmax(0, 1fr));
-    gap: var(--space-1);
-    background: var(--color-surface-muted);
-    border-radius: var(--radius-md);
-    padding: var(--space-1);
-    flex-grow: 1;
-  }
-
-  .memory-provenance__item {
-    text-align: center;
-    padding: 0.75rem 0.6rem;
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: var(--color-muted);
-    border-radius: var(--radius-sm);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-  }
-
-  .memory-provenance__item--active {
-    background: var(--color-accent);
-    color: #ffffff;
-    box-shadow: var(--shadow-soft);
-  }
-</style>
