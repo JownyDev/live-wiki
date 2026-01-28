@@ -779,23 +779,31 @@
   }
 
   .emotions-toward__badge {
-    @apply px-[1.5rem] py-[0.5rem] rounded-md text-[0.95rem] font-bold uppercase tracking-[0.18em] border-2;
+    @apply inline-block px-[1.5rem] py-[0.5rem] rounded-md text-[0.95rem] font-bold uppercase tracking-[0.18em] border-2;
   }
 
   .emotions-toward__badge--friendly {
-    @apply bg-[#34d399]/15 border-[#34d399]/40 text-[#34d399];
+    background-color: rgba(52, 211, 153, 0.15);
+    border-color: rgba(52, 211, 153, 0.4);
+    color: rgb(52, 211, 153);
   }
 
   .emotions-toward__badge--wary {
-    @apply bg-[#f59e0b]/12 border-[#f59e0b]/35 text-[#f59e0b];
+    background-color: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.35);
+    color: rgb(245, 158, 11);
   }
 
   .emotions-toward__badge--hostile {
-    @apply bg-[#f87171]/12 border-[#f87171]/35 text-[#f87171];
+    background-color: rgba(248, 113, 113, 0.12);
+    border-color: rgba(248, 113, 113, 0.35);
+    color: rgb(248, 113, 113);
   }
 
   .emotions-toward__badge--neutral {
-    @apply bg-[#94a3b8]/12 border-[#94a3b8]/35 text-[#94a3b8];
+    background-color: rgba(148, 163, 184, 0.12);
+    border-color: rgba(148, 163, 184, 0.35);
+    color: rgb(148, 163, 184);
   }
 
   .emotions-toward__note {
