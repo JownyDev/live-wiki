@@ -29,53 +29,45 @@ if (date) {
 }
 ---
 
-<div class="relative flex items-center justify-center group w-full">
+<div class={`event-summary-card event-summary-card--${side === 'left' ? 'left' : 'right'}`}>
   {/* The Node on the line */}
-  <div class="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[14px] h-[14px] bg-accent rounded-full border-2 border-bg shadow-[0_0_15px_var(--color-accent)]"></div>
+  <div class="event-summary-card__dot"></div>
   
-  <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-4 md:gap-8 lg:gap-24">
+  <div class="event-summary-card__grid">
     {/* Left Side */}
-    <div
-      class={`flex flex-col justify-center order-1 text-left ${
-        side === 'left' ? 'md:order-2 md:pl-4 md:text-left' : 'md:order-1 md:pr-4 md:text-right'
-      }`}
-    >
+    <div class="event-summary-card__date-col">
       {year ? (
-        <span class="text-[10px] font-bold text-accent uppercase tracking-[0.2em] mb-1">
+        <span class="event-summary-card__year-label">
           {t("event.year")}: {year}
         </span>
       ) : null}
       {restOfDate ? (
-        <h3 class="font-serif text-3xl lg:text-4xl font-bold text-text">
+        <h3 class="event-summary-card__date-text">
           {restOfDate}
         </h3>
       ) : (year ? null : (
-        <h3 class="font-serif text-3xl lg:text-4xl font-bold text-text">
+        <h3 class="event-summary-card__date-text">
           {date}
         </h3>
       ))}
     </div>
 
     {/* Right Side (The Card) */}
-    <div
-      class={`order-2 ${
-        side === 'left' ? 'md:order-1 md:pr-4' : 'md:order-2 md:pl-4'
-      }`}
-    >
-      <div class="bg-surface border border-border p-6 lg:p-8 rounded-2xl shadow-xl hover:border-accent/50 transition-all">
-        <div class="flex items-start justify-between mb-4">
-          <h4 class="text-xl lg:text-2xl font-bold text-text">
-            {href ? <a href={href} class="text-text hover:text-accent hover:bg-transparent transition-colors">{title}</a> : title}
+    <div class="event-summary-card__panel-col">
+      <div class="event-summary-card__panel">
+        <div class="event-summary-card__header">
+          <h4 class="event-summary-card__title">
+            {href ? <a href={href} class="event-summary-card__link">{title}</a> : title}
           </h4>
           {href ? (
-            <a href={href} class="text-muted hover:text-accent transition-colors">
+            <a href={href} class="event-summary-card__icon-link">
               <span class="material-symbols-outlined">open_in_new</span>
             </a>
           ) : null}
         </div>
         
         {preview ? (
-          <p class="text-muted leading-relaxed text-sm lg:text-base">
+          <p class="event-summary-card__description">
             {preview}
           </p>
         ) : null}
