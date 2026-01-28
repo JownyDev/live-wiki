@@ -54,24 +54,35 @@ if (date) {
 
     {/* Right Side (The Card) */}
     <div class="event-summary-card__panel-col">
-      <div class="event-summary-card__panel">
-        <div class="event-summary-card__header">
-          <h4 class="event-summary-card__title">
-            {href ? <a href={href} class="event-summary-card__link">{title}</a> : title}
-          </h4>
-          {href ? (
-            <a href={href} class="event-summary-card__icon-link">
-              <span class="material-symbols-outlined">open_in_new</span>
-            </a>
+      {href ? (
+        <a href={href} class="event-summary-card__panel block">
+          <div class="event-summary-card__header">
+            <h4 class="event-summary-card__title">
+              {title}
+            </h4>
+          </div>
+          
+          {preview ? (
+            <p class="event-summary-card__description">
+              {preview}
+            </p>
+          ) : null}
+        </a>
+      ) : (
+        <div class="event-summary-card__panel">
+          <div class="event-summary-card__header">
+            <h4 class="event-summary-card__title">
+              {title}
+            </h4>
+          </div>
+          
+          {preview ? (
+            <p class="event-summary-card__description">
+              {preview}
+            </p>
           ) : null}
         </div>
-        
-        {preview ? (
-          <p class="event-summary-card__description">
-            {preview}
-          </p>
-        ) : null}
-      </div>
+      )}
     </div>
   </div>
 </div>

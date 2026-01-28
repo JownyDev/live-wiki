@@ -1091,12 +1091,16 @@
     border-color: color-mix(in srgb, var(--color-accent), transparent 50%);
   }
 
+  .event-summary-card__panel:hover .event-summary-card__title {
+    @apply text-accent;
+  }
+
   .event-summary-card__header {
     @apply flex items-start justify-between mb-4;
   }
 
   .event-summary-card__title {
-    @apply text-xl lg:text-2xl font-bold text-text;
+    @apply text-xl lg:text-2xl font-bold text-text transition-colors;
   }
 
   .event-summary-card__link {
