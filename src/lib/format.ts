@@ -16,7 +16,7 @@ export const formatEntityId = (id: string): string => {
  */
 export const formatOrigin = (origin: string | null | undefined, lang: string = defaultLang): string => {
   if (!origin || origin === 'unknown') {
-    return ui[lang as keyof typeof ui]?.['ui.unknown'] || ui[defaultLang]['ui.unknown'];
+    return ui[lang as keyof typeof ui]['ui.unknown'];
   }
   
   // Extrae el ID (lo que está después de ':') o usa el string completo

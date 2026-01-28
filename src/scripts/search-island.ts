@@ -14,12 +14,13 @@ if (!input || !status || !results) {
   throw new Error('Search UI is missing required elements');
 }
 
-const searchEndpoint = root.dataset.searchEndpoint ?? '/search.json';
-const searchLang = (root.dataset.searchLang ?? 'es') as keyof typeof ui;
-const limitValue = Number(root.dataset.searchLimit ?? '12');
+const searchEndpoint = root.getAttribute('data-search-endpoint') ?? '/search.json';
+const langAttr = root.getAttribute('data-search-lang') ?? 'es';
+const searchLang = (langAttr in ui ? langAttr : 'es') as keyof typeof ui;
+const limitValue = Number(root.getAttribute('data-search-limit') ?? '12');
 const resultLimit = Number.isFinite(limitValue) && limitValue > 0 ? limitValue : 12;
 
-const t = ui[searchLang] ?? ui.es;
+const t = ui[searchLang];
 
 let index: SearchIndexEntry[] = [];
 let loadPromise: Promise<boolean> | null = null;
@@ -51,8 +52,8 @@ const renderResults = (entries: SearchIndexEntry[]): void => {
 
     const meta = document.createElement('span');
     meta.className = 'search__result-meta';
-    const typeKey = `type.${entry.type}` as keyof typeof t;
-    meta.textContent = t[typeKey] ?? entry.type;
+    const typeKey = `type.${entry.type}`;
+    meta.textContent = typeKey in t ? t[typeKey as keyof typeof t] : entry.type;
 
     item.append(link, meta);
     results.append(item);
