@@ -1,5 +1,9 @@
 ---
 import PersonaCard from './PersonaCard.astro';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 type Props = {
   tone?: string | null;
@@ -13,17 +17,17 @@ const shouldRender = hasTone || hasStyleNotes;
 ---
 
 {shouldRender ? (
-  <PersonaCard title="Voz" span="wide" icon="record_voice_over">
+  <PersonaCard title={t("ui.voice")} span="wide" icon="record_voice_over">
     <div class="persona-voice">
       {hasTone ? (
         <div class="persona-voice__block">
-          <p class="persona-voice__label">Tono</p>
+          <p class="persona-voice__label">{t('ui.tone')}</p>
           <p class="persona-voice__tone">{tone}</p>
         </div>
       ) : null}
       {hasStyleNotes ? (
         <div class="persona-voice__block">
-          <p class="persona-voice__label">Notas de estilo</p>
+          <p class="persona-voice__label">{t('ui.style_notes')}</p>
           <ul class="persona-voice__notes">
             {styleNotes.map((note) => (
               <li>{note}</li>

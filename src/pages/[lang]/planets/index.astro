@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import EntityList from '../../../components/EntityList.astro';
+import Section from '../../../components/Section.astro';
+import { listPlanets } from '../../../lib/content/planets';
+import { languages } from '../../../i18n/ui';
+import { useTranslations } from '../../../i18n/utils';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const t = useTranslations(lang as any);
+
+const title = t('nav.planets');
+const planets = await listPlanets();
+
+const planetItems = planets.map(p => ({
+  label: p.name,
+  href: getRelativeLocaleUrl(lang as any, `/planets/${p.id}`)
+}));
+---
+
+<BaseLayout title={title} lang={lang as any}>
+  <Header title={title} icon="public" />
+  <Section>
+    <div class="max-w-prose mb-12">
+      <p class="text-muted text-sm">{t('desc.planets')}</p>
+    </div>
+    {planets.length === 0 ? (
+      <p>{t('planet.list.empty')}</p>
+    ) : (
+      <EntityList items={planetItems} />
+    )}
+  </Section>
+</BaseLayout>

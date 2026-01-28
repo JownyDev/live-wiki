@@ -1,5 +1,10 @@
 ---
-const searchEndpoint = '/search.json';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const searchEndpoint = getRelativeLocaleUrl(lang, '/search.json');
 const resultLimit = 12;
 ---
 
@@ -7,24 +12,24 @@ const resultLimit = 12;
   id="search"
   class="search"
   data-search
+  data-search-lang={lang}
   data-search-endpoint={searchEndpoint}
   data-search-limit={resultLimit}
 >
-  <label class="search__label" for="search-input">Buscar</label>
+  <label class="search__label" for="search-input">{t('ui.search')}</label>
   <div class="search__control">
     <input
       id="search-input"
       class="search__input"
       type="search"
       name="q"
-      placeholder="Buscar por nombre, id o texto..."
+      placeholder={t('nav.search') + "..."}
       autocomplete="off"
       aria-controls="search-results"
     />
   </div>
   <div class="search__meta">
     <span class="search__status" data-search-status role="status" aria-live="polite">
-      Escribe para buscar.
     </span>
   </div>
   <ul id="search-results" class="search__results" data-search-results hidden></ul>

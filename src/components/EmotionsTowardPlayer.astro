@@ -1,4 +1,9 @@
 ---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
 type Props = {
   stance: string;
   note?: string | null;
@@ -54,7 +59,7 @@ const badgeClass = `${baseBadgeStyles} ${badgeColorStyles[stanceTone]}`;
       <span class="material-symbols-outlined emotions-toward__icon" aria-hidden="true">
         person_pin_circle
       </span>
-      Hacia el jugador
+      {t('ui.stance')}
     </h3>
     <div class="emotions-toward__content">
       <span class={badgeClass}>{stance}</span>

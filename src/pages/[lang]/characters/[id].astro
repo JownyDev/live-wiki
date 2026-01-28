@@ -1,55 +1,63 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Breadcrumbs, { type BreadcrumbItem } from '../../components/Breadcrumbs.astro';
-import CharacterHero from '../../components/CharacterHero.astro';
-import CharacterList from '../../components/CharacterList.astro';
-import DataPanel, { type DataPanelItem } from '../../components/DataPanel.astro';
-import EventSummaryCard from '../../components/EventSummaryCard.astro';
-import MarkdownDescription from '../../components/MarkdownDescription.astro';
-import EntityLink from '../../components/EntityLink.astro';
-import CapabilityCard from '../../components/CapabilityCard.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs, { type BreadcrumbItem } from '../../../components/Breadcrumbs.astro';
+import CharacterHero from '../../../components/CharacterHero.astro';
+import CharacterList from '../../../components/CharacterList.astro';
+import DataPanel, { type DataPanelItem } from '../../../components/DataPanel.astro';
+import EventSummaryCard from '../../../components/EventSummaryCard.astro';
+import MarkdownDescription from '../../../components/MarkdownDescription.astro';
+import EntityLink from '../../../components/EntityLink.astro';
+import CapabilityCard from '../../../components/CapabilityCard.astro';
 import EmotionsBaselineMood, {
   type BaselineMoodItem,
-} from '../../components/EmotionsBaselineMood.astro';
-import EmotionsSensitivities from '../../components/EmotionsSensitivities.astro';
-import EmotionsTowardPlayer from '../../components/EmotionsTowardPlayer.astro';
-import GoalList from '../../components/GoalList.astro';
-import KnowledgeList from '../../components/KnowledgeList.astro';
-import KnowledgeSummary from '../../components/KnowledgeSummary.astro';
-import MemoryProvenancePolicy from '../../components/MemoryProvenancePolicy.astro';
-import MemoryRetrievalLimits from '../../components/MemoryRetrievalLimits.astro';
-import MemoryTags from '../../components/MemoryTags.astro';
-import PersonaArchetype from '../../components/PersonaArchetype.astro';
-import PersonaBiographyHighlights from '../../components/PersonaBiographyHighlights.astro';
-import PersonaTaboos from '../../components/PersonaTaboos.astro';
-import PersonaTraits from '../../components/PersonaTraits.astro';
-import PersonaValues from '../../components/PersonaValues.astro';
-import PersonaVoice from '../../components/PersonaVoice.astro';
-import PriorityList from '../../components/PriorityList.astro';
-import Section from '../../components/Section.astro';
-import SectionHeader from '../../components/SectionHeader.astro';
-import Tabs, { type TabItem } from '../../components/Tabs.astro';
-import { type InlineMetaItem } from '../../components/InlineMetaList.astro';
-import { getCharacterById, listCharacters } from '../../lib/content/characters';
-import { getElementById } from '../../lib/content/elements';
-import { getPlaceById } from '../../lib/content/places';
-import { getPlanetById } from '../../lib/content/planets';
-import { listEventsByCharacterId } from '../../lib/content/events';
-import { parseLocationRef } from '../../lib/content/location-refs';
-import { formatEntityId, formatOrigin } from '../../lib/format';
+} from '../../../components/EmotionsBaselineMood.astro';
+import EmotionsSensitivities from '../../../components/EmotionsSensitivities.astro';
+import EmotionsTowardPlayer from '../../../components/EmotionsTowardPlayer.astro';
+import GoalList from '../../../components/GoalList.astro';
+import KnowledgeList from '../../../components/KnowledgeList.astro';
+import KnowledgeSummary from '../../../components/KnowledgeSummary.astro';
+import MemoryProvenancePolicy from '../../../components/MemoryProvenancePolicy.astro';
+import MemoryRetrievalLimits from '../../../components/MemoryRetrievalLimits.astro';
+import MemoryTags from '../../../components/MemoryTags.astro';
+import PersonaArchetype from '../../../components/PersonaArchetype.astro';
+import PersonaBiographyHighlights from '../../../components/PersonaBiographyHighlights.astro';
+import PersonaTaboos from '../../../components/PersonaTaboos.astro';
+import PersonaTraits from '../../../components/PersonaTraits.astro';
+import PersonaValues from '../../../components/PersonaValues.astro';
+import PersonaVoice from '../../../components/PersonaVoice.astro';
+import PriorityList from '../../../components/PriorityList.astro';
+import Section from '../../../components/Section.astro';
+import SectionHeader from '../../../components/SectionHeader.astro';
+import Tabs, { type TabItem } from '../../../components/Tabs.astro';
+import { type InlineMetaItem } from '../../../components/InlineMetaList.astro';
+import { getCharacterById, listCharacters } from '../../../lib/content/characters';
+import { getElementById } from '../../../lib/content/elements';
+import { getPlaceById } from '../../../lib/content/places';
+import { getPlanetById } from '../../../lib/content/planets';
+import { listEventsByCharacterId } from '../../../lib/content/events';
+import { parseLocationRef } from '../../../lib/content/location-refs';
+import { formatEntityId, formatOrigin } from '../../../lib/format';
+import { languages } from '../../../i18n/ui';
+import { useTranslations } from '../../../i18n/utils';
+import { getRelativeLocaleUrl } from 'astro:i18n';
 
 export async function getStaticPaths() {
   const characters = await listCharacters();
-  return characters.map((character) => ({
-    params: { id: character.id },
-  }));
+  const paths = [];
+  for (const lang of Object.keys(languages)) {
+    for (const character of characters) {
+      paths.push({ params: { lang, id: character.id } });
+    }
+  }
+  return paths;
 }
 
-const id = Astro.params.id;
+const { lang, id } = Astro.params;
+const t = useTranslations(lang as any);
 const characterId = typeof id === 'string' ? id : null;
 const character = characterId ? await getCharacterById(characterId) : null;
 const events = characterId && character ? await listEventsByCharacterId(characterId) : [];
-const title = character ? character.name : 'Personaje no encontrado';
+const title = character ? character.name : t('char.not_found');
 const originView = await (async () => {
   if (!character?.origin) {
     return null;
@@ -70,7 +78,7 @@ const originView = await (async () => {
     case 'space':
       return { text: formatEntityId(parsed.id) };
     case 'unknown':
-      return { text: 'Desconocido' };
+      return { text: t('ui.unknown') };
   }
 })();
 
@@ -112,7 +120,7 @@ const resolveAffinityView = async (value: string): Promise<LinkView> => {
   const element = await getElementById(elementId);
   return element
     ? { text: element.name, href: `/elements/${element.id}` }
-    : { text: `${elementId} (no encontrado)` };
+    : { text: `${elementId} (${t('ui.unknown')})` };
 };
 
 const buildRelatedCharacters = async (
@@ -127,7 +135,7 @@ const buildRelatedCharacters = async (
     if (!characterId) {
       items.push({
         id: 'unknown',
-        name: 'no encontrado',
+        name: t('ui.unknown'),
         relationship: label,
         missing: true,
       });
@@ -138,7 +146,7 @@ const buildRelatedCharacters = async (
     if (!relatedCharacter) {
       items.push({
         id: characterId,
-        name: 'no encontrado',
+        name: t('ui.unknown'),
         relationship: label,
         missing: true,
       });
@@ -152,7 +160,7 @@ const buildRelatedCharacters = async (
       archetype: relatedCharacter.persona?.archetype ?? undefined,
       origin: relatedCharacter.origin,
       relationship: label,
-      href: `/characters/${relatedCharacter.id}`,
+      href: getRelativeLocaleUrl(lang as any, `/characters/${relatedCharacter.id}`),
     });
   }
 
@@ -248,14 +256,14 @@ const hasEmotionsProfile =
   hasItems(baselineMoodItems) || hasTowardPlayer || hasSensitivities || hasManipulability;
 const breadcrumbs: BreadcrumbItem[] = character
   ? [
-      { label: 'Inicio', href: '/' },
-      { label: 'Personajes', href: '/characters' },
+      { label: t('nav.home'), href: getRelativeLocaleUrl(lang as any, '/') },
+      { label: t('nav.characters'), href: getRelativeLocaleUrl(lang as any, '/characters') },
       { label: character.name, current: true },
     ]
   : [
-      { label: 'Inicio', href: '/' },
-      { label: 'Personajes', href: '/characters' },
-      { label: 'Personaje no encontrado', current: true },
+      { label: t('nav.home'), href: getRelativeLocaleUrl(lang as any, '/') },
+      { label: t('nav.characters'), href: getRelativeLocaleUrl(lang as any, '/characters') },
+      { label: t('char.not_found'), current: true },
     ];
 const characterMeta: InlineMetaItem[] = character
   ? [{ label: 'ID', value: `#${character.id}` }]
@@ -263,40 +271,40 @@ const characterMeta: InlineMetaItem[] = character
 const dataItems: DataPanelItem[] = [];
 
 if (character?.born) {
-  dataItems.push({ label: 'Nacimiento', value: character.born, icon: 'cake' });
+  dataItems.push({ label: t('ui.born'), value: character.born, icon: 'cake' });
 }
 
 if (character?.died) {
-  dataItems.push({ label: 'Muerte', value: character.died, icon: 'heart_broken' });
+  dataItems.push({ label: t('ui.died'), value: character.died, icon: 'heart_broken' });
 }
 
 if (originView) {
   dataItems.push({
-    label: 'Origen',
+    label: t('ui.origin'),
     value: originView.text,
-    href: originView.href,
+    href: originView.href ? getRelativeLocaleUrl(lang as any, originView.href) : undefined,
     icon: 'location_on',
   });
 }
 
 if (affinityView) {
   dataItems.push({
-    label: 'Afinidad',
+    label: t('ui.affinity'),
     value: affinityView.text,
-    href: affinityView.href,
+    href: affinityView.href ? getRelativeLocaleUrl(lang as any, affinityView.href) : undefined,
     icon: 'auto_awesome',
   });
 }
 
 const tabItems: TabItem[] = [
-  { id: 'bio', label: 'Biografía', icon: 'description' },
-  { id: 'technical', label: 'Ficha Técnica', icon: 'analytics' },
-  { id: 'relations', label: 'Relaciones', icon: 'group' },
-  { id: 'events', label: 'Eventos', icon: 'event' },
+  { id: 'bio', label: t('ui.bio'), icon: 'description' },
+  { id: 'technical', label: t('ui.technical'), icon: 'analytics' },
+  { id: 'relations', label: t('ui.relations'), icon: 'group' },
+  { id: 'events', label: t('ui.events'), icon: 'event' },
 ];
 ---
 
-<BaseLayout title={title} lang="es" pageClass="page--character">
+<BaseLayout title={title} lang={lang as any} pageClass="page--character">
   {character ? (
     <div class="character-page">
       <Breadcrumbs items={breadcrumbs} />
@@ -307,13 +315,13 @@ const tabItems: TabItem[] = [
       />
       <div class="character-page__grid">
         <aside class="character-page__sidebar">
-          <DataPanel title="Datos del personaje" items={dataItems} />
+          <DataPanel title={t('ui.data_title')} items={dataItems} />
         </aside>
         <div class="character-page__content">
           <Tabs items={tabItems} defaultTab="bio">
             <div data-tab-panel="bio" class="animate-fadeIn">
               <Section>
-                <SectionHeader title="Biografía" showDivider />
+                <SectionHeader title={t('ui.bio')} showDivider />
                 <MarkdownDescription content={character.body} />
               </Section>
             </div>
@@ -321,7 +329,7 @@ const tabItems: TabItem[] = [
             <div data-tab-panel="technical" class="animate-fadeIn" hidden>
               {hasPersona ? (
                 <Section>
-                  <SectionHeader title="Persona" showDivider />
+                  <SectionHeader title={t('char.persona')} showDivider />
                   <div class="character-page__persona">
                     {hasItems(personaTraits) ? (
                       <PersonaTraits items={personaTraits} />
@@ -349,28 +357,28 @@ const tabItems: TabItem[] = [
               ) : null}
               {hasKnowledge ? (
                 <Section>
-                  <SectionHeader title="Conocimiento" showDivider />
+                  <SectionHeader title={t('char.knowledge')} showDivider />
                   <div class="character-page__knowledge">
                     {hasText(knowledgeSummary) ? (
                       <KnowledgeSummary summary={knowledgeSummary} />
                     ) : null}
                     {hasItems(knowledgeKnowsAbout) ? (
                       <KnowledgeList
-                        label="Sabe sobre"
+                        label={t('char.knows_about')}
                         items={knowledgeKnowsAbout}
                         variant="knows"
                       />
                     ) : null}
                     {hasItems(knowledgeBlindspots) ? (
                       <KnowledgeList
-                        label="Puntos ciegos"
+                        label={t('char.blindspots')}
                         items={knowledgeBlindspots}
                         variant="blindspots"
                       />
                     ) : null}
                     {hasItems(knowledgeCanReveal) ? (
                       <KnowledgeList
-                        label="Puede revelar"
+                        label={t('char.can_reveal')}
                         items={knowledgeCanReveal}
                         variant="reveal"
                       />
@@ -380,7 +388,7 @@ const tabItems: TabItem[] = [
               ) : null}
               {hasMemoryProfile ? (
                 <Section>
-                  <SectionHeader title="Perfil de memoria" showDivider />
+                  <SectionHeader title={t('char.memory_profile')} showDivider />
                   <div class="character-page__memory">
                     {memoryProfile ? (
                       <MemoryTags
@@ -413,7 +421,7 @@ const tabItems: TabItem[] = [
               ) : null}
               {hasEmotionsProfile ? (
                 <Section>
-                  <SectionHeader title="Perfil emocional" showDivider />
+                  <SectionHeader title={t('char.emotions_profile')} showDivider />
                   <div class="character-page__emotions">
                     <div class="character-page__emotions-grid">
                       {hasItems(baselineMoodItems) ? (
@@ -438,11 +446,11 @@ const tabItems: TabItem[] = [
               ) : null}
               {hasGoals ? (
                 <Section>
-                  <SectionHeader title="Objetivos" showDivider />
+                  <SectionHeader title={t('char.goals')} showDivider />
                   <div class="character-page__goals">
                     {hasItems(goalsLongTerm) ? (
                       <GoalList
-                        label="Objetivos a largo plazo"
+                        label={t('char.long_term_goals')}
                         items={goalsLongTerm}
                         icon="flag"
                         itemIcon="ads_click"
@@ -450,7 +458,7 @@ const tabItems: TabItem[] = [
                     ) : null}
                     {hasItems(goalsPriorities) ? (
                       <PriorityList
-                        label="Prioridades habituales"
+                        label={t('char.typical_priorities')}
                         items={goalsPriorities}
                         icon="list_alt"
                         itemIcon="priority_high"
@@ -461,7 +469,7 @@ const tabItems: TabItem[] = [
               ) : null}
               {hasCapabilities ? (
                 <Section>
-                  <SectionHeader title="Capacidades" showDivider />
+                  <SectionHeader title={t('char.capabilities')} showDivider />
                   <div class="character-page__capabilities">
                     {capabilityActions.map((capability) => (
                       <CapabilityCard
@@ -479,27 +487,27 @@ const tabItems: TabItem[] = [
             <div data-tab-panel="relations" class="animate-fadeIn" hidden>
               {allRelatedCharacters.length > 0 ? (
                 <Section>
-                  <SectionHeader title="Relaciones" showDivider />
+                  <SectionHeader title={t('ui.relations')} showDivider />
                   <div class="character-page__relations">
                     <CharacterList characters={allRelatedCharacters} variant="relations" />
                   </div>
                 </Section>
               ) : (
-                <p>No se conocen relaciones directas.</p>
+                <p>{t('ui.no_relations')}</p>
               )}
             </div>
 
             <div data-tab-panel="events" class="animate-fadeIn" hidden>
               {events.length === 0 ? (
                 <Section>
-                   <SectionHeader title="Eventos relacionados" showDivider />
-                   <p>Sin eventos.</p>
+                   <SectionHeader title={t('ui.related_events')} showDivider />
+                   <p>{t('event.list.empty')}</p>
                 </Section>
               ) : (
                 <Section>
-                  <SectionHeader title="Eventos relacionados" showDivider>
-                    <a slot="action" href="/events">
-                      Ver linea de tiempo completa
+                  <SectionHeader title={t('ui.related_events')} showDivider>
+                    <a slot="action" href={getRelativeLocaleUrl(lang as any, '/events')}>
+                      {t('event.full_timeline')}
                     </a>
                   </SectionHeader>
                   <div class="relative space-y-16 py-8 before:content-[''] before:absolute before:left-1/2 before:top-0 before:-translate-x-1/2 before:w-px before:h-full before:bg-gradient-to-b before:from-transparent before:via-accent before:to-transparent before:opacity-30">
@@ -508,7 +516,7 @@ const tabItems: TabItem[] = [
                         title={event.title}
                         date={event.date}
                         preview={event.preview}
-                        href={`/events/${event.id}`}
+                        href={getRelativeLocaleUrl(lang as any, `/events/${event.id}`)}
                         side={index % 2 === 0 ? 'right' : 'left'}
                       />
                     ))}
@@ -523,11 +531,11 @@ const tabItems: TabItem[] = [
   ) : (
     <div class="character-page">
       <Breadcrumbs items={breadcrumbs} />
-      <CharacterHero name="Personaje no encontrado" />
+      <CharacterHero name={t('char.not_found')} />
       <Section>
-        <p>El personaje solicitado no existe.</p>
+        <p>{t('char.not_found')}</p>
         <p>
-          <a href="/characters">Volver a personajes</a>
+          <a href={getRelativeLocaleUrl(lang as any, '/characters')}>{t('char.back_to_list')}</a>
         </p>
       </Section>
     </div>

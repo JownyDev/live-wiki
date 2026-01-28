@@ -1,33 +1,29 @@
 ---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
 import MemoryProfileCard from './MemoryProfileCard.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 type Props = {
   allowed: string[];
-  defaultValue?: string | null;
+  defaultValue: string;
 };
 
-const { allowed, defaultValue = null } = Astro.props as Props;
-const hasItems = allowed.length > 0;
-const columnCount = allowed.length;
+const { allowed, defaultValue } = Astro.props as Props;
 ---
 
-{hasItems ? (
-  <MemoryProfileCard title="Politica de procedencia" icon="policy">
-    <div
-      class="memory-provenance"
-      style={`--memory-provenance-columns: ${columnCount};`}
-    >
-      {allowed.map((item) => (
-        <span
-          class={
-            item === defaultValue
-              ? 'memory-provenance__item memory-provenance__item--active'
-              : 'memory-provenance__item'
-          }
-        >
-          {item}
-        </span>
-      ))}
+<MemoryProfileCard title={t("ui.provenance_policy")} icon="policy">
+  <div class="memory-provenance">
+    <div class="mb-4">
+      <p class="text-xs font-bold uppercase text-muted mb-2">Permitido</p>
+      <div class="tag-list">
+        {allowed.map(item => <span class="tag">{item}</span>)}
+      </div>
     </div>
-  </MemoryProfileCard>
-) : null}
+    <div>
+      <p class="text-xs font-bold uppercase text-muted mb-2">Por defecto</p>
+      <span class="text-sm font-medium">{defaultValue}</span>
+    </div>
+  </div>
+</MemoryProfileCard>

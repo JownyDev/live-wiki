@@ -1,0 +1,126 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs, { type BreadcrumbItem } from '../../../components/Breadcrumbs.astro';
+import CharacterHero from '../../../components/CharacterHero.astro';
+import DataPanel, { type DataPanelItem } from '../../../components/DataPanel.astro';
+import MarkdownDescription from '../../../components/MarkdownDescription.astro';
+import Section from '../../../components/Section.astro';
+import SectionHeader from '../../../components/SectionHeader.astro';
+import Tabs, { type TabItem } from '../../../components/Tabs.astro';
+import { type InlineMetaItem } from '../../../components/InlineMetaList.astro';
+import { getMechanicById, listMechanics } from '../../../lib/content/mechanics';
+import { getElementById } from '../../../lib/content/elements';
+import { formatEntityId } from '../../../lib/format';
+import { languages } from '../../../i18n/ui';
+import { useTranslations } from '../../../i18n/utils';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+export async function getStaticPaths() {
+  const mechanics = await listMechanics();
+  const paths = [];
+  for (const lang of Object.keys(languages)) {
+    for (const mechanic of mechanics) {
+      paths.push({ params: { lang, id: mechanic.id } });
+    }
+  }
+  return paths;
+}
+
+const { lang, id } = Astro.params;
+const t = useTranslations(lang as any);
+const mechanicId = typeof id === 'string' ? id : null;
+const mechanic = mechanicId ? await getMechanicById(mechanicId) : null;
+const title = mechanic ? mechanic.name : t('mech.not_found');
+
+const breadcrumbs: BreadcrumbItem[] = mechanic
+  ? [
+      { label: t('nav.home'), href: getRelativeLocaleUrl(lang as any, '/') },
+      { label: t('nav.mechanics'), href: getRelativeLocaleUrl(lang as any, '/mechanics') },
+      { label: mechanic.name, current: true },
+    ]
+  : [
+      { label: t('nav.home'), href: getRelativeLocaleUrl(lang as any, '/') },
+      { label: t('nav.mechanics'), href: getRelativeLocaleUrl(lang as any, '/mechanics') },
+      { label: t('mech.not_found'), current: true },
+    ];
+
+const mechanicMeta: InlineMetaItem[] = mechanic
+  ? [{ label: 'ID', value: `#${mechanic.id}` }]
+  : [];
+
+// Helper to parse prefixes
+const parseWithPrefix = (value: string, prefix: string): string | null => {
+  if (!value.startsWith(prefix)) return null;
+  const id = value.slice(prefix.length);
+  return id.length > 0 ? id : null;
+};
+
+// Resolve Elements for DataPanel
+const resolveElementView = async (elRef: string) => {
+  const elId = parseWithPrefix(elRef, 'element:');
+  if (!elId) return { text: elRef };
+  const element = await getElementById(elId);
+  return {
+    text: element?.name ?? formatEntityId(elId),
+    href: getRelativeLocaleUrl(lang as any, `/elements/${elId}`),
+    icon: 'auto_awesome'
+  };
+};
+
+const elementViews = mechanic ? await Promise.all(mechanic.relatedElements.map(resolveElementView)) : [];
+
+const dataItems: DataPanelItem[] = [];
+if (mechanic) {
+  // Related Elements
+  elementViews.forEach(view => {
+    dataItems.push({
+      label: t('ui.related_elements'),
+      value: view.text,
+      href: view.href,
+      icon: view.icon as any
+    });
+  });
+}
+
+const tabItems: TabItem[] = [
+  { id: 'info', label: t('ui.description') || 'Descripción', icon: 'description' },
+];
+---
+
+<BaseLayout title={title} lang={lang as any} pageClass="page--mechanic">
+  {mechanic ? (
+    <div class="mechanic-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero
+        name={mechanic.name}
+        meta={mechanicMeta}
+        imageUrl={mechanic.image ?? undefined}
+      />
+      <div class="mechanic-page__grid">
+        <aside class="mechanic-page__sidebar">
+          <DataPanel title={t('ui.data_title')} items={dataItems} />
+        </aside>
+        <div class="mechanic-page__content">
+          <Tabs items={tabItems} defaultTab="info">
+            <div data-tab-panel="info" class="animate-fadeIn">
+              <Section>
+                <SectionHeader title={t('ui.description') || 'Descripción'} showDivider />
+                <MarkdownDescription content={mechanic.body} />
+              </Section>
+            </div>
+          </Tabs>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div class="mechanic-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <Section>
+        <p>{t('mech.not_found')}</p>
+        <p>
+          <a href={getRelativeLocaleUrl(lang as any, '/mechanics')}>{t('mech.back_to_list') || 'Volver a la lista'}</a>
+        </p>
+      </Section>
+    </div>
+  )}
+</BaseLayout>

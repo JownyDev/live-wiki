@@ -12,7 +12,7 @@ type Props = {
 const { items } = Astro.props;
 ---
 
-<div class="entity-list space-y-1">
+<div class="entity-list space-y-4">
   {items.map((item) => {
     const isMissing = item.missing || !item.href;
     

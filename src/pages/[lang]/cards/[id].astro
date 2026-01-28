@@ -1,0 +1,188 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs, { type BreadcrumbItem } from '../../../components/Breadcrumbs.astro';
+import CharacterHero from '../../../components/CharacterHero.astro';
+import DataPanel, { type DataPanelItem } from '../../../components/DataPanel.astro';
+import MarkdownDescription from '../../../components/MarkdownDescription.astro';
+import Section from '../../../components/Section.astro';
+import SectionHeader from '../../../components/SectionHeader.astro';
+import Tabs, { type TabItem } from '../../../components/Tabs.astro';
+import { type InlineMetaItem } from '../../../components/InlineMetaList.astro';
+import { getCardById, listCards } from '../../../lib/content/cards';
+import { getElementById } from '../../../lib/content/elements';
+import { getCharacterById } from '../../../lib/content/characters';
+import { getEventById } from '../../../lib/content/events';
+import { getPlaceById } from '../../../lib/content/places';
+import { getPlanetById } from '../../../lib/content/planets';
+import { parseLocationRef } from '../../../lib/content/location-refs';
+import { formatEntityId } from '../../../lib/format';
+import { languages } from '../../../i18n/ui';
+import { useTranslations } from '../../../i18n/utils';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+export async function getStaticPaths() {
+  const cards = await listCards();
+  const paths = [];
+  for (const lang of Object.keys(languages)) {
+    for (const card of cards) {
+      paths.push({ params: { lang, id: card.id } });
+    }
+  }
+  return paths;
+}
+
+const { lang, id } = Astro.params;
+const t = useTranslations(lang as any);
+const cardId = typeof id === 'string' ? id : null;
+const card = cardId ? await getCardById(cardId) : null;
+const title = card ? card.name : t('card.not_found');
+
+const breadcrumbs: BreadcrumbItem[] = card
+  ? [
+      { label: t('nav.home'), href: getRelativeLocaleUrl(lang as any, '/') },
+      { label: t('nav.cards'), href: getRelativeLocaleUrl(lang as any, '/cards') },
+      { label: card.name, current: true },
+    ]
+  : [
+      { label: t('nav.home'), href: getRelativeLocaleUrl(lang as any, '/') },
+      { label: t('nav.cards'), href: getRelativeLocaleUrl(lang as any, '/cards') },
+      { label: t('card.not_found'), current: true },
+    ];
+
+const cardMeta: InlineMetaItem[] = card
+  ? [{ label: 'ID', value: `#${card.id}` }]
+  : [];
+
+// Helper to parse prefixes
+const parseWithPrefix = (value: string, prefix: string): string | null => {
+  if (!value.startsWith(prefix)) return null;
+  const id = value.slice(prefix.length);
+  return id.length > 0 ? id : null;
+};
+
+// Resolve Elements for DataPanel
+const resolveElementView = async (elRef: string) => {
+  const elId = parseWithPrefix(elRef, 'element:');
+  if (!elId) return { text: elRef };
+  const element = await getElementById(elId);
+  return {
+    text: element?.name ?? formatEntityId(elId),
+    href: getRelativeLocaleUrl(lang as any, `/elements/${elId}`),
+    icon: 'auto_awesome'
+  };
+};
+
+// Resolve Represents for DataPanel
+const resolveRepresentsView = async (ref: string) => {
+  // Character
+  const charId = parseWithPrefix(ref, 'character:');
+  if (charId) {
+    const char = await getCharacterById(charId);
+    return {
+      text: char?.name ?? formatEntityId(charId),
+      href: getRelativeLocaleUrl(lang as any, `/characters/${charId}`),
+      icon: 'person'
+    };
+  }
+
+  // Event
+  const evId = parseWithPrefix(ref, 'event:');
+  if (evId) {
+    const ev = await getEventById(evId);
+    return {
+      text: ev?.title ?? formatEntityId(evId),
+      href: getRelativeLocaleUrl(lang as any, `/events/${evId}`),
+      icon: 'event'
+    };
+  }
+
+  // Locations
+  const parsedLoc = parseLocationRef(ref);
+  if (parsedLoc) {
+    if (parsedLoc.kind === 'place') {
+      const place = await getPlaceById(parsedLoc.id);
+      return {
+        text: place?.name ?? formatEntityId(parsedLoc.id),
+        href: getRelativeLocaleUrl(lang as any, `/places/${parsedLoc.id}`),
+        icon: 'location_on'
+      };
+    }
+    if (parsedLoc.kind === 'planet') {
+      const planet = await getPlanetById(parsedLoc.id);
+      return {
+        text: planet?.name ?? formatEntityId(parsedLoc.id),
+        href: getRelativeLocaleUrl(lang as any, `/planets/${parsedLoc.id}`),
+        icon: 'public'
+      };
+    }
+  }
+
+  return { text: ref, icon: 'info' };
+};
+
+const elementViews = card ? await Promise.all(card.elements.map(resolveElementView)) : [];
+const representsViews = card ? await Promise.all(card.represents.map(resolveRepresentsView)) : [];
+
+const dataItems: DataPanelItem[] = [];
+if (card) {
+  elementViews.forEach(view => {
+    dataItems.push({
+      label: t('ui.element') || 'Elemento',
+      value: view.text,
+      href: view.href,
+      icon: view.icon as any
+    });
+  });
+
+  representsViews.forEach(view => {
+    dataItems.push({
+      label: t('ui.represents') || 'Representa',
+      value: view.text,
+      href: view.href,
+      icon: view.icon as any
+    });
+  });
+}
+
+const tabItems: TabItem[] = [
+  { id: 'info', label: t('ui.description') || 'Descripción', icon: 'description' },
+];
+---
+
+<BaseLayout title={title} lang={lang as any} pageClass="page--card">
+  {card ? (
+    <div class="card-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero
+        name={card.name}
+        meta={cardMeta}
+        imageUrl={card.image ?? undefined}
+      />
+      <div class="card-page__grid">
+        <aside class="card-page__sidebar">
+          <DataPanel title={t('ui.data_title')} items={dataItems} />
+        </aside>
+        <div class="card-page__content">
+          <Tabs items={tabItems} defaultTab="info">
+            <div data-tab-panel="info" class="animate-fadeIn">
+              <Section>
+                <SectionHeader title={t('ui.description') || 'Descripción'} showDivider />
+                <MarkdownDescription content={card.body} />
+              </Section>
+            </div>
+          </Tabs>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div class="card-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <Section>
+        <p>{t('card.not_found')}</p>
+        <p>
+          <a href={getRelativeLocaleUrl(lang as any, '/cards')}>{t('card.back_to_list') || 'Volver a la lista'}</a>
+        </p>
+      </Section>
+    </div>
+  )}
+</BaseLayout>

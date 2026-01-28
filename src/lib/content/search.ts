@@ -40,6 +40,7 @@ const buildIndexText = (id: string, title: string, body: string): string => {
 const buildEntriesForType = async (
   config: SearchTypeConfig,
   baseDir: string,
+  lang?: string,
 ): Promise<SearchIndexEntry[]> => {
   const dir = path.join(baseDir, config.dir);
   const markdownFiles = await listMarkdownFiles(dir);
@@ -54,11 +55,12 @@ const buildEntriesForType = async (
     }
     const id = getStringField(data, 'id');
     const title = getStringField(data, config.titleField);
+    const hrefPrefix = lang ? `/${lang}${config.hrefPrefix}` : config.hrefPrefix;
     entries.push({
       type: config.type,
       id,
       title,
-      href: `${config.hrefPrefix}${id}`,
+      href: `${hrefPrefix}${id}`,
       text: buildIndexText(id, title, content),
     });
   }
@@ -68,10 +70,11 @@ const buildEntriesForType = async (
 
 export const buildSearchIndex = async (
   baseDir?: string,
+  lang?: string,
 ): Promise<SearchIndexEntry[]> => {
   const resolvedBaseDir = baseDir ?? path.resolve(process.cwd(), 'content');
   const entriesByType = await Promise.all(
-    searchTypes.map((config) => buildEntriesForType(config, resolvedBaseDir)),
+    searchTypes.map((config) => buildEntriesForType(config, resolvedBaseDir, lang)),
   );
   const entries = entriesByType.flat();
 

@@ -1,6 +1,5 @@
 import { searchIndex, type SearchIndexEntry } from '../lib/content/search-core';
-
-type TypeLabelMap = Record<string, string>;
+import { ui } from '../i18n/ui';
 
 const root = document.querySelector<HTMLElement>('[data-search]');
 if (!root) {
@@ -16,18 +15,11 @@ if (!input || !status || !results) {
 }
 
 const searchEndpoint = root.dataset.searchEndpoint ?? '/search.json';
+const searchLang = (root.dataset.searchLang ?? 'es') as keyof typeof ui;
 const limitValue = Number(root.dataset.searchLimit ?? '12');
 const resultLimit = Number.isFinite(limitValue) && limitValue > 0 ? limitValue : 12;
 
-const typeLabels: TypeLabelMap = {
-  card: 'Carta',
-  character: 'Personaje',
-  element: 'Elemento',
-  event: 'Evento',
-  mechanic: 'Mecanica',
-  place: 'Lugar',
-  planet: 'Planeta',
-};
+const t = ui[searchLang] ?? ui.es;
 
 let index: SearchIndexEntry[] = [];
 let loadPromise: Promise<boolean> | null = null;
@@ -59,7 +51,8 @@ const renderResults = (entries: SearchIndexEntry[]): void => {
 
     const meta = document.createElement('span');
     meta.className = 'search__result-meta';
-    meta.textContent = typeLabels[entry.type] ?? entry.type;
+    const typeKey = `type.${entry.type}` as keyof typeof t;
+    meta.textContent = t[typeKey] ?? entry.type;
 
     item.append(link, meta);
     results.append(item);
@@ -72,7 +65,7 @@ const loadIndex = async (): Promise<boolean> => {
   }
 
   setStatus(
-    '<span class="material-symbols-outlined animate-spin text-sm align-middle">progress_activity</span> <span class="align-middle">Cargando...</span>',
+    `<span class="material-symbols-outlined animate-spin text-sm align-middle">progress_activity</span> <span class="align-middle">${t['ui.loading']}</span>`,
     true,
   );
   loadPromise = (async () => {
@@ -84,11 +77,11 @@ const loadIndex = async (): Promise<boolean> => {
       const data: unknown = await response.json();
       index = Array.isArray(data) ? (data as SearchIndexEntry[]) : [];
       if (!input.value.trim()) {
-        setStatus('Escribe para buscar...');
+        setStatus(t['ui.type_to_search']);
       }
       return true;
     } catch {
-      setStatus('Error al cargar.');
+      setStatus(t['ui.error_loading']);
       return false;
     }
   })();
@@ -101,7 +94,7 @@ const updateResults = async (): Promise<void> => {
   if (!query.trim()) {
     results.innerHTML = '';
     results.hidden = true;
-    setStatus('Escribe para buscar...');
+    setStatus(t['ui.type_to_search']);
     return;
   }
 
@@ -115,12 +108,13 @@ const updateResults = async (): Promise<void> => {
   renderResults(matches);
 
   if (matches.length === 0) {
-    setStatus('Sin resultados.');
+    setStatus(t['ui.no_results']);
     return;
   }
 
   const count = matches.length;
-  setStatus(`${String(count)} resultado${count === 1 ? '' : 's'}.`);
+  const countLabel = count === 1 ? t['ui.result_count'] : t['ui.results_count'];
+  setStatus(`${String(count)} ${countLabel}.`);
 };
 
 input.addEventListener('input', () => {

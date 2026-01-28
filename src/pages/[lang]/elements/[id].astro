@@ -1,0 +1,135 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs, { type BreadcrumbItem } from '../../../components/Breadcrumbs.astro';
+import CharacterHero from '../../../components/CharacterHero.astro';
+import DataPanel, { type DataPanelItem } from '../../../components/DataPanel.astro';
+import MarkdownDescription from '../../../components/MarkdownDescription.astro';
+import Section from '../../../components/Section.astro';
+import SectionHeader from '../../../components/SectionHeader.astro';
+import Tabs, { type TabItem } from '../../../components/Tabs.astro';
+import { type InlineMetaItem } from '../../../components/InlineMetaList.astro';
+import { getElementById, listElements } from '../../../lib/content/elements';
+import { getPlaceById } from '../../../lib/content/places';
+import { getPlanetById } from '../../../lib/content/planets';
+import { parseLocationRef } from '../../../lib/content/location-refs';
+import { formatEntityId } from '../../../lib/format';
+import { languages } from '../../../i18n/ui';
+import { useTranslations } from '../../../i18n/utils';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+export async function getStaticPaths() {
+  const elements = await listElements();
+  const paths = [];
+  for (const lang of Object.keys(languages)) {
+    for (const element of elements) {
+      paths.push({ params: { lang, id: element.id } });
+    }
+  }
+  return paths;
+}
+
+const { lang, id } = Astro.params;
+const t = useTranslations(lang as any);
+const elementId = typeof id === 'string' ? id : null;
+const element = elementId ? await getElementById(elementId) : null;
+const title = element ? element.name : t('elem.not_found');
+
+const breadcrumbs: BreadcrumbItem[] = element
+  ? [
+      { label: t('nav.home'), href: getRelativeLocaleUrl(lang as any, '/') },
+      { label: t('nav.elements'), href: getRelativeLocaleUrl(lang as any, '/elements') },
+      { label: element.name, current: true },
+    ]
+  : [
+      { label: t('nav.home'), href: getRelativeLocaleUrl(lang as any, '/') },
+      { label: t('nav.elements'), href: getRelativeLocaleUrl(lang as any, '/elements') },
+      { label: t('elem.not_found'), current: true },
+    ];
+
+const elementMeta: InlineMetaItem[] = element
+  ? [{ label: 'ID', value: `#${element.id}` }]
+  : [];
+
+// Resolve origin for DataPanel
+const originView = await (async () => {
+  if (!element?.origin) {
+    return null;
+  }
+  const parsed = parseLocationRef(element.origin);
+  if (!parsed) {
+    return null;
+  }
+  switch (parsed.kind) {
+    case 'place': {
+      const place = await getPlaceById(parsed.id);
+      return { 
+        text: place?.name ?? formatEntityId(parsed.id), 
+        href: getRelativeLocaleUrl(lang as any, `/places/${parsed.id}`),
+        icon: 'location_on'
+      };
+    }
+    case 'planet': {
+      const planet = await getPlanetById(parsed.id);
+      return { 
+        text: planet?.name ?? formatEntityId(parsed.id), 
+        href: getRelativeLocaleUrl(lang as any, `/planets/${parsed.id}`),
+        icon: 'public'
+      };
+    }
+    default:
+      return { text: formatEntityId(parsed.id), icon: 'location_on' };
+  }
+})();
+
+const dataItems: DataPanelItem[] = [];
+if (originView) {
+  dataItems.push({
+    label: t('ui.origin'),
+    value: originView.text,
+    href: originView.href,
+    icon: originView.icon as any || 'location_on',
+  });
+}
+
+const tabItems: TabItem[] = [
+  { id: 'info', label: t('ui.description') || 'Descripción', icon: 'description' },
+];
+---
+
+<BaseLayout title={title} lang={lang as any} pageClass="page--element">
+  {element ? (
+    <div class="element-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero
+        name={element.name}
+        meta={elementMeta}
+        imageUrl={element.image ?? undefined}
+      />
+      <div class="element-page__grid">
+        <aside class="element-page__sidebar">
+          <DataPanel title={t('ui.data_title')} items={dataItems} />
+        </aside>
+        <div class="element-page__content">
+          <Tabs items={tabItems} defaultTab="info">
+            <div data-tab-panel="info" class="animate-fadeIn">
+              <Section>
+                <SectionHeader title={t('ui.description') || 'Descripción'} showDivider />
+                <MarkdownDescription content={element.body} />
+              </Section>
+            </div>
+          </Tabs>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div class="element-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <Section>
+        <p>{t('elem.not_found')}</p>
+        <p>
+          <a href={getRelativeLocaleUrl(lang as any, '/elements')}>{t('elem.back_to_list') || 'Volver a la lista'}</a>
+        </p>
+      </Section>
+    </div>
+  )}
+</BaseLayout>

@@ -1,5 +1,9 @@
 ---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
 import PersonaCard from './PersonaCard.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 type Props = {
   items: string[];
@@ -10,11 +14,11 @@ const hasItems = items.length > 0;
 ---
 
 {hasItems ? (
-  <PersonaCard title="Tabues" icon="block">
-    <ul class="persona-taboos tag-list">
-      {items.map((item) => (
-        <li>{item}</li>
+  <PersonaCard title={t("ui.taboos")} icon="block">
+    <div class="persona-taboos tag-list">
+      {items.map((taboo) => (
+        <span class="persona-taboos__item tag tag--danger">{taboo}</span>
       ))}
-    </ul>
+    </div>
   </PersonaCard>
 ) : null}

@@ -1,30 +1,39 @@
 ---
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Breadcrumbs, { type BreadcrumbItem } from '../../components/Breadcrumbs.astro';
-import CharacterHero from '../../components/CharacterHero.astro';
-import DataPanel, { type DataPanelItem } from '../../components/DataPanel.astro';
-import EventSummaryCard from '../../components/EventSummaryCard.astro';
-import MarkdownDescription from '../../components/MarkdownDescription.astro';
-import Section from '../../components/Section.astro';
-import SectionHeader from '../../components/SectionHeader.astro';
-import Tabs, { type TabItem } from '../../components/Tabs.astro';
-import EntityList from '../../components/EntityList.astro';
-import { getPlanetById, listPlanets } from '../../lib/content/planets';
-import { listEventsByPlanetId } from '../../lib/content/events';
-import { parseFrontmatter, getStringField } from '../../lib/content/frontmatter';
-import { parseLocationRef } from '../../lib/content/location-refs';
-import { listMarkdownFiles } from '../../lib/content/markdown-files';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs, { type BreadcrumbItem } from '../../../components/Breadcrumbs.astro';
+import CharacterHero from '../../../components/CharacterHero.astro';
+import DataPanel, { type DataPanelItem } from '../../../components/DataPanel.astro';
+import EventSummaryCard from '../../../components/EventSummaryCard.astro';
+import MarkdownDescription from '../../../components/MarkdownDescription.astro';
+import Section from '../../../components/Section.astro';
+import SectionHeader from '../../../components/SectionHeader.astro';
+import Tabs, { type TabItem } from '../../../components/Tabs.astro';
+import EntityList from '../../../components/EntityList.astro';
+import { getPlanetById, listPlanets } from '../../../lib/content/planets';
+import { listEventsByPlanetId } from '../../../lib/content/events';
+import { parseFrontmatter, getStringField } from '../../../lib/content/frontmatter';
+import { parseLocationRef } from '../../../lib/content/location-refs';
+import { listMarkdownFiles } from '../../../lib/content/markdown-files';
+
+import { languages } from '../../../i18n/ui';
+import { useTranslations } from '../../../i18n/utils';
+import { getRelativeLocaleUrl } from 'astro:i18n';
 
 export async function getStaticPaths() {
   const planets = await listPlanets();
-  return planets.map((planet) => ({
-    params: { id: planet.id },
-  }));
+  const paths = [];
+  for (const lang of Object.keys(languages)) {
+    for (const planet of planets) {
+      paths.push({ params: { lang, id: planet.id } });
+    }
+  }
+  return paths;
 }
 
-const id = Astro.params.id;
+const { lang, id } = Astro.params;
+const t = useTranslations(lang as any);
 const planet = typeof id === 'string' ? await getPlanetById(id) : null;
 const events =
   planet && typeof id === 'string' ? await listEventsByPlanetId(id) : [];
@@ -61,40 +70,40 @@ const places = await (async () => {
   return result;
 })();
 
-const title = planet ? planet.name : 'Planeta no encontrado';
+const title = planet ? planet.name : t('planet.not_found');
 
 const breadcrumbs: BreadcrumbItem[] = planet
   ? [
-      { label: 'Inicio', href: '/' },
-      { label: 'Planetas', href: '/planets' },
+      { label: t('nav.home'), href: getRelativeLocaleUrl(lang as any, '/') },
+      { label: t('nav.planets'), href: getRelativeLocaleUrl(lang as any, '/planets') },
       { label: planet.name, current: true },
     ]
   : [
-      { label: 'Inicio', href: '/' },
-      { label: 'Planetas', href: '/planets' },
-      { label: 'Planeta no encontrado', current: true },
+      { label: t('nav.home'), href: getRelativeLocaleUrl(lang as any, '/') },
+      { label: t('nav.planets'), href: getRelativeLocaleUrl(lang as any, '/planets') },
+      { label: t('planet.not_found'), current: true },
     ];
 
 const dataItems: DataPanelItem[] = [];
 if (planet) {
-    dataItems.push({ label: 'Tipo', value: 'Cuerpo Celeste', icon: 'public' });
+    dataItems.push({ label: t('ui.type'), value: t('ui.celestial_body'), icon: 'public' });
 }
 
 const tabItems: TabItem[] = [
-  { id: 'info', label: 'Información', icon: 'description' },
-  { id: 'places', label: 'Lugares', icon: 'location_on' },
-  { id: 'events', label: 'Eventos', icon: 'event' },
+  { id: 'info', label: t('ui.info'), icon: 'description' },
+  { id: 'places', label: t('nav.places'), icon: 'location_on' },
+  { id: 'events', label: t('ui.events'), icon: 'event' },
 ];
 
 const placeItems = places.map(p => ({
   label: p.name,
-  href: `/places/${p.id}`
+  href: getRelativeLocaleUrl(lang as any, `/places/${p.id}`)
 }));
 
 const planetMeta = planet ? [{ label: 'ID', value: `#${planet.id}` }] : [];
 ---
 
-<BaseLayout title={title} lang="es">
+<BaseLayout title={title} lang={lang as any}>
   {planet ? (
     <div class="character-page">
       <Breadcrumbs items={breadcrumbs} />
@@ -106,23 +115,23 @@ const planetMeta = planet ? [{ label: 'ID', value: `#${planet.id}` }] : [];
 
       <div class="character-page__grid">
         <aside class="character-page__sidebar">
-          <DataPanel title="Datos planetarios" items={dataItems} />
+          <DataPanel title={t('ui.planet_data')} items={dataItems} />
         </aside>
 
         <div class="character-page__content">
           <Tabs items={tabItems} defaultTab="info">
             <div data-tab-panel="info" class="animate-fadeIn">
               <Section>
-                <SectionHeader title="Descripción" showDivider />
+                <SectionHeader title={t('ui.description')} showDivider />
                 <MarkdownDescription content={planet.body} />
               </Section>
             </div>
 
             <div data-tab-panel="places" class="animate-fadeIn" hidden>
               <Section>
-                <SectionHeader title="Lugares de interés" showDivider />
+                <SectionHeader title={t('ui.places_of_interest')} showDivider />
                 {places.length === 0 ? (
-                  <p>No se conocen lugares en este planeta.</p>
+                  <p>{t('place.list.empty')}</p>
                 ) : (
                   <EntityList items={placeItems} />
                 )}
@@ -131,9 +140,9 @@ const planetMeta = planet ? [{ label: 'ID', value: `#${planet.id}` }] : [];
 
             <div data-tab-panel="events" class="animate-fadeIn" hidden>
               <Section>
-                <SectionHeader title="Eventos en el planeta" showDivider />
+                <SectionHeader title={t('planet.events_in_planet')} showDivider />
                 {events.length === 0 ? (
-                  <p>Sin eventos registrados en este mundo.</p>
+                  <p>{t('event.list.empty')}</p>
                 ) : (
                   <div class="relative space-y-16 py-8 before:content-[''] before:absolute before:left-1/2 before:top-0 before:-translate-x-1/2 before:w-px before:h-full before:bg-gradient-to-b before:from-transparent before:via-accent before:to-transparent before:opacity-30">
                     {events.map((event, index) => (
@@ -141,7 +150,7 @@ const planetMeta = planet ? [{ label: 'ID', value: `#${planet.id}` }] : [];
                         title={event.title}
                         date={event.date}
                         preview={event.preview}
-                        href={`/events/${event.id}`}
+                        href={getRelativeLocaleUrl(lang as any, `/events/${event.id}`)}
                         side={index % 2 === 0 ? 'right' : 'left'}
                       />
                     ))}
@@ -156,11 +165,11 @@ const planetMeta = planet ? [{ label: 'ID', value: `#${planet.id}` }] : [];
   ) : (
     <div class="character-page">
       <Breadcrumbs items={breadcrumbs} />
-      <CharacterHero name="Planeta no encontrado" />
+      <CharacterHero name={t('planet.not_found')} />
       <Section>
-        <p>El planeta solicitado no existe.</p>
+        <p>{t('planet.not_found')}</p>
         <p>
-          <a href="/planets">Volver a planetas</a>
+          <a href={getRelativeLocaleUrl(lang as any, '/planets')}>{t('planet.back_to_list')}</a>
         </p>
       </Section>
     </div>

@@ -1,4 +1,9 @@
 ---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
 type Props = {
   title: string;
   preview?: string;
@@ -26,14 +31,14 @@ if (date) {
 
 <div class="relative flex items-center justify-center group w-full">
   {/* The Node on the line */}
-  <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[14px] height-[14px] bg-accent rounded-full border-2 border-bg shadow-[0_0_15px_var(--color-accent)] h-[14px]"></div>
+  <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[14px] h-[14px] bg-accent rounded-full border-2 border-bg shadow-[0_0_15px_var(--color-accent)]"></div>
   
   <div class="grid grid-cols-2 w-full gap-8 lg:gap-24">
     {/* Left Side */}
     <div class={`flex flex-col justify-center ${side === 'left' ? 'order-2 pl-4 text-left' : 'order-1 pr-4 text-right'}`}>
       {year ? (
         <span class="text-[10px] font-bold text-accent uppercase tracking-[0.2em] mb-1">
-          Año: {year}
+          {t("event.year")}: {year}
         </span>
       ) : null}
       {restOfDate ? (

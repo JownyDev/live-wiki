@@ -1,4 +1,9 @@
 ---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
 type Manipulability = {
   byEmpathy: string | null;
   byBribe: string | null;
@@ -40,10 +45,10 @@ const getFactorTone = (value: string): FactorTone => {
 
 const factors = manipulability
   ? [
-      { label: 'Empatia', value: manipulability.byEmpathy },
-      { label: 'Soborno', value: manipulability.byBribe },
-      { label: 'Intimidacion', value: manipulability.byIntimidation },
-      { label: 'Autoridad', value: manipulability.byAuthority },
+      { label: t('ui.empathy'), value: manipulability.byEmpathy },
+      { label: t('ui.bribe'), value: manipulability.byBribe },
+      { label: t('ui.intimidation'), value: manipulability.byIntimidation },
+      { label: t('ui.authority'), value: manipulability.byAuthority },
     ]
       .filter((factor) => hasText(factor.value))
       .map((factor) => ({
@@ -70,7 +75,7 @@ const baseStyles = "inline-flex items-center justify-center px-[0.6rem] py-[0.15
     <span class="material-symbols-outlined emotions-sensitivity__icon" aria-hidden="true">
       psychology
     </span>
-    Sensibilidades y manipulabilidad
+    {t('ui.sens_manip')}
   </h3>
   <div class="emotions-sensitivity__grid">
     {hasAngers ? (
@@ -82,7 +87,7 @@ const baseStyles = "inline-flex items-center justify-center px-[0.6rem] py-[0.15
           >
             warning
           </span>
-          Se enfada si
+          {t('ui.angers_if')}
         </div>
         <ul class="emotions-sensitivity__list">
           {angersIf.map((item) => (
@@ -103,7 +108,7 @@ const baseStyles = "inline-flex items-center justify-center px-[0.6rem] py-[0.15
           >
             check_circle
           </span>
-          Se calma si
+          {t('ui.calms_if')}
         </div>
         <ul class="emotions-sensitivity__list">
           {calmsIf.map((item) => (
@@ -118,7 +123,7 @@ const baseStyles = "inline-flex items-center justify-center px-[0.6rem] py-[0.15
   </div>
   {factors.length > 0 ? (
     <div class="emotions-sensitivity__manipulability">
-      <span class="emotions-sensitivity__caption">Factores de manipulabilidad</span>
+      <span class="emotions-sensitivity__caption">{t('ui.manip_factors')}</span>
       <div class="emotions-sensitivity__factors tag-list">
         {factors.map((factor) => (
           <div class="emotions-sensitivity__factor">

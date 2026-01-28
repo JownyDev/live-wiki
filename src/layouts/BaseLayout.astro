@@ -3,6 +3,9 @@ import '../styles/global.css';
 import PrimaryNav from '../components/PrimaryNav.astro';
 import SearchIsland from '../components/SearchIsland.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
+import LanguagePicker from '../components/LanguagePicker.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { useTranslations } from '../i18n/utils';
 
 type Props = {
   title: string;
@@ -11,7 +14,9 @@ type Props = {
 };
 
 const { title, lang = 'es', pageClass } = Astro.props as Props;
+const t = useTranslations(lang as any);
 const layoutClass = pageClass ? `layout ${pageClass}` : 'layout';
+const homeUrl = getRelativeLocaleUrl(lang, '/');
 ---
 
 <!doctype html>
@@ -32,15 +37,16 @@ const layoutClass = pageClass ? `layout ${pageClass}` : 'layout';
   </head>
   <body>
     <a class="skip-link" href="#content">
-      Saltar al contenido
+      {t('ui.skip_link')}
     </a>
     <div class={layoutClass}>
       <header class="layout__header">
         <div class="layout__brand">
-          <a href="/">Live-Wiki</a>
+          <a href={homeUrl}>Live-Wiki</a>
         </div>
         <PrimaryNav />
         <div class="layout__actions">
+          <LanguagePicker />
           <SearchIsland />
           <ThemeToggle />
         </div>

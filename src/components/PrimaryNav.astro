@@ -1,5 +1,10 @@
 ---
 import EntityLink from './EntityLink.astro';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 type NavItem = {
   href: string;
@@ -8,13 +13,13 @@ type NavItem = {
 };
 
 const items: NavItem[] = [
-  { href: '/characters', label: 'Personajes', icon: 'group' },
-  { href: '/events', label: 'Eventos', icon: 'event' },
-  { href: '/places', label: 'Lugares', icon: 'place' },
-  { href: '/planets', label: 'Planetas', icon: 'public' },
-  { href: '/elements', label: 'Elementos', icon: 'auto_awesome' },
-  { href: '/cards', label: 'Cartas', icon: 'style' },
-  { href: '/mechanics', label: 'Mecanicas', icon: 'tune' },
+  { href: getRelativeLocaleUrl(lang, '/characters'), label: t('nav.characters'), icon: 'group' },
+  { href: getRelativeLocaleUrl(lang, '/events'), label: t('nav.events'), icon: 'event' },
+  { href: getRelativeLocaleUrl(lang, '/places'), label: t('nav.places'), icon: 'place' },
+  { href: getRelativeLocaleUrl(lang, '/planets'), label: t('nav.planets'), icon: 'public' },
+  { href: getRelativeLocaleUrl(lang, '/elements'), label: t('nav.elements'), icon: 'auto_awesome' },
+  { href: getRelativeLocaleUrl(lang, '/cards'), label: t('nav.cards'), icon: 'style' },
+  { href: getRelativeLocaleUrl(lang, '/mechanics'), label: t('nav.mechanics'), icon: 'tune' },
 ];
 
 const { pathname } = Astro.url;
@@ -28,7 +33,7 @@ const isActive = (href: string) => {
 };
 ---
 
-<nav class="primary-nav flex items-center" aria-label="Navegacion principal">
+<nav class="primary-nav flex items-center" aria-label={t("ui.nav_label")}>
   {/* Desktop Menu */}
   <ul class="primary-nav__list hidden md:flex items-center gap-x-space-3 gap-y-space-2 list-none m-0 p-0 text-[0.85rem] whitespace-nowrap">
     {items.map((item) => {
@@ -50,7 +55,7 @@ const isActive = (href: string) => {
   <button 
     id="mobile-menu-toggle" 
     class="md:hidden p-2 text-muted hover:text-text focus:outline-none rounded-md transition-colors"
-    aria-label="Abrir menú"
+    aria-label={t("ui.open_menu")}
     aria-expanded="false"
     aria-controls="mobile-menu"
   >

@@ -1,4 +1,9 @@
 ---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
 type Props = {
   action: string;
   triggers: string[];
@@ -24,7 +29,7 @@ const hasFilters = filters.length > 0;
   </header>
   <div class="capability-card__body">
     <div class="capability-card__section">
-      <p class="capability-card__label">Disparadores</p>
+      <p class="capability-card__label">{t('ui.triggers')}</p>
       <div class="capability-card__tags tag-list">
         {triggers.map((trigger) => (
           <span class="capability-card__tag">{trigger}</span>
@@ -33,7 +38,7 @@ const hasFilters = filters.length > 0;
     </div>
     {hasNotes ? (
       <div class="capability-card__section">
-        <p class="capability-card__label">Notas</p>
+        <p class="capability-card__label">{t('ui.notes')}</p>
         <ul class="capability-card__notes">
           {notes.map((note) => (
             <li>{note}</li>

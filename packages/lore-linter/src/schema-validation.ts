@@ -97,7 +97,7 @@ const requiredStringFieldsByType: Partial<Record<string, string[]>> = {
   place: ['id', 'name'],
   planet: ['id', 'name'],
   event: ['id', 'title'],
-  mechanic: ['id', 'name'],
+  mechanic: ['id', 'name', 'difficulty'],
   card: ['id', 'name'],
 };
 
@@ -747,6 +747,13 @@ const validateElementFields = (context: SchemaContext): void => {
   validateOptionalOriginField(context, 'origin', context.data.origin);
 };
 
+const validateMechanicFields = (context: SchemaContext): void => {
+  const relatedElements = context.data.related_elements;
+  if (typeof relatedElements !== 'undefined' && !isStringArray(relatedElements)) {
+    addSchemaError(context, 'related_elements', 'invalid-shape');
+  }
+};
+
 const validateRelatedFields = (context: SchemaContext): void => {
   for (const [field, value] of Object.entries(context.data)) {
     if (!field.startsWith('related_')) {
@@ -787,6 +794,7 @@ const typeValidators: Partial<Record<string, (context: SchemaContext) => void>> 
   element: validateElementFields,
   event: validateEventFields,
   card: validateCardFields,
+  mechanic: validateMechanicFields,
 };
 
 /**

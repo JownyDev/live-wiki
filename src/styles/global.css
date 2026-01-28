@@ -1137,40 +1137,54 @@
   }
 
   .event-page,
-  .element-page {
+  .element-page,
+  .card-page,
+  .mechanic-page {
     @apply flex flex-col gap-space-4;
   }
 
   .event-page__grid,
-  .element-page__grid {
+  .element-page__grid,
+  .card-page__grid,
+  .mechanic-page__grid {
     @apply grid gap-space-5;
   }
 
   .event-page__sidebar,
-  .element-page__sidebar {
+  .element-page__sidebar,
+  .card-page__sidebar,
+  .mechanic-page__sidebar {
     @apply flex flex-col gap-space-4 self-start;
   }
 
   .event-page__content,
-  .element-page__content {
+  .element-page__content,
+  .card-page__content,
+  .mechanic-page__content {
     @apply flex flex-col gap-space-6;
   }
 
   .character-page__sidebar .data-panel,
   .event-page__sidebar .data-panel,
-  .element-page__sidebar .data-panel {
+  .element-page__sidebar .data-panel,
+  .card-page__sidebar .data-panel,
+  .mechanic-page__sidebar .data-panel {
     @apply sticky top-[5.5rem];
   }
 
   .character-page__sidebar section,
   .event-page__sidebar section,
-  .element-page__sidebar section {
+  .element-page__sidebar section,
+  .card-page__sidebar section,
+  .mechanic-page__sidebar section {
     margin: 0;
   }
 
   .character-page__content section,
   .event-page__content section,
-  .element-page__content section {
+  .element-page__content section,
+  .card-page__content section,
+  .mechanic-page__content section {
     margin: 0;
   }
 
@@ -1229,7 +1243,9 @@
 
     .character-page__grid,
     .event-page__grid,
-    .element-page__grid {
+    .element-page__grid,
+    .card-page__grid,
+    .mechanic-page__grid {
       @apply grid-cols-[minmax(0,17rem)_minmax(0,1fr)];
     }
 

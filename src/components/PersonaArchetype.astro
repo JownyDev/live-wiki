@@ -1,16 +1,19 @@
 ---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
 import PersonaCard from './PersonaCard.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 type Props = {
   archetype: string;
 };
 
 const { archetype } = Astro.props as Props;
-const shouldRender = archetype.length > 0;
 ---
 
-{shouldRender ? (
-  <PersonaCard title="Arquetipo" icon="badge">
-    <p class="persona-archetype">{archetype}</p>
-  </PersonaCard>
-) : null}
+<PersonaCard title={t("ui.archetype")} icon="badge">
+  <p class="persona-archetype m-0 text-[1rem] font-bold text-accent tracking-wide uppercase">
+    {archetype}
+  </p>
+</PersonaCard>

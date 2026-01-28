@@ -59,6 +59,12 @@ describe('lore-linter schema minimum', () => {
       {
         type: 'mechanic',
         id: null,
+        field: 'difficulty',
+        reason: 'required',
+      },
+      {
+        type: 'mechanic',
+        id: null,
         field: 'id',
         reason: 'required',
       },

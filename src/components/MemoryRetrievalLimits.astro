@@ -1,5 +1,9 @@
 ---
 import MemoryProfileCard from './MemoryProfileCard.astro';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 type Props = {
   maxItems?: number | null;
@@ -13,17 +17,17 @@ const shouldRender = hasItems || hasTokens;
 ---
 
 {shouldRender ? (
-  <MemoryProfileCard title="Limites de recuperacion" icon="analytics">
+  <MemoryProfileCard title={t('ui.memory_limits')} icon="analytics">
     <div class="memory-limits">
       {hasItems ? (
         <div class="memory-limits__item">
-          <span class="memory-limits__label">Maximo de items:</span>
+          <span class="memory-limits__label">{t('ui.max_items')}:</span>
           <span class="memory-limits__value">{maxItems}</span>
         </div>
       ) : null}
       {hasTokens ? (
         <div class="memory-limits__item">
-          <span class="memory-limits__label">Maximo de tokens resumen:</span>
+          <span class="memory-limits__label">{t('ui.max_tokens')}:</span>
           <span class="memory-limits__value">{maxTokensSummary}</span>
         </div>
       ) : null}

@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import { languages } from '../../i18n/ui';
+import { useTranslations } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const t = useTranslations(lang as any);
+
+const title = 'Live-Wiki';
+---
+
+<BaseLayout title={title} lang={lang as any}>
+  <Header title={title} icon="auto_stories" />
+  <p>{t('site.tagline')}</p>
+</BaseLayout>

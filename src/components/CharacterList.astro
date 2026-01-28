@@ -1,5 +1,11 @@
 ---
 import { formatOrigin } from '../lib/format';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 export interface CharacterListItem {
   id: string;
@@ -23,22 +29,22 @@ const isRelations = variant === 'relations';
 <div class="bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
   {/* Table Header */}
   <div class="grid grid-cols-12 gap-4 px-6 py-3 border-b border-border bg-surface-muted">
-    <div class="col-span-8 sm:col-span-6 text-xs font-medium text-muted uppercase tracking-wider">Personaje</div>
-    <div class="col-span-4 sm:col-span-4 text-xs font-medium text-muted uppercase tracking-wider">Origen</div>
+    <div class="col-span-8 sm:col-span-6 text-xs font-medium text-muted uppercase tracking-wider">{t('char.list.name')}</div>
+    <div class="col-span-4 sm:col-span-4 text-xs font-medium text-muted uppercase tracking-wider">{t('char.list.origin')}</div>
     {isRelations ? (
-      <div class="col-span-2 hidden sm:block text-xs font-medium text-muted uppercase tracking-wider">Relación</div>
+      <div class="col-span-2 hidden sm:block text-xs font-medium text-muted uppercase tracking-wider">{t('char.list.relation')}</div>
     ) : (
-      <div class="col-span-2 hidden sm:block text-xs font-medium text-muted uppercase tracking-wider">Clase</div>
+      <div class="col-span-2 hidden sm:block text-xs font-medium text-muted uppercase tracking-wider">{t('char.list.class')}</div>
     )}
   </div>
 
   {/* Table Body */}
   <div class="divide-y divide-border">
     {characters.length === 0 ? (
-      <div class="p-6 text-center text-muted">No hay personajes todavía.</div>
+      <div class="p-6 text-center text-muted">{t('char.list.empty')}</div>
     ) : (
       characters.map((character) => (
-        <a href={character.href || `/characters/${character.id}`} class="group grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-surface-muted/50 transition-colors cursor-pointer no-underline">
+        <a href={character.href || getRelativeLocaleUrl(lang, `/characters/${character.id}`)} class="group grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-surface-muted/50 transition-colors cursor-pointer no-underline">
           
           {/* Character Column */}
           <div class="col-span-8 sm:col-span-6 flex items-center gap-4">
@@ -54,14 +60,14 @@ const isRelations = variant === 'relations';
             <div class="min-w-0">
               <p class="text-sm font-semibold text-text group-hover:text-accent transition-colors truncate">{character.name}</p>
               <p class="text-xs text-muted sm:hidden truncate">
-                {isRelations ? (character.relationship || 'Desconocida') : (character.archetype || 'Desconocido')}
+                {isRelations ? (character.relationship || t('ui.unknown')) : (character.archetype || t('ui.unknown'))}
               </p>
             </div>
           </div>
 
           {/* Origin Column */}
           <div class="col-span-4 sm:col-span-4">
-            <span class="text-sm text-muted truncate block">{formatOrigin(character.origin)}</span>
+            <span class="text-sm text-muted truncate block">{formatOrigin(character.origin, lang)}</span>
           </div>
 
           {/* Third Column (Desktop) */}

@@ -1,5 +1,9 @@
 ---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
 import PersonaCard from './PersonaCard.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 type Props = {
   items: string[];
@@ -10,7 +14,7 @@ const hasItems = items.length > 0;
 ---
 
 {hasItems ? (
-  <PersonaCard title="Hitos biográficos" span="full" icon="menu_book">
+  <PersonaCard title={t("ui.bio_highlights")} span="full" icon="menu_book">
     <ul class="persona-highlights m-0 p-0 list-none columns-1 md:columns-2 lg:columns-3 gap-x-8 text-[0.85rem] text-text">
       {items.map((item) => (
         <li class="flex items-start gap-2 mb-2 break-inside-avoid-column">

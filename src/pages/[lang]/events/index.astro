@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Section from '../../../components/Section.astro';
+import EventSummaryCard from '../../../components/EventSummaryCard.astro';
+import { listEvents } from '../../../lib/content/events';
+import { languages } from '../../../i18n/ui';
+import { useTranslations } from '../../../i18n/utils';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const t = useTranslations(lang as any);
+
+const title = t('nav.events');
+const events = await listEvents();
+---
+
+<BaseLayout title={title} lang={lang as any}>
+  <Header title={title} icon="event" />
+  <Section>
+    <div class="max-w-prose mb-12">
+      <p class="text-muted text-sm">{t('desc.events')}</p>
+    </div>
+    {events.length === 0 ? (
+      <p>{t('event.list.empty')}</p>
+    ) : (
+      <div class="relative space-y-24 py-10 before:content-[''] before:absolute before:left-1/2 before:top-0 before:-translate-x-1/2 before:w-px before:h-full before:bg-gradient-to-b before:from-transparent before:via-accent before:to-transparent before:opacity-30">
+        {events.map((event, index) => (
+          <EventSummaryCard
+            title={event.title}
+            date={event.date}
+            preview={event.preview}
+            href={getRelativeLocaleUrl(lang as any, `/events/${event.id}`)}
+            side={index % 2 === 0 ? 'right' : 'left'}
+          />
+        ))}
+      </div>
+    )}
+  </Section>
+</BaseLayout>

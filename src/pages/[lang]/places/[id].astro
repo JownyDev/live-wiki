@@ -1,0 +1,151 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs, { type BreadcrumbItem } from '../../../components/Breadcrumbs.astro';
+import CharacterHero from '../../../components/CharacterHero.astro';
+import DataPanel, { type DataPanelItem } from '../../../components/DataPanel.astro';
+import EventSummaryCard from '../../../components/EventSummaryCard.astro';
+import MarkdownDescription from '../../../components/MarkdownDescription.astro';
+import Section from '../../../components/Section.astro';
+import SectionHeader from '../../../components/SectionHeader.astro';
+import Tabs, { type TabItem } from '../../../components/Tabs.astro';
+import { getPlaceById, listPlaces } from '../../../lib/content/places';
+import { getPlanetById } from '../../../lib/content/planets';
+import { listEventsByPlaceId } from '../../../lib/content/events';
+import { languages } from '../../../i18n/ui';
+import { useTranslations } from '../../../i18n/utils';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+export async function getStaticPaths() {
+  const places = await listPlaces();
+  const paths = [];
+  for (const lang of Object.keys(languages)) {
+    for (const place of places) {
+      paths.push({ params: { lang, id: place.id } });
+    }
+  }
+  return paths;
+}
+
+const { lang, id } = Astro.params;
+const t = useTranslations(lang as any);
+const place = typeof id === 'string' ? await getPlaceById(id) : null;
+const events =
+  place && typeof id === 'string' ? await listEventsByPlaceId(id) : [];
+
+const planet = place?.planetId ? await getPlanetById(place.planetId) : null;
+
+const title = place ? place.name : t('place.not_found');
+
+const breadcrumbs: BreadcrumbItem[] = place
+  ? [
+      { label: t('nav.home'), href: getRelativeLocaleUrl(lang as any, '/') },
+      { label: t('nav.places'), href: getRelativeLocaleUrl(lang as any, '/places') },
+      { label: place.name, current: true },
+    ]
+  : [
+      { label: t('nav.home'), href: getRelativeLocaleUrl(lang as any, '/') },
+      { label: t('nav.places'), href: getRelativeLocaleUrl(lang as any, '/places') },
+      { label: t('place.not_found'), current: true },
+    ];
+
+const placeMeta = place ? [{ label: 'ID', value: `#${place.id}` }] : [];
+
+const dataItems: DataPanelItem[] = [];
+if (place) {
+  if (planet) {
+    dataItems.push({
+      label: t('ui.planet'),
+      value: planet.name,
+      href: getRelativeLocaleUrl(lang as any, `/planets/${planet.id}`),
+      icon: 'public',
+    });
+  } else if (place.planetId) {
+    dataItems.push({
+      label: t('ui.planet'),
+      value: place.planetId,
+      href: getRelativeLocaleUrl(lang as any, `/planets/${place.planetId}`),
+      icon: 'public',
+    });
+  }
+
+  if (place.locationType) {
+    const typeLabels = {
+      space: t('ui.loc_space'),
+      planet: t('ui.loc_planet'),
+      unknown: t('ui.unknown'),
+    };
+    dataItems.push({
+      label: t('ui.location_type'),
+      value: typeLabels[place.locationType as keyof typeof typeLabels],
+      icon: 'category',
+    });
+  }
+}
+
+const tabItems: TabItem[] = [
+  { id: 'info', label: t('ui.description'), icon: 'description' },
+  { id: 'events', label: t('ui.events'), icon: 'event' },
+];
+---
+
+<BaseLayout title={title} lang={lang as any}>
+  {place ? (
+    <div class="character-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero
+        name={place.name}
+        meta={placeMeta}
+        imageUrl={place.image}
+      />
+
+      <div class="character-page__grid">
+        <aside class="character-page__sidebar">
+          <DataPanel title={t('ui.place_data')} items={dataItems} />
+        </aside>
+
+        <div class="character-page__content">
+          <Tabs items={tabItems} defaultTab="info">
+            <div data-tab-panel="info" class="animate-fadeIn">
+              <Section>
+                <SectionHeader title={t('ui.description')} showDivider />
+                <MarkdownDescription content={place.body} />
+              </Section>
+            </div>
+
+            <div data-tab-panel="events" class="animate-fadeIn" hidden>
+              <Section>
+                <SectionHeader title={t('ui.related_events')} showDivider />
+                {events.length === 0 ? (
+                  <p>{t('event.list.empty')}</p>
+                ) : (
+                  <div class="relative space-y-16 py-8 before:content-[''] before:absolute before:left-1/2 before:top-0 before:-translate-x-1/2 before:w-px before:h-full before:bg-gradient-to-b before:from-transparent before:via-accent before:to-transparent before:opacity-30">
+                    {events.map((event, index) => (
+                      <EventSummaryCard
+                        title={event.title}
+                        date={event.date}
+                        preview={event.preview}
+                        href={getRelativeLocaleUrl(lang as any, `/events/${event.id}`)}
+                        side={index % 2 === 0 ? 'right' : 'left'}
+                      />
+                    ))}
+                  </div>
+                )}
+              </Section>
+            </div>
+          </Tabs>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div class="character-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero name={t('place.not_found')} />
+      <Section>
+        <p>{t('place.not_found')}</p>
+        <p>
+          <a href={getRelativeLocaleUrl(lang as any, '/places')}>{t('place.back_to_list')}</a>
+        </p>
+      </Section>
+    </div>
+  )}
+</BaseLayout>

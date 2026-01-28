@@ -1,4 +1,9 @@
 ---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
 export type BaselineMoodItem = {
   label: string;
   value: number;
@@ -11,6 +16,7 @@ type Props = {
 
 const { items } = Astro.props as Props;
 const hasItems = items.length > 0;
+
 const normalizeTone = (tone?: string): string | null => {
   if (!tone) {
     return null;
@@ -36,7 +42,6 @@ const barColorStyles: Record<string, string> = {
   trust: 'bg-accent',
   irritation: 'bg-[#f59e0b]',
 };
-
 ---
 
 {hasItems ? (
@@ -45,7 +50,7 @@ const barColorStyles: Record<string, string> = {
       <span class="material-symbols-outlined emotions-baseline__icon" aria-hidden="true">
         mood
       </span>
-      Estado de animo base
+      {t('ui.mood')}
     </h3>
     <div class="emotions-baseline__list">
       {items.map((item) => {

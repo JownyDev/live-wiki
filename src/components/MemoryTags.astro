@@ -1,61 +1,37 @@
 ---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
 import MemoryProfileCard from './MemoryProfileCard.astro';
 
-type TagGroup = {
-  label: string;
-  items: string[];
-  variant: 'interest' | 'relationships' | 'allowed' | 'blocked';
-};
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 type Props = {
-  interestTags?: string[];
-  relationshipTags?: string[];
-  allowedTags?: string[];
-  blockedTags?: string[];
+  interestTags: string[];
+  relationshipTags: string[];
+  allowedTags: string[];
+  blockedTags: string[];
 };
 
-const {
-  interestTags = [],
-  relationshipTags = [],
-  allowedTags = [],
-  blockedTags = [],
-} = Astro.props as Props;
-
-const baseGroups: TagGroup[] = [
-  { label: 'Intereses', items: interestTags, variant: 'interest' },
-  { label: 'Relaciones', items: relationshipTags, variant: 'relationships' },
-  { label: 'Permitidos', items: allowedTags, variant: 'allowed' },
-  { label: 'Bloqueados', items: blockedTags, variant: 'blocked' },
-];
-const groups = baseGroups.filter((group) => group.items.length > 0);
-
-const shouldRender = groups.length > 0;
-
-const variantStyles: Record<TagGroup['variant'], string> = {
-  interest: 'text-[#34d399] bg-[#34d399]/12 border-[#34d399]/20',
-  relationships: 'text-[#818cf8] bg-[#818cf8]/12 border-[#818cf8]/20',
-  allowed: 'text-[#60a5fa] bg-[#60a5fa]/12 border-[#60a5fa]/20',
-  blocked: 'text-[#f87171] bg-[#f87171]/12 border-[#f87171]/20',
-};
-
-const baseTagStyles = "memory-tags__tag px-2.5 py-1 rounded-md border text-[0.7rem] font-semibold";
+const { interestTags, relationshipTags, allowedTags, blockedTags } = Astro.props as Props;
 ---
 
-{shouldRender ? (
-  <MemoryProfileCard title="Etiquetas" icon="sell">
-    <div class="memory-tags">
-      {groups.map((group) => (
-        <div class="memory-tags__group">
-          <span class="memory-tags__label">{group.label}</span>
-          <div class="memory-tags__list tag-list">
-            {group.items.map((item) => (
-              <span class={`${baseTagStyles} ${variantStyles[group.variant]}`}>
-                {item}
-              </span>
-            ))}
-          </div>
+<MemoryProfileCard title={t("ui.tags")} icon="sell">
+  <div class="memory-tags space-y-4">
+    {interestTags.length > 0 && (
+      <div>
+        <p class="text-xs font-bold uppercase text-muted mb-2">Intereses</p>
+        <div class="tag-list">
+          {interestTags.map(tag => <span class="tag tag--accent">{tag}</span>)}
         </div>
-      ))}
-    </div>
-  </MemoryProfileCard>
-) : null}
+      </div>
+    )}
+    {relationshipTags.length > 0 && (
+      <div>
+        <p class="text-xs font-bold uppercase text-muted mb-2">Relaciones</p>
+        <div class="tag-list">
+          {relationshipTags.map(tag => <span class="tag tag--primary">{tag}</span>)}
+        </div>
+      </div>
+    )}
+  </div>
+</MemoryProfileCard>

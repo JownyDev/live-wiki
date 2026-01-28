@@ -1,0 +1,27 @@
+---
+import { languages } from '../i18n/ui';
+import { getLangFromUrl } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const { pathname } = Astro.url;
+
+// Function to generate the URL for the same page in another language
+function getLocalizedPath(targetLang: string) {
+  const segments = pathname.split('/');
+  // Assuming the URL structure is /[lang]/...
+  // segments[0] is empty, segments[1] is the current lang
+  segments[1] = targetLang;
+  return segments.join('/') || '/';
+}
+---
+
+<div class="language-picker flex gap-2 text-sm">
+  {Object.entries(languages).map(([code, label]) => (
+    <a 
+      href={getLocalizedPath(code)}
+      class={`px-2 py-1 rounded hover:bg-surface-muted transition-colors ${lang === code ? 'text-accent font-bold' : 'text-muted'}`}
+    >
+      {code.toUpperCase()}
+    </a>
+  ))}
+</div>
