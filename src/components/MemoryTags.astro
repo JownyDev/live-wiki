@@ -16,20 +16,36 @@ const { interestTags, relationshipTags, allowedTags, blockedTags } = Astro.props
 ---
 
 <MemoryProfileCard title={t("ui.tags")} icon="sell">
-  <div class="memory-tags space-y-4">
+  <div class="memory-tags">
     {interestTags.length > 0 && (
-      <div>
-        <p class="text-xs font-bold uppercase text-muted mb-2">Intereses</p>
+      <div class="memory-tags__group">
+        <span class="memory-tags__label">{t('ui.tags_interest')}</span>
         <div class="tag-list">
-          {interestTags.map(tag => <span class="tag tag--accent">{tag}</span>)}
+          {interestTags.map(tag => <span class="memory-tags__tag memory-tags__tag--interest">{tag}</span>)}
         </div>
       </div>
     )}
     {relationshipTags.length > 0 && (
-      <div>
-        <p class="text-xs font-bold uppercase text-muted mb-2">Relaciones</p>
+      <div class="memory-tags__group">
+        <span class="memory-tags__label">{t('ui.tags_relationships')}</span>
         <div class="tag-list">
-          {relationshipTags.map(tag => <span class="tag tag--primary">{tag}</span>)}
+          {relationshipTags.map(tag => <span class="memory-tags__tag memory-tags__tag--relationships">{tag}</span>)}
+        </div>
+      </div>
+    )}
+    {allowedTags.length > 0 && (
+      <div class="memory-tags__group">
+        <span class="memory-tags__label">{t('ui.tags_allowed')}</span>
+        <div class="tag-list">
+          {allowedTags.map(tag => <span class="memory-tags__tag memory-tags__tag--allowed">{tag}</span>)}
+        </div>
+      </div>
+    )}
+    {blockedTags.length > 0 && (
+      <div class="memory-tags__group">
+        <span class="memory-tags__label">{t('ui.tags_blocked')}</span>
+        <div class="tag-list">
+          {blockedTags.map(tag => <span class="memory-tags__tag memory-tags__tag--blocked">{tag}</span>)}
         </div>
       </div>
     )}

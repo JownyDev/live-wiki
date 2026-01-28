@@ -14,7 +14,7 @@ const spanStyles: Record<PersonaCardSpan, string> = {
   full: 'col-span-full',
 };
 
-const className = `persona-card p-space-5 rounded-md border border-border bg-surface grid gap-space-3 ${span ? spanStyles[span] : ''}`;
+const className = `persona-card p-space-5 rounded-md border border-border bg-surface flex flex-col gap-space-3 ${span ? spanStyles[span] : ''}`;
 ---
 
 <div class={className}>
@@ -26,7 +26,7 @@ const className = `persona-card p-space-5 rounded-md border border-border bg-sur
     ) : null}
     {title}
   </h3>
-  <div class="persona-card__content grid gap-space-3">
+  <div class="persona-card__content flex flex-col gap-space-3">
     <slot />
   </div>
 </div>

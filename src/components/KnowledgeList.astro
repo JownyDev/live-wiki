@@ -26,9 +26,9 @@ const iconName = (() => {
 })();
 
 const containerStyles = {
-  knows: 'knowledge-list p-space-5 rounded-md border border-border bg-surface grid gap-space-4',
-  blindspots: 'knowledge-list p-space-5 rounded-md border border-border bg-surface grid gap-space-4 opacity-70',
-  reveal: 'knowledge-list p-space-5 rounded-md border-2 border-[#2b6cee]/35 bg-[#2b6cee]/8 grid gap-space-4',
+  knows: 'knowledge-list p-space-5 rounded-md border border-border bg-surface flex flex-col gap-space-4',
+  blindspots: 'knowledge-list p-space-5 rounded-md border border-border bg-surface flex flex-col gap-space-4 opacity-70',
+  reveal: 'knowledge-list p-space-5 rounded-md border-2 border-[#2b6cee]/35 bg-[#2b6cee]/8 flex flex-col gap-space-4',
 };
 
 const labelStyles = {
@@ -65,7 +65,7 @@ const textStyles = {
       {label}
     </h3>
     {hasItems ? (
-      <ul class="knowledge-list__items list-none m-0 p-0 grid gap-space-2">
+      <ul class="knowledge-list__items list-none m-0 p-0 flex flex-col gap-space-2">
         {items.map((item) => (
           <li class={itemStyles[variant]}>
             <span class={dotStyles[variant]} aria-hidden="true"></span>

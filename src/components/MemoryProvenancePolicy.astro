@@ -7,23 +7,24 @@ const t = useTranslations(lang);
 
 type Props = {
   allowed: string[];
-  defaultValue: string;
+  defaultValue: string | null;
 };
 
 const { allowed, defaultValue } = Astro.props as Props;
+const columns = allowed.length;
 ---
 
 <MemoryProfileCard title={t("ui.provenance_policy")} icon="policy">
-  <div class="memory-provenance">
-    <div class="mb-4">
-      <p class="text-xs font-bold uppercase text-muted mb-2">Permitido</p>
-      <div class="tag-list">
-        {allowed.map(item => <span class="tag">{item}</span>)}
+  <div class="memory-provenance" style={`--memory-provenance-columns: ${columns}`}>
+    {allowed.map((item) => (
+      <div
+        class:list={[
+          "memory-provenance__item",
+          { "memory-provenance__item--active": item === defaultValue }
+        ]}
+      >
+        {item}
       </div>
-    </div>
-    <div>
-      <p class="text-xs font-bold uppercase text-muted mb-2">Por defecto</p>
-      <span class="text-sm font-medium">{defaultValue}</span>
-    </div>
+    ))}
   </div>
 </MemoryProfileCard>
