@@ -2,8 +2,11 @@ import { defineConfig } from 'astro/config';
 
 import tailwind from '@astrojs/tailwind';
 
+import cloudflare from '@astrojs/cloudflare';
+
 export default defineConfig({
   output: 'static',
+
   i18n: {
     defaultLocale: 'es',
     locales: ['es', 'en'],
@@ -11,5 +14,7 @@ export default defineConfig({
       prefixDefaultLocale: true,
     },
   },
+
   integrations: [tailwind()],
+  adapter: cloudflare(),
 });

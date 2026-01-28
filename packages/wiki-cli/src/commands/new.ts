@@ -148,6 +148,12 @@ const createFromTemplate = async (options: {
 export const runNewCommand = async (
   options: NewOptions,
 ): Promise<CommandResult> => {
+  if (process.env.CF_PAGES) {
+    return failResult(
+      formatErrorOutput('Cannot run "new" command in Cloudflare environment'),
+    );
+  }
+
   const targetDir = resolveTargetDir(options.type);
   if (!targetDir) {
     return failResult(formatErrorOutput(`unknown type ${options.type}`));
