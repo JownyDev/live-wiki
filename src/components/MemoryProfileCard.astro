@@ -2,12 +2,14 @@
 type Props = {
   title: string;
   icon?: string;
+  class?: string;
+  contentClass?: string;
 };
 
-const { title, icon } = Astro.props as Props;
+const { title, icon, class: className, contentClass } = Astro.props as Props;
 ---
 
-<div class="memory-card">
+<div class:list={["memory-card", className]}>
   <h3 class="memory-card__title">
     {icon ? (
       <span class="material-symbols-outlined memory-card__icon" aria-hidden="true">
@@ -16,7 +18,7 @@ const { title, icon } = Astro.props as Props;
     ) : null}
     {title}
   </h3>
-  <div class="memory-card__content">
+  <div class:list={["memory-card__content", contentClass]}>
     <slot />
   </div>
 </div>

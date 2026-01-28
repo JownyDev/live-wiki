@@ -59,15 +59,6 @@ const factors = manipulability
   : [];
 const notes = manipulability?.notes ?? [];
 const hasNotes = notes.length > 0;
-
-const toneColorStyles: Record<FactorTone, string> = {
-  high: 'text-[#34d399] bg-[#34d399]/18',
-  medium: 'text-[#f5b14a] bg-[#f5b14a]/20',
-  low: 'text-[#f87171] bg-[#f87171]/18',
-  unknown: 'text-text bg-slate-400/15',
-};
-
-const baseStyles = "inline-flex items-center justify-center px-[0.6rem] py-[0.15rem] rounded-pill text-[0.6rem] font-bold tracking-[0.06em] uppercase";
 ---
 
 <div class="emotions-sensitivity">
@@ -129,7 +120,10 @@ const baseStyles = "inline-flex items-center justify-center px-[0.6rem] py-[0.15
           <div class="emotions-sensitivity__factor">
             <span class="emotions-sensitivity__factor-label">{factor.label}:</span>
             <span
-              class={`emotions-sensitivity__factor-value ${baseStyles} ${toneColorStyles[factor.tone]}`}
+              class:list={[
+                "emotions-sensitivity__factor-value",
+                factor.tone !== 'unknown' && `emotions-sensitivity__factor-value--${factor.tone}`
+              ]}
             >
               {String(factor.value).toUpperCase()}
             </span>

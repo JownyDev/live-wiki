@@ -14,7 +14,12 @@ const { allowed, defaultValue } = Astro.props as Props;
 const columns = allowed.length;
 ---
 
-<MemoryProfileCard title={t("ui.provenance_policy")} icon="policy">
+<MemoryProfileCard 
+  title={t("ui.provenance_policy")} 
+  icon="policy"
+  class="h-full"
+  contentClass="flex-1 justify-center"
+>
   <div class="memory-provenance" style={`--memory-provenance-columns: ${columns}`}>
     {allowed.map((item) => (
       <div

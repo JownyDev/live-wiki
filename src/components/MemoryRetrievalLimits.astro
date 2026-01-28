@@ -17,7 +17,12 @@ const shouldRender = hasItems || hasTokens;
 ---
 
 {shouldRender ? (
-  <MemoryProfileCard title={t('ui.memory_limits')} icon="analytics">
+  <MemoryProfileCard 
+    title={t('ui.memory_limits')} 
+    icon="analytics"
+    class="h-full"
+    contentClass="flex-1 justify-center"
+  >
     <div class="memory-limits">
       {hasItems ? (
         <div class="memory-limits__item">
