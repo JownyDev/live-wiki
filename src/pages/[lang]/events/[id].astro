@@ -156,7 +156,7 @@ const tabItems: TabItem[] = [
               <Section>
                 <SectionHeader title={t('ui.participants') || 'Participantes'} showDivider />
                 {participantItems.length > 0 ? (
-                  <CharacterList characters={participantItems} variant="relations" />
+                  <CharacterList characters={participantItems} />
                 ) : (
                   <p>{t('ui.no_participants') || 'No hay participantes registrados.'}</p>
                 )}

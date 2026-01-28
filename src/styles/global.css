@@ -302,7 +302,7 @@
   }
 
   .primary-nav__list {
-    @apply hidden md:flex flex-nowrap justify-between gap-x-space-3 gap-y-space-2 list-none m-0 p-0 text-[0.85rem] whitespace-nowrap w-full;
+    @apply hidden xl:flex flex-nowrap justify-start gap-x-space-3 gap-y-space-2 list-none m-0 p-0 text-[0.85rem] whitespace-nowrap;
   }
 
   .primary-nav .entity-link {
