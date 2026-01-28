@@ -49,6 +49,7 @@ Cuando realices estas acciones, SIEMPRE invoca la skill correspondiente primero:
 - **TypeScript** (strict)
 - **Gestor de paquetes:** `pnpm` (preferido)
 - **SSG:** Astro (recomendado)
+- **Estilos:** Tailwind CSS
 - **Tests:** Vitest (unit/integración) + Playwright (e2e opcional)
 - **Formato/Lint:** Prettier + ESLint
 
