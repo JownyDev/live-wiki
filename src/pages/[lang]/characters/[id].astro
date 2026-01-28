@@ -318,7 +318,8 @@ const tabItems: TabItem[] = [
           <DataPanel title={t('ui.data_title')} items={dataItems} />
         </aside>
         <div class="character-page__content">
-          <Tabs items={tabItems} defaultTab="bio">
+          <div class="character-tabs">
+            <Tabs items={tabItems} defaultTab="bio">
             <div data-tab-panel="bio" class="animate-fadeIn">
               <Section>
                 <SectionHeader title={t('ui.bio')} showDivider />
@@ -524,7 +525,8 @@ const tabItems: TabItem[] = [
                 </Section>
               )}
             </div>
-          </Tabs>
+            </Tabs>
+          </div>
         </div>
       </div>
     </div>
