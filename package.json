@@ -16,9 +16,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "verify": "pnpm quality && pnpm build",
-    "wiki:check": "pnpm -C packages/wiki-cli build && pnpm exec wiki check",
-    "wiki:build": "pnpm -C packages/wiki-cli build && pnpm exec wiki build",
-    "wiki:new": "pnpm -C packages/wiki-cli build && pnpm exec wiki new",
+    "wiki:check": "pnpm --filter wiki-cli run build && node packages/wiki-cli/dist/index.js check",
+    "wiki:build": "pnpm --filter wiki-cli run build && node packages/wiki-cli/dist/index.js build",
+    "wiki:new": "pnpm --filter wiki-cli run build && node packages/wiki-cli/dist/index.js new",
     "build:docs": "typedoc"
   },
   "devDependencies": {

@@ -9,6 +9,7 @@
     "wiki": "dist/index.js"
   },
   "scripts": {
-    "build": "pnpm -C ../lore-linter build && tsc -p tsconfig.json"
+    "build": "pnpm -C ../lore-linter build && tsc -p tsconfig.json",
+    "wiki": "node dist/index.js"
   }
 }

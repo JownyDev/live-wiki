@@ -2,6 +2,7 @@
 type: mechanic
 id: resonance-tuning
 name: Resonance Tuning
+difficulty: moderate
 related_elements:
   - element:echo-crystal
 ---
