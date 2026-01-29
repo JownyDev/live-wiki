@@ -148,7 +148,7 @@ export const ui = {
     "nav.mechanics": "Mecánicas",
     "nav.search": "Buscar",
     "site.tagline":
-      "Explora el archivo vivo del universo: personajes, eventos y lugares conectados.",
+      "Explora el archivo vivo del universo: personajes, eventos y lugares...",
     "desc.characters": "Explora los personajes del universo.",
     "desc.events": "Eventos históricos significativos e hitos del universo.",
     "desc.planets": "Planetas y astros descubiertos en la red de resonancia.",
