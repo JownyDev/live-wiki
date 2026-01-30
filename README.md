@@ -1,150 +1,195 @@
-# Live-Wiki
+# 🚀 Live-Wiki
 
-## Descripción general
-Live-Wiki es una wiki "text-first" para un universo de juego, construida sobre Markdown + Git. Renderiza páginas estáticas por tipo de entidad, mantiene relaciones mediante IDs estables y valida la consistencia del lore con un linter.
+![CI Status](https://github.com/JownyDev/live-wiki/actions/workflows/ci.yml/badge.svg)
+![Deploy Status](https://img.shields.io/badge/Deploy-Cloudflare-orange?logo=cloudflare)
+![Astro](https://img.shields.io/badge/Built%20with-Astro-ff5d01.svg?logo=astro)
+![TypeScript](https://img.shields.io/badge/Language-TypeScript-3178C6.svg?logo=typescript)
+
+> **Una wiki estática "text-first" para documentación de mundos, lore y narrativa.**
+> Diseñada para ser inmutable, rápida y sin base de datos.
 
 ---
 
-## Instalación y ejecución
+## 🔗 Demo y Recursos (Requisitos TFM)
 
-Requisitos:
-- Node.js LTS (se recomienda v20)
-- pnpm
+- 🌐 **Despliegue Real:** [ **VER PROYECTO ONLINE** ](https://live-wiki.pages.dev/es/)
+- 📄 **Slides de Presentación:** [ **VER PRESENTACIÓN (PDF)** ](./PRESENTACION.pdf)
+- 🐙 **Repositorio:** [GitHub Público](https://github.com/JownyDev/live-wiki)
 
-Comando rápido (instalar + ejecutar):
-```bash
-pnpm install && pnpm dev
+---
+
+## 📸 Vista Previa
+
+![Vista Previa de la Wiki](assets/preview.png)
+
+
+---
+
+## 📖 Descripción General
+
+**Live-Wiki** es una plataforma de documentación para universos de ficción (juegos, novelas, RPGs) construida sobre la filosofía **Jamstack**.
+
+A diferencia de las wikis tradicionales (MediaWiki), Live-Wiki **no usa base de datos**. Todo el contenido reside en archivos Markdown dentro del repositorio, permitiendo:
+
+1.  **Versionado real:** Historial de cambios mediante Git.
+2.  **Colaboración:** Pull Requests para proponer cambios en el lore.
+3.  **Calidad automática:** Un linter personalizado valida la coherencia de la historia (fechas, referencias rotas, IDs duplicados) en cada commit.
+
+---
+
+## 🛠️ Stack Tecnológico
+
+Este proyecto utiliza un stack moderno enfocado en rendimiento y DX (Developer Experience):
+
+* **Core:** ![Astro](https://img.shields.io/badge/-Astro-ff5d01?style=flat-square&logo=astro&logoColor=white) ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+* **Estilos:** ![Tailwind CSS](https://img.shields.io/badge/-Tailwind-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
+* **Testing & Calidad:** ![Vitest](https://img.shields.io/badge/-Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white) ![Playwright](https://img.shields.io/badge/-Playwright-45ba4b?style=flat-square&logo=playwright&logoColor=white) ![ESLint](https://img.shields.io/badge/-ESLint-4B32C3?style=flat-square&logo=eslint&logoColor=white)
+* **Infraestructura:** ![Cloudflare Pages](https://img.shields.io/badge/-Cloudflare-F38020?style=flat-square&logo=cloudflare&logoColor=white) ![GitHub Actions](https://img.shields.io/badge/-GitHub%20Actions-2088FF?style=flat-square&logo=github-actions&logoColor=white)
+
+---
+
+## 🚀 Guía de Inicio: ¿Cómo quieres usar esto?
+
+Existen dos formas principales de utilizar Live-Wiki. Elige la que se adapte a tu objetivo:
+
+### Opción A: Autor de Lore / Uso Personal (Fork)
+*Ideal si quieres documentar tu propia novela, campaña de RPG o videojuego usando esta herramienta como base.*
+
+1.  **Haz un Fork** de este repositorio a tu cuenta de GitHub.
+2.  Clona **tu** repositorio:
+    ```bash
+    git clone https://github.com/TU-USUARIO/live-wiki.git
+    cd live-wiki
+    ```
+3.  Instala las dependencias:
+    ```bash
+    pnpm install
+    ```
+4.  **Limpia el ejemplo:** Elimina los archivos `.md` dentro de `content/` para empezar tu universo desde cero (manteniendo la estructura de carpetas).
+5.  **Personaliza:** Puedes modificar colores, componentes o añadir nuevos tipos de entidad según las necesidades específicas de tu mundo.
+
+### Opción B: Contribuidor del Core
+*Ideal si quieres mejorar el motor, añadir componentes reutilizables, corregir bugs o expandir el sistema base para la comunidad.*
+
+1.  Clona el repositorio original:
+    ```bash
+    git clone https://github.com/JownyDev/live-wiki.git
+    ```
+2.  Instala y levanta el entorno:
+    ```bash
+    pnpm install && pnpm dev
+    ```
+3.  **Reglas de Ingeniería:** Consulta [AGENTS.md](./AGENTS.md) antes de tocar código lógico o estructural.
+
+---
+
+## 💻 Comandos Globales
+
+Independientemente de tu modo de uso, estos son los comandos que usarás día a día:
+
+| Comando | Descripción |
+| :--- | :--- |
+| `pnpm dev` | Inicia el servidor de desarrollo local. |
+| `pnpm build` | Construye el sitio estático para producción. |
+| `pnpm quality` | **CI Local:** Ejecuta lint, typecheck y tests unitarios. |
+`pnpm test:e2e` | Ejecuta los tests end-to-end con Playwright. |
+| `pnpm wiki:new` | Crea una nueva entidad (ej: `pnpm wiki:new character gannicus`). |
+| `pnpm wiki:check` | **Lore Linter:** Valida la integridad de tu historia. |
+
+---
+
+## 🧩 Funcionalidades Clave
+
+### 1. Sistema de Entidades
+Soporte nativo para 7 tipos de contenido con esquemas estrictos:
+- `character`, `event`, `place`, `planet`, `element`, `card`, `mechanic`.
+
+### 2. Lore Linter (Motor propio)
+Un paquete desarrollado a medida (`packages/lore-linter`) que impide "romper" la historia:
+- Detecta referencias a personajes que no existen.
+- Valida cronologías (un evento no puede ocurrir antes de nacer sus participantes).
+- Asegura IDs únicos en todo el universo.
+
+### 3. Relaciones Automáticas
+El sistema cruza los datos del frontmatter para generar automáticamente:
+- "Aparece en..." (Backlinks).
+- Líneas de tiempo de personajes.
+
+### 4. Seguridad
+- Renderizado estático (sin servidor runtime).
+- Sanitización estricta de HTML para prevenir XSS.
+
+---
+
+## 📂 Estructura del Proyecto
+
+```text
+├── content/              # Fuente de la verdad (Markdown)
+│   ├── characters/       # Personajes y sus perfiles de IA
+│   ├── events/           # Eventos cronológicos
+│   └── ...               # (planets, places, elements, mechanics, cards)
+├── docs/                 # Documentación de diseño (ADRs), TFM y API
+├── packages/
+│   ├── lore-linter/      # Motor de validación (Reglas de consistencia narrativa)
+│   └── wiki-cli/         # Herramientas dev (pnpm wiki:new, pnpm wiki:check)
+├── skills/               # Habilidades especializadas para agentes IA
+├── src/                  # Código fuente Astro
+│   ├── components/       # Componentes visuales (Astro Islands)
+│   ├── layouts/          # Estructuras de página compartidas
+│   └── pages/            # Rutas y carga de datos
+├── templates/            # Plantillas base para nuevas entidades
+├── tests/                # Tests E2E (Playwright)
+└── .github/workflows/    # CI/CD Pipelines
 ```
 
-Comandos útiles:
+---
+
+## 🤝 Contribución y Reglas del Proyecto
+
+Este proyecto sigue reglas estrictas para mantener la calidad tanto del código como del lore. Si deseas contribuir, consulta las siguientes guías:
+
+- **[AGENTS.md](./AGENTS.md):** Reglas técnicas, stack asumido y flujos de trabajo (TDD, Clean Code).
+- **[AGENTS-LORE.md](./AGENTS-LORE.md):** Guía de estilo y convenciones para la escritura del lore.
+- **[Design Docs](./docs/design/):** Documentos de arquitectura y decisiones de diseño (ADRs).
+
+---
+
+## 🛠️ Flujo de Trabajo (Dev & IA)
+
+### 1. Creación de Contenido
+Usa el CLI para generar nuevas entidades basadas en plantillas:
 ```bash
-pnpm quality      # Ejecuta lint, typecheck y tests
-pnpm test --run   # Ejecuta los tests una sola vez
-pnpm wiki:check   # Ejecuta el linter de lore
-pnpm build        # Construye el sitio estático
+pnpm wiki:new character mi-personaje
 ```
 
-### Configuración de Asistentes IA
+### 2. Validación de Consistencia
+Antes de cada commit, el **Lore Linter** asegura que no existan contradicciones:
+```bash
+pnpm wiki:check
+```
 
-El proyecto incluye scripts para configurar asistentes de IA (Claude, Gemini, Copilot, etc.) con el contexto del proyecto y las skills disponibles.
+### 3. Automatización con Skills
+Si usas un asistente compatible (como Gemini CLI), puedes activar "skills" para automatizar tareas complejas:
+- `activate_skill content-creator`: Guía paso a paso para crear lore coherente.
+- `activate_skill entity-type-creator`: Ayuda a extender el sistema con nuevos tipos de datos.
 
-Para configurarlos, ejecuta:
+---
+
+## 🤖 Desarrollo Asistido por IA
+
+El proyecto está preparado para el desarrollo asistido por IA (Copilot, Cursor, etc).
+Para inyectar el contexto del proyecto y las "skills" disponibles:
+
 ```bash
 bash skills/setup.sh
 ```
 
 ---
 
-## Stack tecnológico
+## 🚀 Despliegue (CI/CD)
 
-- **Node.js (LTS):** entorno de ejecución para herramientas, builds y scripts.
-- **TypeScript (strict):** lógica de validación y parsing más segura.
-- **pnpm:** gestión de dependencias monorepo rápida y eficiente en disco.
-- **Astro:** generación de sitios estáticos para páginas centradas en contenido.
-- **Vitest:** tests unitarios/integración para lógica central.
-- **ESLint + Prettier:** calidad de código y formateo consistente.
+El proyecto cuenta con un pipeline de **Integración Continua** robusto en GitHub Actions:
 
----
-
-## Funcionalidades
-
-- **7 tipos de entidades:** character, event, place, planet, element, card, mechanic.
-- **Páginas estáticas:** `/characters/:id`, `/events/:id`, `/places/:id`, etc.
-- **Listados por tipo:** `/characters`, `/events`, `/places`, etc.
-- **Relaciones automáticas:** líneas de tiempo y enlaces entre entidades.
-- **Lore linter:** validación de esquema, comprobación de fechas, detección de IDs duplicados y referencias rotas.
-- **Herramientas CLI:** para crear contenido, verificar integridad y construir el proyecto.
-
----
-
-## Estructura
-
-```text
-content/               Fuente de la verdad en Markdown
-src/                   Sitio Astro (pages/layouts/components)
-packages/lore-linter/  Motor de validación (sin dependencias de UI)
-packages/wiki-cli/     Herramientas de desarrollo y checks
-templates/             Plantillas Markdown por tipo
-docs/design/           Documentos de diseño técnico
-```
-
-Dirección de dependencias:
-- `wiki-cli -> lore-linter -> shared`
-- `site (src) -> shared`
-
----
-
-## Formato de contenido
-
-Cada entidad es un único archivo Markdown bajo `content/<tipo>/`.
-El frontmatter define los campos mínimos; el cuerpo es Markdown libre.
-
-Ejemplo (character):
-```md
----
-type: character
-id: arina-mora
-name: Arina Mora
-origin: place:haven-docks
----
-
-Biografía corta en Markdown.
-```
-
-Ejemplo (event):
-```md
----
-type: event
-id: relay-run
-title: Relay Run
-date: 3051-02-14
-who:
-  - character: arina-mora
-locations:
-  - place:haven-docks
----
-```
-
-Reglas:
-- Los IDs usan `kebab-case` y son estables.
-- Las referencias usan prefijos como `character:`, `place:`, `planet:`, `element:`.
-
----
-
-## Sin base de datos (por diseño)
-
-Live-Wiki no utiliza una base de datos convencional. El repositorio es la fuente de verdad: el contenido vive como archivos Markdown bajo `content/`, permitiendo que humanos e IA trabajen directamente en el repositorio e iteren ideas creativas sin migraciones.
-
----
-
-## CLI
-
-Estos comandos utilizan el paquete local `wiki-cli`:
-
-```bash
-pnpm wiki:new <type> <id>
-pnpm wiki:check
-pnpm wiki:build
-```
-
----
-
-## CI
-
-GitHub Actions se ejecuta en push/PR:
-- Instalación de dependencias (pnpm)
-- Comprobaciones de calidad (lint, types)
-- Tests (Vitest)
-- `pnpm wiki:check` (Lore Linter)
-- Build del sitio
-
-Workflow: `.github/workflows/ci.yml`
-
----
-
-## Contribución
-
-Lee `AGENTS.md` para las reglas y convenciones del proyecto.
-
-Referencias de diseño:
-- `docs/`
+1.  **Push a rama:** Ejecuta Linter + Typecheck + Unit Tests + Lore Check.
+2.  **Pull Request:** Ejecuta todo lo anterior + **Tests E2E con Playwright**.
+3.  **Merge a Main:** Si todos los tests pasan, Cloudflare Pages construye y despliega automáticamente la nueva versión.
