@@ -65,7 +65,7 @@ const originView = await (async () => {
       return { 
         text: place?.name ?? formatEntityId(parsed.id), 
         href: getRelativeLocaleUrl(lang as any, `/places/${parsed.id}`),
-        icon: 'location_on'
+        icon: 'location-on'
       };
     }
     case 'planet': {
@@ -77,7 +77,7 @@ const originView = await (async () => {
       };
     }
     default:
-      return { text: formatEntityId(parsed.id), icon: 'location_on' };
+      return { text: formatEntityId(parsed.id), icon: 'location-on' };
   }
 })();
 
@@ -87,7 +87,7 @@ if (originView) {
     label: t('ui.origin'),
     value: originView.text,
     href: originView.href,
-    icon: originView.icon as any || 'location_on',
+    icon: originView.icon as any || 'location-on',
   });
 }
 

@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { formatOrigin } from '../lib/format';
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
 
@@ -53,7 +54,7 @@ const isRelations = variant === 'relations';
                 <img src={character.image} alt={character.name} class="character-list__avatar-img" loading="lazy" />
               ) : (
                 <div class="character-list__avatar-placeholder">
-                  <span class="material-symbols-outlined text-sm">person</span>
+                  <Icon name="material-symbols:person" class="text-sm" />
                 </div>
               )}
             </div>

@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
@@ -63,21 +64,14 @@ const hasNotes = notes.length > 0;
 
 <div class="emotions-sensitivity">
   <h3 class="emotions-sensitivity__title">
-    <span class="material-symbols-outlined emotions-sensitivity__icon" aria-hidden="true">
-      psychology
-    </span>
+    <Icon name="material-symbols:psychology" class="emotions-sensitivity__icon" aria-hidden="true" />
     {t('ui.sens_manip')}
   </h3>
   <div class="emotions-sensitivity__grid">
     {hasAngers ? (
       <div class="emotions-sensitivity__block">
         <div class="emotions-sensitivity__heading emotions-sensitivity__heading--anger">
-          <span
-            class="material-symbols-outlined emotions-sensitivity__heading-icon"
-            aria-hidden="true"
-          >
-            warning
-          </span>
+          <Icon name="material-symbols:warning" class="emotions-sensitivity__heading-icon" aria-hidden="true" />
           {t('ui.angers_if')}
         </div>
         <ul class="emotions-sensitivity__list">
@@ -93,12 +87,7 @@ const hasNotes = notes.length > 0;
     {hasCalms ? (
       <div class="emotions-sensitivity__block">
         <div class="emotions-sensitivity__heading emotions-sensitivity__heading--calm">
-          <span
-            class="material-symbols-outlined emotions-sensitivity__heading-icon"
-            aria-hidden="true"
-          >
-            check_circle
-          </span>
+          <Icon name="material-symbols:check-circle" class="emotions-sensitivity__heading-icon" aria-hidden="true" />
           {t('ui.calms_if')}
         </div>
         <ul class="emotions-sensitivity__list">
@@ -132,12 +121,7 @@ const hasNotes = notes.length > 0;
       </div>
       {hasNotes ? (
         <div class="emotions-sensitivity__notes">
-          <span
-            class="material-symbols-outlined emotions-sensitivity__notes-icon"
-            aria-hidden="true"
-          >
-            info
-          </span>
+          <Icon name="material-symbols:info" class="emotions-sensitivity__notes-icon" aria-hidden="true" />
           <div class="emotions-sensitivity__notes-text">
             {notes.map((note) => (
               <p class="m-0">{note}</p>

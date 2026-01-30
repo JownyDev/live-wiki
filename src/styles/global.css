@@ -82,21 +82,6 @@
 }
 
 @layer components {
-  .material-symbols-outlined {
-    font-family: "Material Symbols Outlined";
-    font-weight: normal;
-    font-style: normal;
-    font-size: 1rem;
-    line-height: 1;
-    display: inline-block;
-    letter-spacing: normal;
-    text-transform: none;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    -webkit-font-smoothing: antialiased;
-  }
-
   .tag-list {
     @apply list-none m-0 p-0 flex flex-wrap items-start gap-space-2;
   }

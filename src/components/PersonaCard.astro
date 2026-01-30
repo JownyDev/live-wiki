@@ -1,4 +1,6 @@
 ---
+import { Icon } from 'astro-icon/components';
+
 type PersonaCardSpan = 'wide' | 'full';
 
 type Props = {
@@ -20,9 +22,7 @@ const className = `persona-card p-space-5 rounded-md border border-border bg-sur
 <div class={className}>
   <h3 class="persona-card__label flex items-center gap-space-2 m-0 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-accent">
     {icon ? (
-      <span class="material-symbols-outlined persona-card__icon text-[0.9rem]" aria-hidden="true">
-        {icon}
-      </span>
+      <Icon name={`material-symbols:${icon}`} class="persona-card__icon text-[0.9rem]" aria-hidden="true" />
     ) : null}
     {title}
   </h3>

@@ -66,7 +66,7 @@ const loadIndex = async (): Promise<boolean> => {
   }
 
   setStatus(
-    `<span class="material-symbols-outlined animate-spin text-sm align-middle">progress_activity</span> <span class="align-middle">${t['ui.loading']}</span>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" class="animate-spin text-sm align-middle inline-block"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8a8 8 0 0 1-8 8z"/><path fill="currentColor" d="M12 4a8 8 0 0 0-8 8h2a6 6 0 0 1 6-6V4z"/></svg> <span class="align-middle">${t['ui.loading']}</span>`,
     true,
   );
   loadPromise = (async () => {

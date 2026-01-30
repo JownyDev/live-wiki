@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import Badge, { type BadgeVariant } from './Badge.astro';
 
 type MetaItem = {
@@ -22,9 +23,7 @@ const hasActions = Astro.slots.has('actions');
   <div class="page-header__title-row">
     <h1 class="page-header__title">
       {icon ? (
-        <span class="material-symbols-outlined page-header__title-icon" aria-hidden="true">
-          {icon}
-        </span>
+        <Icon name={`material-symbols:${icon}`} class="page-header__title-icon" aria-hidden="true" />
       ) : null}
       <span>{title}</span>
     </h1>

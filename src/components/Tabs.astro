@@ -1,4 +1,6 @@
 ---
+import { Icon } from 'astro-icon/components';
+
 export type TabItem = {
   id: string;
   label: string;
@@ -25,7 +27,7 @@ const activeTabId = defaultTab || items[0]?.id;
         id={`tab-${item.id}`}
         data-tab-target={item.id}
       >
-        {item.icon && <span class="material-symbols-outlined text-[1.1rem]">{item.icon}</span>}
+        {item.icon && <Icon name={`material-symbols:${item.icon}`} class="text-[1.1rem]" />}
         <span class="whitespace-nowrap">{item.label}</span>
       </button>
     ))}

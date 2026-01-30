@@ -1,4 +1,6 @@
 ---
+import { Icon } from 'astro-icon/components';
+
 type Props = {
   title: string;
   icon?: string;
@@ -12,9 +14,7 @@ const { title, icon, class: className, contentClass } = Astro.props as Props;
 <div class:list={["memory-card", className]}>
   <h3 class="memory-card__title">
     {icon ? (
-      <span class="material-symbols-outlined memory-card__icon" aria-hidden="true">
-        {icon}
-      </span>
+      <Icon name={`material-symbols:${icon}`} class="memory-card__icon" aria-hidden="true" />
     ) : null}
     {title}
   </h3>

@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import EntityLink from './EntityLink.astro';
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
 import { getRelativeLocaleUrl } from 'astro:i18n';
@@ -15,9 +16,9 @@ type NavItem = {
 const items: NavItem[] = [
   { href: getRelativeLocaleUrl(lang, '/characters'), label: t('nav.characters'), icon: 'group' },
   { href: getRelativeLocaleUrl(lang, '/events'), label: t('nav.events'), icon: 'event' },
-  { href: getRelativeLocaleUrl(lang, '/places'), label: t('nav.places'), icon: 'place' },
+  { href: getRelativeLocaleUrl(lang, '/places'), label: t('nav.places'), icon: 'location-on' },
   { href: getRelativeLocaleUrl(lang, '/planets'), label: t('nav.planets'), icon: 'public' },
-  { href: getRelativeLocaleUrl(lang, '/elements'), label: t('nav.elements'), icon: 'auto_awesome' },
+  { href: getRelativeLocaleUrl(lang, '/elements'), label: t('nav.elements'), icon: 'auto-awesome' },
   { href: getRelativeLocaleUrl(lang, '/cards'), label: t('nav.cards'), icon: 'style' },
   { href: getRelativeLocaleUrl(lang, '/mechanics'), label: t('nav.mechanics'), icon: 'tune' },
 ];
@@ -59,7 +60,8 @@ const isActive = (href: string) => {
     aria-expanded="false"
     aria-controls="mobile-menu"
   >
-    <span class="material-symbols-outlined text-2xl">menu</span>
+    <Icon name="material-symbols:menu" class="text-2xl menu-icon" />
+    <Icon name="material-symbols:close" class="text-2xl close-icon hidden" />
   </button>
 
   {/* Mobile Menu Overlay */}
@@ -89,9 +91,10 @@ const isActive = (href: string) => {
 <script>
   const toggleBtn = document.getElementById('mobile-menu-toggle');
   const mobileMenu = document.getElementById('mobile-menu');
-  const icon = toggleBtn?.querySelector('.material-symbols-outlined');
+  const menuIcon = toggleBtn?.querySelector('.menu-icon');
+  const closeIcon = toggleBtn?.querySelector('.close-icon');
 
-  if (toggleBtn && mobileMenu && icon) {
+  if (toggleBtn && mobileMenu && menuIcon && closeIcon) {
     toggleBtn.addEventListener('click', () => {
       const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
       toggleBtn.setAttribute('aria-expanded', (!isExpanded).toString());
@@ -106,8 +109,14 @@ const isActive = (href: string) => {
       toggleBtn.classList.toggle('bg-surface-muted');
       toggleBtn.classList.toggle('text-accent');
       
-      // Toggle icon
-      icon.textContent = isExpanded ? 'menu' : 'close';
+      // Toggle icons
+      if (isExpanded) {
+        menuIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+      } else {
+        menuIcon.classList.add('hidden');
+        closeIcon.classList.remove('hidden');
+      }
       
       // Prevent body scroll when menu is open
       document.body.style.overflow = isExpanded ? '' : 'hidden';

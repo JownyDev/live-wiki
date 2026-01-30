@@ -52,47 +52,42 @@ const eventMeta: InlineMetaItem[] = event
   ? [{ label: 'ID', value: `#${event.id}` }]
   : [];
 
-// Resolve locations for DataPanel
+// Resolve Location for DataPanel
 const resolveLocationView = async (locRef: string) => {
   const parsed = parseLocationRef(locRef);
-  if (!parsed) return { text: locRef };
+  if (!parsed) return { text: locRef, icon: 'location-on' };
 
-  switch (parsed.kind) {
-    case 'place': {
-      const place = await getPlaceById(parsed.id);
-      return { 
-        text: place?.name ?? formatEntityId(parsed.id), 
-        href: getRelativeLocaleUrl(lang as any, `/places/${parsed.id}`),
-        icon: 'location_on'
-      };
-    }
-    case 'planet': {
-      const planet = await getPlanetById(parsed.id);
-      return { 
-        text: planet?.name ?? formatEntityId(parsed.id), 
-        href: getRelativeLocaleUrl(lang as any, `/planets/${parsed.id}`),
-        icon: 'public'
-      };
-    }
-    default:
-      return { text: formatEntityId(parsed.id), icon: 'location_on' };
+  if (parsed.kind === 'place') {
+    const place = await getPlaceById(parsed.id);
+    return {
+      text: place?.name ?? formatEntityId(parsed.id),
+      href: getRelativeLocaleUrl(lang as any, `/places/${parsed.id}`),
+      icon: 'location-on'
+    };
   }
+  if (parsed.kind === 'planet') {
+    const planet = await getPlanetById(parsed.id);
+    return {
+      text: planet?.name ?? formatEntityId(parsed.id),
+      href: getRelativeLocaleUrl(lang as any, `/planets/${parsed.id}`),
+      icon: 'public'
+    };
+  }
+  return { text: formatEntityId(parsed.id), icon: 'location-on' };
 };
 
-const locationViews = event ? await Promise.all(event.locations.map(resolveLocationView)) : [];
+const locationView = event?.location ? await resolveLocationView(event.location) : null;
 
 const dataItems: DataPanelItem[] = [];
 if (event) {
-  dataItems.push({ label: t('event.date'), value: event.date, icon: 'calendar_today' });
-  
-  locationViews.forEach(view => {
+  if (locationView) {
     dataItems.push({
-      label: t('ui.location'),
-      value: view.text,
-      href: view.href,
-      icon: view.icon as any || 'location_on'
+      label: t('ui.location') || 'Ubicación',
+      value: locationView.text,
+      href: locationView.href,
+      icon: locationView.icon as any || 'location-on'
     });
-  });
+  }
 }
 
 // Resolve participants for CharacterList

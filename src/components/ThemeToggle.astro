@@ -1,29 +1,31 @@
 ---
-import { getLangFromUrl, useTranslations } from "../i18n/utils";
+import { Icon } from 'astro-icon/components';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 ---
 
-<button id="theme-toggle" type="button" class="theme-toggle" aria-label={t("ui.theme_toggle")}>
-  <span class="material-symbols-outlined theme-toggle__icon theme-toggle__icon--light">
-    light_mode
-  </span>
-  <span class="material-symbols-outlined theme-toggle__icon theme-toggle__icon--dark">
-    dark_mode
-  </span>
+<button
+  class="theme-toggle"
+  id="theme-toggle"
+  title={t('ui.toggle_theme')}
+  aria-label={t('ui.toggle_theme')}
+>
+  <Icon name="material-symbols:light-mode" class="theme-toggle__icon theme-toggle__icon--light" />
+  <Icon name="material-symbols:dark-mode" class="theme-toggle__icon theme-toggle__icon--dark" />
 </button>
 
 <script>
-  const themeToggle = document.getElementById('theme-toggle');
-  
-  if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-      const isDark = !document.documentElement.classList.contains('light');
-      const nextTheme = isDark ? 'light' : 'dark';
-      
-      document.documentElement.classList.toggle('light');
-      localStorage.setItem('theme', nextTheme);
-    });
-  }
+  const handleToggleClick = () => {
+    const element = document.documentElement;
+    element.classList.toggle('light');
+
+    const isLight = element.classList.contains('light');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  };
+
+  document
+    .getElementById('theme-toggle')
+    ?.addEventListener('click', handleToggleClick);
 </script>

@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
@@ -47,9 +48,7 @@ const barColorStyles: Record<string, string> = {
 {hasItems ? (
   <div class="emotions-baseline">
     <h3 class="emotions-baseline__title">
-      <span class="material-symbols-outlined emotions-baseline__icon" aria-hidden="true">
-        mood
-      </span>
+      <Icon name="material-symbols:mood" class="emotions-baseline__icon" aria-hidden="true" />
       {t('ui.mood')}
     </h3>
     <div class="emotions-baseline__list">

@@ -68,7 +68,7 @@ const resolveElementView = async (elRef: string) => {
   return {
     text: element?.name ?? formatEntityId(elId),
     href: getRelativeLocaleUrl(lang as any, `/elements/${elId}`),
-    icon: 'auto_awesome'
+    icon: 'auto-awesome'
   };
 };
 
@@ -104,7 +104,7 @@ const resolveRepresentsView = async (ref: string) => {
       return {
         text: place?.name ?? formatEntityId(parsedLoc.id),
         href: getRelativeLocaleUrl(lang as any, `/places/${parsedLoc.id}`),
-        icon: 'location_on'
+        icon: 'location-on'
       };
     }
     if (parsedLoc.kind === 'planet') {

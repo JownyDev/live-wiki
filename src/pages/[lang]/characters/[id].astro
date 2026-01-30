@@ -283,7 +283,7 @@ if (originView) {
     label: t('ui.origin'),
     value: originView.text,
     href: originView.href ? getRelativeLocaleUrl(lang as any, originView.href) : undefined,
-    icon: 'location_on',
+    icon: 'location-on',
   });
 }
 
@@ -292,7 +292,7 @@ if (affinityView) {
     label: t('ui.affinity'),
     value: affinityView.text,
     href: affinityView.href ? getRelativeLocaleUrl(lang as any, affinityView.href) : undefined,
-    icon: 'auto_awesome',
+    icon: 'auto-awesome',
   });
 }
 
@@ -454,15 +454,15 @@ const tabItems: TabItem[] = [
                         label={t('char.long_term_goals')}
                         items={goalsLongTerm}
                         icon="flag"
-                        itemIcon="ads_click"
+                        itemIcon="ads-click"
                       />
                     ) : null}
                     {hasItems(goalsPriorities) ? (
                       <PriorityList
                         label={t('char.typical_priorities')}
                         items={goalsPriorities}
-                        icon="list_alt"
-                        itemIcon="priority_high"
+                        icon="list-alt"
+                        itemIcon="priority-high"
                       />
                     ) : null}
                   </div>

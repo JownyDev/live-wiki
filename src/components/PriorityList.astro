@@ -1,4 +1,6 @@
 ---
+import { Icon } from 'astro-icon/components';
+
 type Props = {
   label: string;
   items: string[];
@@ -16,12 +18,11 @@ const shouldRender = hasItems || typeof emptyText === 'string';
   <div class="priority-list">
     <h3 class="priority-list__label">
       {icon ? (
-        <span
-          class="material-symbols-outlined priority-list__label-icon"
+        <Icon
+          name={`material-symbols:${icon}`}
+          class="priority-list__label-icon"
           aria-hidden="true"
-        >
-          {icon}
-        </span>
+        />
       ) : null}
       {label}
     </h3>
@@ -30,12 +31,11 @@ const shouldRender = hasItems || typeof emptyText === 'string';
         {items.map((item) => (
           <div class="priority-list__item">
             {itemIcon ? (
-              <span
-                class="material-symbols-outlined priority-list__item-icon"
+              <Icon
+                name={`material-symbols:${itemIcon}`}
+                class="priority-list__item-icon"
                 aria-hidden="true"
-              >
-                {itemIcon}
-              </span>
+              />
             ) : (
               <span class="priority-list__dot" aria-hidden="true"></span>
             )}

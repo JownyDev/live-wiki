@@ -1,4 +1,6 @@
 ---
+import { Icon } from 'astro-icon/components';
+
 export type KnowledgeListVariant = 'knows' | 'blindspots' | 'reveal';
 
 type Props = {
@@ -17,7 +19,7 @@ const className = `knowledge-list knowledge-list--${variant}`;
 const iconName = (() => {
   switch (variant) {
     case 'blindspots':
-      return 'visibility_off';
+      return 'visibility-off';
     case 'reveal':
       return 'key';
     default:
@@ -59,9 +61,7 @@ const textStyles = {
 {shouldRender ? (
   <div class={containerStyles[variant]}>
     <h3 class={labelStyles[variant]}>
-      <span class="material-symbols-outlined knowledge-list__icon text-[0.95rem]" aria-hidden="true">
-        {iconName}
-      </span>
+      <Icon name={`material-symbols:${iconName}`} class="knowledge-list__icon text-[0.95rem]" aria-hidden="true" />
       {label}
     </h3>
     {hasItems ? (
