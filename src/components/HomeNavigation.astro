@@ -1,0 +1,84 @@
+---
+interface Props {
+  items: {
+    href: string;
+    title: string;
+    description: string;
+  }[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="home-nav">
+  <div class="home-nav__grid">
+    {
+      items.map((item) => (
+        <a href={item.href} class="home-nav__card group">
+          <h2 class="home-nav__title">
+            {item.title}
+          </h2>
+          <p class="home-nav__description">
+            {item.description}
+          </p>
+        </a>
+      ))
+    }
+  </div>
+</nav>
+
+<style>
+  .home-nav__grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  @media (min-width: 768px) {
+    .home-nav__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .home-nav__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .home-nav__card {
+    display: block;
+    padding: var(--space-6);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+  }
+
+  .home-nav__card:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-accent);
+  }
+
+  .home-nav__title {
+    margin-top: 0;
+    margin-bottom: var(--space-2);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    transition: color 0.2s;
+  }
+
+  .home-nav__card:hover .home-nav__title {
+    color: var(--color-accent-strong);
+  }
+
+  .home-nav__description {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: var(--text-base);
+    line-height: 1.5;
+  }
+</style>

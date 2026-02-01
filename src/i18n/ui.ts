@@ -17,7 +17,7 @@ export const ui = {
     "nav.mechanics": "Mechanics",
     "nav.search": "Search",
     "site.tagline":
-      "Explore the living archive of the universe: connected characters, events, and places.",
+      "Explore the living archive of the universe.",
     "desc.characters": "Explore the characters of the universe.",
     "desc.events": "Significant historical events and milestones.",
     "desc.planets":
@@ -149,7 +149,7 @@ export const ui = {
     "nav.mechanics": "Mecánicas",
     "nav.search": "Buscar",
     "site.tagline":
-      "Explora el archivo vivo del universo: personajes, eventos y lugares...",
+      "Explora el archivo vivo del universo.",
     "desc.characters": "Explora los personajes del universo.",
     "desc.events": "Eventos históricos significativos e hitos del universo.",
     "desc.planets": "Planetas y astros descubiertos en la red de resonancia.",
