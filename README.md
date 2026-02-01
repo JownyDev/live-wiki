@@ -20,7 +20,9 @@
 
 ## 📸 Vista Previa
 
-![Vista Previa de la Wiki](assets/preview.png)
+![Ejemplo de Prompt](public/readme-img/example-prompt.png)
+
+![Ejemplo de Evento](public/readme-img/example-event.png)
 
 
 ---

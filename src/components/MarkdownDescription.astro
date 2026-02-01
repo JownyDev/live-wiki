@@ -1,13 +1,52 @@
 ---
-import { marked } from 'marked';
+import { Marked } from 'marked';
 import sanitizeHtml from 'sanitize-html';
+import { getRelativeLocaleUrl } from 'astro:i18n';
 
 type Props = {
   content: string;
 };
 
 const { content } = Astro.props as Props;
-const rawHtml = await marked.parse(content);
+const currentLang = Astro.currentLocale ?? 'es';
+
+const parser = new Marked();
+
+parser.use({
+  renderer: {
+    link(this: any, { href, title, tokens }: any) {
+      if (!href) return false;
+
+      // Detect internal schema links (e.g., character:jonathan-pineda)
+      const match = href.match(/^(character|place|event|planet|element|mechanic|card):([a-z0-9-]+)$/);
+
+      if (match) {
+        const [_, schema, id] = match;
+        const collectionMap: Record<string, string> = {
+          character: 'characters',
+          place: 'places',
+          event: 'events',
+          planet: 'planets',
+          element: 'elements',
+          mechanic: 'mechanics',
+          card: 'cards',
+        };
+
+        const collection = collectionMap[schema];
+        if (collection) {
+          const newHref = getRelativeLocaleUrl(currentLang, `/${collection}/${id}`);
+          const text = this.parser.parseInline(tokens);
+          const titleAttr = title ? ` title="${title}"` : '';
+          return `<a href="${newHref}"${titleAttr}>${text}</a>`;
+        }
+      }
+
+      return false; // Fallback to default renderer
+    },
+  },
+});
+
+const rawHtml = await parser.parse(content);
 const html = sanitizeHtml(rawHtml, {
   allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'h1', 'h2']),
   allowedAttributes: {
