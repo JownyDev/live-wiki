@@ -18,7 +18,7 @@ test.describe('Basic App Functionality', () => {
     await searchInput.focus();
 
     // Fill search term
-    await searchInput.fill('Mira');
+    await searchInput.fill('John');
 
     // Wait for results container to appear and not be hidden
     const resultsContainer = page.locator('#search-results');
@@ -33,12 +33,12 @@ test.describe('Basic App Functionality', () => {
     await expect(status).toContainText('resultado');
     
     // Look for specific result
-    const resultLink = resultsContainer.locator('.search__result-link', { hasText: 'Mira Lane' });
+    const resultLink = resultsContainer.locator('.search__result-link', { hasText: 'John Doe' });
     await expect(resultLink).toBeVisible();
     
     // Click and verify navigation
     await resultLink.click();
-    await page.waitForURL(/.*\/characters\/mira-lane/);
-    await expect(page.getByRole('heading', { level: 1 })).toContainText('Mira Lane');
+    await page.waitForURL(/.*\/characters\/john-doe/);
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('John Doe');
   });
 });

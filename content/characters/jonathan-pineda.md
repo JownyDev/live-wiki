@@ -5,7 +5,6 @@ name: Jonathan Pineda
 image: /img/jownydev.webp
 born: 1999-10-12
 origin: place:girona
-# affinity: element:echo-crystal
 related_characters:
   - type: mentor
     character: character:mouredev
