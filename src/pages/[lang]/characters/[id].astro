@@ -313,10 +313,12 @@ const tabItems: TabItem[] = [
         meta={characterMeta}
         imageUrl={character.image ?? undefined}
       />
-      <div class="character-page__grid">
-        <aside class="character-page__sidebar">
-          <DataPanel title={t('ui.data_title')} items={dataItems} />
-        </aside>
+      <div class:list={['character-page__grid', { '!grid-cols-1': dataItems.length === 0 }]}>
+        {dataItems.length > 0 && (
+          <aside class="character-page__sidebar">
+            <DataPanel title={t('ui.data_title')} items={dataItems} />
+          </aside>
+        )}
         <div class="character-page__content">
           <div class="character-tabs">
             <Tabs items={tabItems} defaultTab="bio">

@@ -113,10 +113,12 @@ const planetMeta = planet ? [{ label: 'ID', value: `#${planet.id}` }] : [];
         imageUrl={planet.image}
       />
 
-      <div class="character-page__grid">
-        <aside class="character-page__sidebar">
-          <DataPanel title={t('ui.planet_data')} items={dataItems} />
-        </aside>
+      <div class:list={['character-page__grid', { '!grid-cols-1': dataItems.length === 0 }]}>
+        {dataItems.length > 0 && (
+          <aside class="character-page__sidebar">
+            <DataPanel title={t('ui.planet_data')} items={dataItems} />
+          </aside>
+        )}
 
         <div class="character-page__content">
           <Tabs items={tabItems} defaultTab="info">

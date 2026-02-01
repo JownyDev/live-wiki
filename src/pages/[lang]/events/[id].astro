@@ -134,10 +134,12 @@ const tabItems: TabItem[] = [
         meta={eventMeta}
         imageUrl={event.image ?? undefined}
       />
-      <div class="event-page__grid">
-        <aside class="event-page__sidebar">
-          <DataPanel title={t('ui.data_title')} items={dataItems} />
-        </aside>
+      <div class:list={['event-page__grid', { '!grid-cols-1': dataItems.length === 0 }]}>
+        {dataItems.length > 0 && (
+          <aside class="event-page__sidebar">
+            <DataPanel title={t('ui.data_title')} items={dataItems} />
+          </aside>
+        )}
         <div class="event-page__content">
           <Tabs items={tabItems} defaultTab="details">
             <div data-tab-panel="details" class="animate-fadeIn">

@@ -105,10 +105,12 @@ const tabItems: TabItem[] = [
         meta={elementMeta}
         imageUrl={element.image ?? undefined}
       />
-      <div class="element-page__grid">
-        <aside class="element-page__sidebar">
-          <DataPanel title={t('ui.data_title')} items={dataItems} />
-        </aside>
+      <div class:list={['element-page__grid', { '!grid-cols-1': dataItems.length === 0 }]}>
+        {dataItems.length > 0 && (
+          <aside class="element-page__sidebar">
+            <DataPanel title={t('ui.data_title')} items={dataItems} />
+          </aside>
+        )}
         <div class="element-page__content">
           <Tabs items={tabItems} defaultTab="info">
             <div data-tab-panel="info" class="animate-fadeIn">

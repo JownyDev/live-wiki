@@ -13,11 +13,11 @@ import { listMarkdownFiles } from './markdown-files';
 
 const generatePreview = (markdown: string): string => {
   // Remove headers
-  let text = markdown.replace(/^#+\s+/gm, '');
+  let text = markdown.replace(/^#+\s+.*$/gm, '');
   // Remove images
-  text = text.replace(/!\[.*?\]\(.*?\)/g, '');
+  text = text.replace(/!\s*\[.*?\]\(.*?\)/g, '');
   // Remove links, keeping text
-  text = text.replace(/\[([^\]]+)\]\(.*?\)/g, '$1');
+  text = text.replace(/\s*\[([^\]]+)\]\(.*?\)/g, '$1');
   // Remove bold/italic
   text = text.replace(/[*_]{1,2}([^*_]+)[*_]{1,2}/g, '$1');
   // Remove blockquotes

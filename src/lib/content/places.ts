@@ -10,7 +10,7 @@ import {
 
 export type Place = SimpleEntity & {
   planetId: string | null;
-  locationType: 'space' | 'planet' | 'unknown' | null;
+  locationType: 'space' | 'planet' | 'province' | 'unknown' | null;
 };
 
 type NodeErrorWithCode = Error & { code?: string };
@@ -20,14 +20,14 @@ const getPlacesDir = (baseDir?: string): string => {
   return path.join(resolvedBaseDir, 'places');
 };
 
-const parseLocationType = (value: unknown): 'space' | 'planet' | 'unknown' | null => {
+const parseLocationType = (value: unknown): 'space' | 'planet' | 'province' | 'unknown' | null => {
   if (typeof value === 'undefined') {
     return null;
   }
   if (typeof value !== 'string') {
     throw new Error('Invalid locationType');
   }
-  if (value !== 'space' && value !== 'planet' && value !== 'unknown') {
+  if (value !== 'space' && value !== 'planet' && value !== 'province' && value !== 'unknown') {
     throw new Error('Invalid locationType');
   }
   return value;

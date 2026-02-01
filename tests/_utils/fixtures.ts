@@ -67,6 +67,7 @@ export const getCardsFixtureBaseDir = (): string => {
 export type EventFixtureName =
   | 'first-contact.md'
   | 'signal-rift.md'
+  | 'header-duplicate.md'
   | 'invalid-who.md'
   | 'invalid-locations.md'
   | 'invalid-wrong-type.md'

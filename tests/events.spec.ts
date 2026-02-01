@@ -58,6 +58,20 @@ describe('content/events contract', () => {
     ]);
   });
 
+  it('listEvents generates preview skipping title header in body', async () => {
+    const baseDir = await createTempBaseDirWithEventFixtures(['header-duplicate.md']);
+    const { listEvents } = await loadEventsModule();
+
+    await expect(listEvents(baseDir)).resolves.toEqual([
+      {
+        id: 'header-duplicate',
+        title: 'Duplicate Header',
+        date: '2026-01-01',
+        preview: 'This is the summary text that should be shown.',
+      },
+    ]);
+  });
+
   it('getEventById("signal-rift") returns id, title, date, who, locations and markdown body', async () => {
     const baseDir = await createTempBaseDirWithEventFixtures(['signal-rift.md']);
     const { getEventById } = await loadEventsModule();

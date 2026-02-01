@@ -96,10 +96,12 @@ const tabItems: TabItem[] = [
         meta={mechanicMeta}
         imageUrl={mechanic.image ?? undefined}
       />
-      <div class="mechanic-page__grid">
-        <aside class="mechanic-page__sidebar">
-          <DataPanel title={t('ui.data_title')} items={dataItems} />
-        </aside>
+      <div class:list={['mechanic-page__grid', { '!grid-cols-1': dataItems.length === 0 }]}>
+        {dataItems.length > 0 && (
+          <aside class="mechanic-page__sidebar">
+            <DataPanel title={t('ui.data_title')} items={dataItems} />
+          </aside>
+        )}
         <div class="mechanic-page__content">
           <Tabs items={tabItems} defaultTab="info">
             <div data-tab-panel="info" class="animate-fadeIn">

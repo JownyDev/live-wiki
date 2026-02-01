@@ -158,10 +158,12 @@ const tabItems: TabItem[] = [
         meta={cardMeta}
         imageUrl={card.image ?? undefined}
       />
-      <div class="card-page__grid">
-        <aside class="card-page__sidebar">
-          <DataPanel title={t('ui.data_title')} items={dataItems} />
-        </aside>
+      <div class:list={['card-page__grid', { '!grid-cols-1': dataItems.length === 0 }]}>
+        {dataItems.length > 0 && (
+          <aside class="card-page__sidebar">
+            <DataPanel title={t('ui.data_title')} items={dataItems} />
+          </aside>
+        )}
         <div class="card-page__content">
           <Tabs items={tabItems} defaultTab="info">
             <div data-tab-panel="info" class="animate-fadeIn">
