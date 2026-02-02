@@ -76,16 +76,18 @@ const resolveLocationView = async (locRef: string) => {
   return { text: formatEntityId(parsed.id), icon: 'location-on' };
 };
 
-const locationView = event?.location ? await resolveLocationView(event.location) : null;
+const locationViews = event?.locations
+  ? await Promise.all(event.locations.map(resolveLocationView))
+  : [];
 
 const dataItems: DataPanelItem[] = [];
 if (event) {
-  if (locationView) {
+  for (const view of locationViews) {
     dataItems.push({
-      label: t('ui.location') || 'Ubicación',
-      value: locationView.text,
-      href: locationView.href,
-      icon: locationView.icon as any || 'location-on'
+      label: t('ui.location'),
+      value: view.text,
+      href: view.href,
+      icon: (view.icon as any) || 'location-on',
     });
   }
 }
@@ -120,8 +122,8 @@ const buildParticipants = async (participants: any[]) => {
 const participantItems = event ? await buildParticipants(event.who) : [];
 
 const tabItems: TabItem[] = [
-  { id: 'details', label: t('ui.details') || 'Detalles', icon: 'description' },
-  { id: 'participants', label: t('ui.participants') || 'Participantes', icon: 'group' },
+  { id: 'details', label: t('ui.details'), icon: 'description' },
+  { id: 'participants', label: t('ui.participants'), icon: 'group' },
 ];
 ---
 
@@ -137,25 +139,25 @@ const tabItems: TabItem[] = [
       <div class:list={['event-page__grid', { '!grid-cols-1': dataItems.length === 0 }]}>
         {dataItems.length > 0 && (
           <aside class="event-page__sidebar">
-            <DataPanel title={t('ui.data_title')} items={dataItems} />
+            <DataPanel title={t('ui.event_data')} items={dataItems} />
           </aside>
         )}
         <div class="event-page__content">
           <Tabs items={tabItems} defaultTab="details">
             <div data-tab-panel="details" class="animate-fadeIn">
               <Section>
-                <SectionHeader title={t('ui.details') || 'Detalles'} showDivider />
+                <SectionHeader title={t('ui.details')} showDivider />
                 <MarkdownDescription content={event.body} />
               </Section>
             </div>
 
             <div data-tab-panel="participants" class="animate-fadeIn" hidden>
               <Section>
-                <SectionHeader title={t('ui.participants') || 'Participantes'} showDivider />
+                <SectionHeader title={t('ui.participants')} showDivider />
                 {participantItems.length > 0 ? (
                   <CharacterList characters={participantItems} />
                 ) : (
-                  <p>{t('ui.no_participants') || 'No hay participantes registrados.'}</p>
+                  <p>{t('ui.no_participants')}</p>
                 )}
               </Section>
             </div>

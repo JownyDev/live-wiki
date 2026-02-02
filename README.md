@@ -13,7 +13,7 @@
 ## 🔗 Demo y Recursos (Requisitos TFM)
 
 - 🌐 **Despliegue Real:** [ **VER PROYECTO ONLINE** ](https://live-wiki.pages.dev/es/)
-- 📄 **Slides de Presentación:** [ **VER PRESENTACIÓN (PDF)** ](./PRESENTACION.pdf)
+- 📄 **Slides de Presentación:** [ **VER PRESENTACIÓN (PDF)** ](https://github.com/JownyDev/live-wiki/blob/main/docs/tfm/TFM%20Presentation%20-%20Live-Wiki.pdf)
 - 🐙 **Repositorio:** [GitHub Público](https://github.com/JownyDev/live-wiki)
 
 ---
