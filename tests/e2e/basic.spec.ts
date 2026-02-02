@@ -33,7 +33,7 @@ test.describe('Basic App Functionality', () => {
     await expect(status).toContainText('resultado');
     
     // Look for specific result
-    const resultLink = resultsContainer.locator('.search__result-link', { hasText: 'John Doe' });
+    const resultLink = resultsContainer.locator('.search__result-link', { hasText: /^John Doe$/ });
     await expect(resultLink).toBeVisible();
     
     // Click and verify navigation
