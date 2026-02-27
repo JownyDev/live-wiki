@@ -17,6 +17,9 @@ const isString = (value: unknown): value is string => typeof value === "string";
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
 
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
+  isRecord(value) && !Array.isArray(value);
+
 const isStringArray = (value: unknown): value is string[] =>
   Array.isArray(value) && value.every(isString);
 
@@ -221,7 +224,7 @@ const validateOptionalNumberFields = (
   return true;
 };
 
-const addRequiredStringFields = (
+const validateRequiredStrings = (
   context: SchemaContext,
   fields: string[],
 ): void => {
@@ -230,6 +233,71 @@ const addRequiredStringFields = (
       addSchemaError(context, field, "required");
     }
   }
+};
+
+type TypedRefArrayIssue = "required" | "invalid-shape" | "invalid-reference";
+
+const getTypedRefArrayIssue = (
+  value: unknown,
+  required: boolean,
+): TypedRefArrayIssue | null => {
+  if (typeof value === "undefined") {
+    return required ? "required" : null;
+  }
+  if (!Array.isArray(value)) {
+    return "invalid-shape";
+  }
+  for (const item of value) {
+    if (!isString(item)) {
+      return "invalid-shape";
+    }
+    if (!isTypedRef(item)) {
+      return "invalid-reference";
+    }
+  }
+  return null;
+};
+
+const validateTypedRefArray = (
+  context: SchemaContext,
+  field: string,
+  value: unknown,
+  options: { required: boolean },
+): void => {
+  const issue = getTypedRefArrayIssue(value, options.required);
+  if (issue) {
+    addSchemaError(context, field, issue);
+  }
+};
+
+type MinMaxIssue = "invalid-shape" | "invalid-value";
+
+const getMinMaxPairIssue = (value: unknown): MinMaxIssue | null => {
+  if (!isPlainObject(value)) {
+    return "invalid-shape";
+  }
+  const min = value.min;
+  const max = value.max;
+  if (!isNumber(min) || !isNumber(max)) {
+    return "invalid-shape";
+  }
+  if (min > max) {
+    return "invalid-value";
+  }
+  return null;
+};
+
+const validateMinMaxPair = (
+  context: SchemaContext,
+  field: string,
+  value: unknown,
+): boolean => {
+  const issue = getMinMaxPairIssue(value);
+  if (issue) {
+    addSchemaError(context, field, issue);
+    return false;
+  }
+  return true;
 };
 
 type DateFieldOptions = {
@@ -273,7 +341,7 @@ const validateRequiredFields = (context: SchemaContext): void => {
   if (!requiredFields) {
     return;
   }
-  addRequiredStringFields(context, requiredFields);
+  validateRequiredStrings(context, requiredFields);
 };
 
 const validateEventDate = (context: SchemaContext): void => {
@@ -804,31 +872,6 @@ const objectSlots = new Set([
 ]);
 const objectStats = ["attack", "defense", "cdr", "max_hp"] as const;
 
-const validateObjectRefArrayField = (
-  context: SchemaContext,
-  field: "shares_effect_with" | "boosts",
-): void => {
-  const value = context.data[field];
-  if (typeof value === "undefined") {
-    addSchemaError(context, field, "required");
-    return;
-  }
-  if (!Array.isArray(value)) {
-    addSchemaError(context, field, "invalid-shape");
-    return;
-  }
-  for (const item of value) {
-    if (!isString(item)) {
-      addSchemaError(context, field, "invalid-shape");
-      return;
-    }
-    if (!isTypedRef(item)) {
-      addSchemaError(context, field, "invalid-reference");
-      return;
-    }
-  }
-};
-
 const validateObjectStats = (context: SchemaContext): void => {
   const stats = context.data.stats;
   if (typeof stats === "undefined") {
@@ -847,18 +890,7 @@ const validateObjectStats = (context: SchemaContext): void => {
     if (typeof statValue === "undefined") {
       continue;
     }
-    if (!isRecord(statValue)) {
-      addSchemaError(context, "stats", "invalid-shape");
-      return;
-    }
-    const min = statValue.min;
-    const max = statValue.max;
-    if (!isNumber(min) || !isNumber(max)) {
-      addSchemaError(context, "stats", "invalid-shape");
-      return;
-    }
-    if (min > max) {
-      addSchemaError(context, "stats", "invalid-value");
+    if (!validateMinMaxPair(context, "stats", statValue)) {
       return;
     }
   }
@@ -869,8 +901,15 @@ const validateObjectFields = (context: SchemaContext): void => {
   if (isString(slot) && !objectSlots.has(slot)) {
     addSchemaError(context, "slot", "invalid-value");
   }
-  validateObjectRefArrayField(context, "shares_effect_with");
-  validateObjectRefArrayField(context, "boosts");
+  validateTypedRefArray(
+    context,
+    "shares_effect_with",
+    context.data.shares_effect_with,
+    { required: true },
+  );
+  validateTypedRefArray(context, "boosts", context.data.boosts, {
+    required: true,
+  });
   validateObjectStats(context);
 };
 
