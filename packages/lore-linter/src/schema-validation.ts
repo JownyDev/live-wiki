@@ -1,4 +1,4 @@
-import { parseLocationRef } from './location-refs';
+import { parseLocationRef } from "./location-refs";
 
 export type SchemaError = {
   type: string;
@@ -12,23 +12,23 @@ export type RawDoc = {
   raw: string | null;
 };
 
-const isString = (value: unknown): value is string => typeof value === 'string';
+const isString = (value: unknown): value is string => typeof value === "string";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null;
+  typeof value === "object" && value !== null;
 
 const isStringArray = (value: unknown): value is string[] =>
   Array.isArray(value) && value.every(isString);
 
 const isNumber = (value: unknown): value is number =>
-  typeof value === 'number' && Number.isFinite(value);
+  typeof value === "number" && Number.isFinite(value);
 
 const hasInvalidOptionalStringFields = (
   record: Record<string, unknown>,
   fields: string[],
 ): boolean =>
   fields.some(
-    (field) => typeof record[field] !== 'undefined' && !isString(record[field]),
+    (field) => typeof record[field] !== "undefined" && !isString(record[field]),
   );
 
 const hasInvalidOptionalStringArrayFields = (
@@ -37,7 +37,7 @@ const hasInvalidOptionalStringArrayFields = (
 ): boolean =>
   fields.some(
     (field) =>
-      typeof record[field] !== 'undefined' && !isStringArray(record[field]),
+      typeof record[field] !== "undefined" && !isStringArray(record[field]),
   );
 
 const hasInvalidOptionalNumberFields = (
@@ -45,7 +45,7 @@ const hasInvalidOptionalNumberFields = (
   fields: string[],
 ): boolean =>
   fields.some(
-    (field) => typeof record[field] !== 'undefined' && !isNumber(record[field]),
+    (field) => typeof record[field] !== "undefined" && !isNumber(record[field]),
   );
 
 const hasInvalidRecordValues = (
@@ -59,8 +59,12 @@ const isValidIsoDate = (value: string): boolean => {
   if (!isIsoDate(value)) {
     return false;
   }
-  const [year, month, day] = value.split('-').map((part) => Number(part));
-  if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day)) {
+  const [year, month, day] = value.split("-").map((part) => Number(part));
+  if (
+    !Number.isInteger(year) ||
+    !Number.isInteger(month) ||
+    !Number.isInteger(day)
+  ) {
     return false;
   }
   if (month < 1 || month > 12) {
@@ -77,11 +81,11 @@ const getRawField = (raw: string | null, field: string): string | null => {
   if (!raw) {
     return null;
   }
-  const match = raw.match(new RegExp(`^${field}:\\s*(.+)\\s*$`, 'm'));
+  const match = raw.match(new RegExp(`^${field}:\\s*(.+)\\s*$`, "m"));
   if (!match) {
     return null;
   }
-  return match[1].trim().replace(/^['"]|['"]$/g, '');
+  return match[1].trim().replace(/^['"]|['"]$/g, "");
 };
 
 const isValidWho = (value: unknown): boolean => {
@@ -92,21 +96,22 @@ const isValidWho = (value: unknown): boolean => {
 };
 
 const requiredStringFieldsByType: Partial<Record<string, string[]>> = {
-  character: ['id', 'name'],
-  element: ['id', 'name'],
-  place: ['id', 'name'],
-  planet: ['id', 'name'],
-  event: ['id', 'title'],
-  mechanic: ['id', 'name', 'difficulty'],
-  card: ['id', 'name'],
+  character: ["id", "name"],
+  element: ["id", "name"],
+  place: ["id", "name"],
+  planet: ["id", "name"],
+  event: ["id", "title"],
+  mechanic: ["id", "name", "difficulty"],
+  card: ["id", "name"],
+  object: ["id", "name", "rarity", "slot", "effect_description"],
 };
 
 const optionalNonEmptyStringFieldsByType: Partial<Record<string, string[]>> = {
-  character: ['image'],
-  element: ['image'],
-  event: ['image'],
-  place: ['image'],
-  planet: ['image'],
+  character: ["image"],
+  element: ["image"],
+  event: ["image"],
+  place: ["image"],
+  planet: ["image"],
 };
 
 type SchemaContext = {
@@ -137,11 +142,11 @@ const getOptionalRecordField = (
   errorField: string,
 ): Record<string, unknown> | null | undefined => {
   const value = parent[field];
-  if (typeof value === 'undefined') {
+  if (typeof value === "undefined") {
     return undefined;
   }
   if (!isRecord(value)) {
-    addSchemaError(context, errorField, 'invalid-shape');
+    addSchemaError(context, errorField, "invalid-shape");
     return null;
   }
   return value;
@@ -152,11 +157,11 @@ const getOptionalRecord = (
   field: string,
 ): Record<string, unknown> | null => {
   const value = context.data[field];
-  if (typeof value === 'undefined') {
+  if (typeof value === "undefined") {
     return null;
   }
   if (!isRecord(value)) {
-    addSchemaError(context, field, 'invalid-shape');
+    addSchemaError(context, field, "invalid-shape");
     return null;
   }
   return value;
@@ -167,11 +172,11 @@ const getOptionalStringValue = (
   field: string,
   value: unknown,
 ): string | null => {
-  if (typeof value === 'undefined') {
+  if (typeof value === "undefined") {
     return null;
   }
   if (!isString(value)) {
-    addSchemaError(context, field, 'invalid-shape');
+    addSchemaError(context, field, "invalid-shape");
     return null;
   }
   return value;
@@ -184,7 +189,7 @@ const validateOptionalStringFields = (
   errorField: string,
 ): boolean => {
   if (hasInvalidOptionalStringFields(record, fields)) {
-    addSchemaError(context, errorField, 'invalid-shape');
+    addSchemaError(context, errorField, "invalid-shape");
     return false;
   }
   return true;
@@ -197,7 +202,7 @@ const validateOptionalStringArrayFields = (
   errorField: string,
 ): boolean => {
   if (hasInvalidOptionalStringArrayFields(record, fields)) {
-    addSchemaError(context, errorField, 'invalid-shape');
+    addSchemaError(context, errorField, "invalid-shape");
     return false;
   }
   return true;
@@ -210,16 +215,19 @@ const validateOptionalNumberFields = (
   errorField: string,
 ): boolean => {
   if (hasInvalidOptionalNumberFields(record, fields)) {
-    addSchemaError(context, errorField, 'invalid-shape');
+    addSchemaError(context, errorField, "invalid-shape");
     return false;
   }
   return true;
 };
 
-const addRequiredStringFields = (context: SchemaContext, fields: string[]): void => {
+const addRequiredStringFields = (
+  context: SchemaContext,
+  fields: string[],
+): void => {
   for (const field of fields) {
     if (!isString(context.data[field])) {
-      addSchemaError(context, field, 'required');
+      addSchemaError(context, field, "required");
     }
   }
 };
@@ -236,9 +244,9 @@ const validateDateField = (
   const rawValue = getRawField(context.raw, field);
   const parsedValue = context.data[field];
 
-  if (rawValue === null && typeof parsedValue === 'undefined') {
+  if (rawValue === null && typeof parsedValue === "undefined") {
     if (options.required) {
-      addSchemaError(context, field, 'required');
+      addSchemaError(context, field, "required");
     }
     return null;
   }
@@ -246,14 +254,14 @@ const validateDateField = (
   // Usa el raw para evitar que YAML normalice fechas invalidas.
   if (rawValue !== null) {
     if (!isValidIsoDate(rawValue)) {
-      addSchemaError(context, field, 'invalid-date');
+      addSchemaError(context, field, "invalid-date");
       return null;
     }
     return rawValue;
   }
 
   if (!isString(parsedValue) || !isValidIsoDate(parsedValue)) {
-    addSchemaError(context, field, 'invalid-date');
+    addSchemaError(context, field, "invalid-date");
     return null;
   }
 
@@ -269,15 +277,15 @@ const validateRequiredFields = (context: SchemaContext): void => {
 };
 
 const validateEventDate = (context: SchemaContext): void => {
-  validateDateField(context, 'date', { required: true });
+  validateDateField(context, "date", { required: true });
 };
 
 const validateEventWho = (context: SchemaContext): void => {
   const who = context.data.who;
-  if (typeof who === 'undefined') {
-    addSchemaError(context, 'who', 'required');
+  if (typeof who === "undefined") {
+    addSchemaError(context, "who", "required");
   } else if (!isValidWho(who)) {
-    addSchemaError(context, 'who', 'invalid-shape');
+    addSchemaError(context, "who", "invalid-shape");
   }
 };
 
@@ -290,25 +298,35 @@ const parseWithPrefix = (value: string, prefix: string): string | null => {
 };
 
 const getCharacterRefId = (value: string): string | null => {
-  return parseWithPrefix(value, 'character:');
+  return parseWithPrefix(value, "character:");
 };
 
 const hasPrefix = (value: string, prefix: string): boolean =>
   parseWithPrefix(value, prefix) !== null;
 
+const isTypedRef = (value: string): boolean => {
+  const firstSeparator = value.indexOf(":");
+  if (firstSeparator <= 0 || firstSeparator >= value.length - 1) {
+    return false;
+  }
+  return value.lastIndexOf(":") === firstSeparator;
+};
+
 const isAllowedRepresentsRef = (value: string): boolean => {
-  if (hasPrefix(value, 'character:')) {
+  if (hasPrefix(value, "character:")) {
     return true;
   }
-  if (hasPrefix(value, 'event:')) {
+  if (hasPrefix(value, "event:")) {
     return true;
   }
   const location = parseLocationRef(value);
-  return location ? location.kind === 'place' || location.kind === 'planet' : false;
+  return location
+    ? location.kind === "place" || location.kind === "planet"
+    : false;
 };
 
 const isElementRef = (value: string): boolean => {
-  return hasPrefix(value, 'element:');
+  return hasPrefix(value, "element:");
 };
 
 const validateOptionalElementRefField = (
@@ -321,7 +339,7 @@ const validateOptionalElementRefField = (
     return;
   }
   if (!isElementRef(stringValue)) {
-    addSchemaError(context, field, 'invalid-reference');
+    addSchemaError(context, field, "invalid-reference");
   }
 };
 
@@ -335,20 +353,20 @@ const validateOptionalOriginField = (
     return;
   }
   if (!parseLocationRef(stringValue)) {
-    addSchemaError(context, field, 'invalid-reference');
+    addSchemaError(context, field, "invalid-reference");
   }
 };
 
-type NonEmptyStringIssue = 'invalid-shape' | 'invalid-value';
+type NonEmptyStringIssue = "invalid-shape" | "invalid-value";
 
 const getRequiredNonEmptyStringIssue = (
   value: unknown,
 ): NonEmptyStringIssue | null => {
   if (!isString(value)) {
-    return 'invalid-shape';
+    return "invalid-shape";
   }
   if (value.trim().length === 0) {
-    return 'invalid-value';
+    return "invalid-value";
   }
   return null;
 };
@@ -357,49 +375,54 @@ const getNonEmptyStringArrayIssue = (
   value: unknown,
 ): NonEmptyStringIssue | null => {
   if (!Array.isArray(value)) {
-    return 'invalid-shape';
+    return "invalid-shape";
   }
   if (value.length === 0) {
-    return 'invalid-value';
+    return "invalid-value";
   }
   for (const entry of value) {
     if (!isString(entry)) {
-      return 'invalid-shape';
+      return "invalid-shape";
     }
     if (entry.trim().length === 0) {
-      return 'invalid-value';
+      return "invalid-value";
     }
   }
   return null;
 };
 
 const isOptionalStringArrayInvalid = (value: unknown): boolean =>
-  typeof value !== 'undefined' && !isStringArray(value);
+  typeof value !== "undefined" && !isStringArray(value);
 
 const validateCharacterPersona = (context: SchemaContext): void => {
-  const persona = getOptionalRecord(context, 'persona');
+  const persona = getOptionalRecord(context, "persona");
   if (!persona) {
     return;
   }
   if (
-    !validateOptionalStringFields(context, persona, ['archetype'], 'persona') ||
+    !validateOptionalStringFields(context, persona, ["archetype"], "persona") ||
     !validateOptionalStringArrayFields(
       context,
       persona,
-      ['traits', 'values', 'taboos', 'biography_bullets'],
-      'persona',
+      ["traits", "values", "taboos", "biography_bullets"],
+      "persona",
     )
   ) {
     return;
   }
-  const voice = getOptionalRecordField(context, persona, 'voice', 'persona');
+  const voice = getOptionalRecordField(context, persona, "voice", "persona");
   if (voice === null) {
     return;
   }
   if (voice) {
     if (
-      !validateOptionalStringFields(context, voice, ['tone'], 'persona') ||
-      !validateOptionalStringArrayFields(context, voice, ['style_notes'], 'persona')
+      !validateOptionalStringFields(context, voice, ["tone"], "persona") ||
+      !validateOptionalStringArrayFields(
+        context,
+        voice,
+        ["style_notes"],
+        "persona",
+      )
     ) {
       return;
     }
@@ -407,17 +430,22 @@ const validateCharacterPersona = (context: SchemaContext): void => {
 };
 
 const validateCharacterKnowledge = (context: SchemaContext): void => {
-  const knowledge = getOptionalRecord(context, 'knowledge');
+  const knowledge = getOptionalRecord(context, "knowledge");
   if (!knowledge) {
     return;
   }
   if (
-    !validateOptionalStringFields(context, knowledge, ['summary'], 'knowledge') ||
+    !validateOptionalStringFields(
+      context,
+      knowledge,
+      ["summary"],
+      "knowledge",
+    ) ||
     !validateOptionalStringArrayFields(
       context,
       knowledge,
-      ['knows_about', 'blindspots', 'can_reveal'],
-      'knowledge',
+      ["knows_about", "blindspots", "can_reveal"],
+      "knowledge",
     )
   ) {
     return;
@@ -425,7 +453,7 @@ const validateCharacterKnowledge = (context: SchemaContext): void => {
 };
 
 const validateCharacterMemoryProfile = (context: SchemaContext): void => {
-  const memoryProfile = getOptionalRecord(context, 'memory_profile');
+  const memoryProfile = getOptionalRecord(context, "memory_profile");
   if (!memoryProfile) {
     return;
   }
@@ -433,8 +461,8 @@ const validateCharacterMemoryProfile = (context: SchemaContext): void => {
     !validateOptionalStringArrayFields(
       context,
       memoryProfile,
-      ['interest_tags', 'relationship_tags', 'allowed_tags', 'blocked_tags'],
-      'memory_profile',
+      ["interest_tags", "relationship_tags", "allowed_tags", "blocked_tags"],
+      "memory_profile",
     )
   ) {
     return;
@@ -442,8 +470,8 @@ const validateCharacterMemoryProfile = (context: SchemaContext): void => {
   const provenancePolicy = getOptionalRecordField(
     context,
     memoryProfile,
-    'provenance_policy',
-    'memory_profile',
+    "provenance_policy",
+    "memory_profile",
   );
   if (provenancePolicy === null) {
     return;
@@ -453,10 +481,15 @@ const validateCharacterMemoryProfile = (context: SchemaContext): void => {
       !validateOptionalStringArrayFields(
         context,
         provenancePolicy,
-        ['allowed'],
-        'memory_profile',
+        ["allowed"],
+        "memory_profile",
       ) ||
-      !validateOptionalStringFields(context, provenancePolicy, ['default'], 'memory_profile')
+      !validateOptionalStringFields(
+        context,
+        provenancePolicy,
+        ["default"],
+        "memory_profile",
+      )
     ) {
       return;
     }
@@ -464,8 +497,8 @@ const validateCharacterMemoryProfile = (context: SchemaContext): void => {
   const retrievalLimits = getOptionalRecordField(
     context,
     memoryProfile,
-    'retrieval_limits',
-    'memory_profile',
+    "retrieval_limits",
+    "memory_profile",
   );
   if (retrievalLimits === null) {
     return;
@@ -474,50 +507,55 @@ const validateCharacterMemoryProfile = (context: SchemaContext): void => {
     validateOptionalNumberFields(
       context,
       retrievalLimits,
-      ['max_items', 'max_tokens_summary'],
-      'memory_profile',
+      ["max_items", "max_tokens_summary"],
+      "memory_profile",
     );
   }
 };
 
 const validateCharacterEmotionsProfile = (context: SchemaContext): void => {
-  const emotionsProfile = getOptionalRecord(context, 'emotions_profile');
+  const emotionsProfile = getOptionalRecord(context, "emotions_profile");
   if (!emotionsProfile) {
     return;
   }
   const baselineMood = getOptionalRecordField(
     context,
     emotionsProfile,
-    'baseline_mood',
-    'emotions_profile',
+    "baseline_mood",
+    "emotions_profile",
   );
   if (baselineMood === null) {
     return;
   }
   if (baselineMood && hasInvalidRecordValues(baselineMood, isNumber)) {
-    addSchemaError(context, 'emotions_profile', 'invalid-shape');
+    addSchemaError(context, "emotions_profile", "invalid-shape");
     return;
   }
   const towardPlayer = getOptionalRecordField(
     context,
     emotionsProfile,
-    'toward_player_default',
-    'emotions_profile',
+    "toward_player_default",
+    "emotions_profile",
   );
   if (towardPlayer === null) {
     return;
   }
   if (
     towardPlayer &&
-    !validateOptionalStringFields(context, towardPlayer, ['stance', 'note'], 'emotions_profile')
+    !validateOptionalStringFields(
+      context,
+      towardPlayer,
+      ["stance", "note"],
+      "emotions_profile",
+    )
   ) {
     return;
   }
   const sensitivities = getOptionalRecordField(
     context,
     emotionsProfile,
-    'sensitivities',
-    'emotions_profile',
+    "sensitivities",
+    "emotions_profile",
   );
   if (sensitivities === null) {
     return;
@@ -527,8 +565,8 @@ const validateCharacterEmotionsProfile = (context: SchemaContext): void => {
     !validateOptionalStringArrayFields(
       context,
       sensitivities,
-      ['angers_if', 'calms_if'],
-      'emotions_profile',
+      ["angers_if", "calms_if"],
+      "emotions_profile",
     )
   ) {
     return;
@@ -536,8 +574,8 @@ const validateCharacterEmotionsProfile = (context: SchemaContext): void => {
   const manipulability = getOptionalRecordField(
     context,
     emotionsProfile,
-    'manipulability',
-    'emotions_profile',
+    "manipulability",
+    "emotions_profile",
   );
   if (manipulability === null) {
     return;
@@ -547,14 +585,14 @@ const validateCharacterEmotionsProfile = (context: SchemaContext): void => {
     (!validateOptionalStringFields(
       context,
       manipulability,
-      ['by_empathy', 'by_bribe', 'by_intimidation', 'by_authority'],
-      'emotions_profile',
+      ["by_empathy", "by_bribe", "by_intimidation", "by_authority"],
+      "emotions_profile",
     ) ||
       !validateOptionalStringArrayFields(
         context,
         manipulability,
-        ['notes'],
-        'emotions_profile',
+        ["notes"],
+        "emotions_profile",
       ))
   ) {
     return;
@@ -562,15 +600,15 @@ const validateCharacterEmotionsProfile = (context: SchemaContext): void => {
 };
 
 const validateCharacterGoals = (context: SchemaContext): void => {
-  const goals = getOptionalRecord(context, 'goals');
+  const goals = getOptionalRecord(context, "goals");
   if (!goals) {
     return;
   }
   validateOptionalStringArrayFields(
     context,
     goals,
-    ['long_term', 'typical_priorities'],
-    'goals',
+    ["long_term", "typical_priorities"],
+    "goals",
   );
 };
 
@@ -580,20 +618,20 @@ const validateCapabilityActionEntry = (
 ): boolean => {
   const actionIssue = getRequiredNonEmptyStringIssue(entry.action);
   if (actionIssue) {
-    addSchemaError(context, 'capabilities', actionIssue);
+    addSchemaError(context, "capabilities", actionIssue);
     return false;
   }
   const triggerIssue = getNonEmptyStringArrayIssue(entry.triggers);
   if (triggerIssue) {
-    addSchemaError(context, 'capabilities', triggerIssue);
+    addSchemaError(context, "capabilities", triggerIssue);
     return false;
   }
   if (isOptionalStringArrayInvalid(entry.notes)) {
-    addSchemaError(context, 'capabilities', 'invalid-shape');
+    addSchemaError(context, "capabilities", "invalid-shape");
     return false;
   }
   if (isOptionalStringArrayInvalid(entry.filters)) {
-    addSchemaError(context, 'capabilities', 'invalid-shape');
+    addSchemaError(context, "capabilities", "invalid-shape");
   }
   return true;
 };
@@ -603,12 +641,12 @@ const validateCapabilityActions = (
   actions: unknown,
 ): void => {
   if (!Array.isArray(actions)) {
-    addSchemaError(context, 'capabilities', 'invalid-shape');
+    addSchemaError(context, "capabilities", "invalid-shape");
     return;
   }
   for (const entry of actions) {
     if (!isRecord(entry)) {
-      addSchemaError(context, 'capabilities', 'invalid-shape');
+      addSchemaError(context, "capabilities", "invalid-shape");
       return;
     }
     if (!validateCapabilityActionEntry(context, entry)) {
@@ -618,7 +656,7 @@ const validateCapabilityActions = (
 };
 
 const validateCharacterCapabilities = (context: SchemaContext): void => {
-  const capabilities = getOptionalRecord(context, 'capabilities');
+  const capabilities = getOptionalRecord(context, "capabilities");
   if (!capabilities) {
     return;
   }
@@ -634,23 +672,23 @@ const getRelatedCharacterEntries = (
   context: SchemaContext,
 ): RelatedCharacterEntry[] | null => {
   const related = context.data.related_characters;
-  if (typeof related === 'undefined') {
+  if (typeof related === "undefined") {
     return null;
   }
   if (!Array.isArray(related)) {
-    addSchemaError(context, 'related_characters', 'invalid-shape');
+    addSchemaError(context, "related_characters", "invalid-shape");
     return null;
   }
   const entries: RelatedCharacterEntry[] = [];
   for (const entry of related) {
     if (!isRecord(entry)) {
-      addSchemaError(context, 'related_characters', 'invalid-shape');
+      addSchemaError(context, "related_characters", "invalid-shape");
       return null;
     }
     const typeValue = entry.type;
     const characterValue = entry.character;
     if (!isString(typeValue) || !isString(characterValue)) {
-      addSchemaError(context, 'related_characters', 'invalid-shape');
+      addSchemaError(context, "related_characters", "invalid-shape");
       return null;
     }
     entries.push({ type: typeValue, character: characterValue });
@@ -666,16 +704,16 @@ const validateRelatedCharacters = (context: SchemaContext): void => {
   const seenCharacters = new Set<string>();
   for (const entry of entries) {
     if (entry.type.length === 0) {
-      addSchemaError(context, 'related_characters', 'invalid-value');
+      addSchemaError(context, "related_characters", "invalid-value");
       return;
     }
     const characterId = getCharacterRefId(entry.character);
     if (!characterId) {
-      addSchemaError(context, 'related_characters', 'invalid-reference');
+      addSchemaError(context, "related_characters", "invalid-reference");
       return;
     }
     if (seenCharacters.has(characterId)) {
-      addSchemaError(context, 'related_characters', 'invalid-value');
+      addSchemaError(context, "related_characters", "invalid-value");
       return;
     }
     seenCharacters.add(characterId);
@@ -691,29 +729,29 @@ const isValidCardRepresentsEntry = (value: unknown): boolean => {
 
 const validateCardElements = (context: SchemaContext): void => {
   const elements = context.data.elements;
-  if (typeof elements === 'undefined') {
-    addSchemaError(context, 'elements', 'required');
+  if (typeof elements === "undefined") {
+    addSchemaError(context, "elements", "required");
     return;
   }
   if (!Array.isArray(elements) || elements.length !== 2) {
-    addSchemaError(context, 'elements', 'invalid-length');
+    addSchemaError(context, "elements", "invalid-length");
   }
 };
 
 const validateCardRepresents = (context: SchemaContext): void => {
   const represents = context.data.represents;
-  if (typeof represents === 'undefined') {
+  if (typeof represents === "undefined") {
     return;
   }
   if (!Array.isArray(represents)) {
-    addSchemaError(context, 'represents', 'invalid-reference');
+    addSchemaError(context, "represents", "invalid-reference");
     return;
   }
   const hasInvalidEntry = represents.some(
     (entry) => !isValidCardRepresentsEntry(entry),
   );
   if (hasInvalidEntry) {
-    addSchemaError(context, 'represents', 'invalid-reference');
+    addSchemaError(context, "represents", "invalid-reference");
   }
 };
 
@@ -723,12 +761,12 @@ const validateEventFields = (context: SchemaContext): void => {
 };
 
 const validateCharacterFields = (context: SchemaContext): void => {
-  const born = validateDateField(context, 'born', { required: false });
-  const died = validateDateField(context, 'died', { required: false });
+  const born = validateDateField(context, "born", { required: false });
+  const died = validateDateField(context, "died", { required: false });
   if (born && died && died < born) {
-    addSchemaError(context, 'died', 'invalid-date');
+    addSchemaError(context, "died", "invalid-date");
   }
-  validateOptionalElementRefField(context, 'affinity', context.data.affinity);
+  validateOptionalElementRefField(context, "affinity", context.data.affinity);
   validateRelatedCharacters(context);
   validateCharacterPersona(context);
   validateCharacterKnowledge(context);
@@ -744,28 +782,110 @@ const validateCardFields = (context: SchemaContext): void => {
 };
 
 const validateElementFields = (context: SchemaContext): void => {
-  validateOptionalOriginField(context, 'origin', context.data.origin);
+  validateOptionalOriginField(context, "origin", context.data.origin);
 };
 
 const validateMechanicFields = (context: SchemaContext): void => {
   const relatedElements = context.data.related_elements;
-  if (typeof relatedElements !== 'undefined' && !isStringArray(relatedElements)) {
-    addSchemaError(context, 'related_elements', 'invalid-shape');
+  if (
+    typeof relatedElements !== "undefined" &&
+    !isStringArray(relatedElements)
+  ) {
+    addSchemaError(context, "related_elements", "invalid-shape");
   }
+};
+
+const objectSlots = new Set([
+  "helmet",
+  "shoulders",
+  "gloves",
+  "pants",
+  "boots",
+]);
+const objectStats = ["attack", "defense", "cdr", "max_hp"] as const;
+
+const validateObjectRefArrayField = (
+  context: SchemaContext,
+  field: "shares_effect_with" | "boosts",
+): void => {
+  const value = context.data[field];
+  if (typeof value === "undefined") {
+    addSchemaError(context, field, "required");
+    return;
+  }
+  if (!Array.isArray(value)) {
+    addSchemaError(context, field, "invalid-shape");
+    return;
+  }
+  for (const item of value) {
+    if (!isString(item)) {
+      addSchemaError(context, field, "invalid-shape");
+      return;
+    }
+    if (!isTypedRef(item)) {
+      addSchemaError(context, field, "invalid-reference");
+      return;
+    }
+  }
+};
+
+const validateObjectStats = (context: SchemaContext): void => {
+  const stats = context.data.stats;
+  if (typeof stats === "undefined") {
+    return;
+  }
+  if (!isRecord(stats)) {
+    addSchemaError(context, "stats", "invalid-shape");
+    return;
+  }
+  if (Object.keys(stats).length === 0) {
+    addSchemaError(context, "stats", "invalid-value");
+    return;
+  }
+  for (const statName of objectStats) {
+    const statValue = stats[statName];
+    if (typeof statValue === "undefined") {
+      continue;
+    }
+    if (!isRecord(statValue)) {
+      addSchemaError(context, "stats", "invalid-shape");
+      return;
+    }
+    const min = statValue.min;
+    const max = statValue.max;
+    if (!isNumber(min) || !isNumber(max)) {
+      addSchemaError(context, "stats", "invalid-shape");
+      return;
+    }
+    if (min > max) {
+      addSchemaError(context, "stats", "invalid-value");
+      return;
+    }
+  }
+};
+
+const validateObjectFields = (context: SchemaContext): void => {
+  const slot = context.data.slot;
+  if (isString(slot) && !objectSlots.has(slot)) {
+    addSchemaError(context, "slot", "invalid-value");
+  }
+  validateObjectRefArrayField(context, "shares_effect_with");
+  validateObjectRefArrayField(context, "boosts");
+  validateObjectStats(context);
 };
 
 const validateRelatedFields = (context: SchemaContext): void => {
   for (const [field, value] of Object.entries(context.data)) {
-    if (!field.startsWith('related_')) {
+    if (!field.startsWith("related_")) {
       continue;
     }
-    if (field === 'related_characters' && context.type === 'character') {
+    if (field === "related_characters" && context.type === "character") {
       continue;
     }
     if (isString(value) || isStringArray(value)) {
       continue;
     }
-    addSchemaError(context, field, 'invalid-shape');
+    addSchemaError(context, field, "invalid-shape");
   }
 };
 
@@ -776,25 +896,28 @@ const validateOptionalNonEmptyStringFields = (context: SchemaContext): void => {
   }
   for (const field of fields) {
     const value = context.data[field];
-    if (typeof value === 'undefined') {
+    if (typeof value === "undefined") {
       continue;
     }
     if (!isString(value)) {
-      addSchemaError(context, field, 'invalid-shape');
+      addSchemaError(context, field, "invalid-shape");
       continue;
     }
     if (value.length === 0) {
-      addSchemaError(context, field, 'invalid-value');
+      addSchemaError(context, field, "invalid-value");
     }
   }
 };
 
-const typeValidators: Partial<Record<string, (context: SchemaContext) => void>> = {
+const typeValidators: Partial<
+  Record<string, (context: SchemaContext) => void>
+> = {
   character: validateCharacterFields,
   element: validateElementFields,
   event: validateEventFields,
   card: validateCardFields,
   mechanic: validateMechanicFields,
+  object: validateObjectFields,
 };
 
 /**
