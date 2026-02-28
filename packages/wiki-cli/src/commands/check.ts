@@ -1,5 +1,10 @@
-import path from 'node:path';
-import { errorResult, failResult, okResult, type CommandResult } from './result';
+import { resolveDefaultContentDir } from "../content-dir";
+import {
+  errorResult,
+  failResult,
+  okResult,
+  type CommandResult,
+} from "./result";
 
 type LintReport = {
   duplicateIds: unknown[];
@@ -15,9 +20,6 @@ type CheckOptions = {
   contentDir?: string;
 };
 
-const getDefaultContentDir = (): string =>
-  path.resolve(process.cwd(), 'content');
-
 const countLintErrors = (report: LintReport): number => {
   return (
     report.duplicateIds.length +
@@ -27,7 +29,7 @@ const countLintErrors = (report: LintReport): number => {
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null;
+  typeof value === "object" && value !== null;
 
 type SchemaError = {
   type: string;
@@ -42,15 +44,15 @@ const isSchemaError = (value: unknown): value is SchemaError => {
   }
   const id = value.id;
   return (
-    typeof value.type === 'string' &&
-    (typeof id === 'string' || id === null) &&
-    typeof value.field === 'string' &&
-    typeof value.reason === 'string'
+    typeof value.type === "string" &&
+    (typeof id === "string" || id === null) &&
+    typeof value.field === "string" &&
+    typeof value.reason === "string"
   );
 };
 
 const formatSchemaError = (error: SchemaError): string => {
-  const id = error.id ?? 'none';
+  const id = error.id ?? "none";
   return `${error.type}:${id}:${error.field}:${error.reason}`;
 };
 
@@ -62,18 +64,16 @@ const formatCheckOutput = (report: LintReport): string => {
   if (schemaLines.length === 0) {
     return `Found ${String(errorCount)} errors.`;
   }
-  return `Found ${String(errorCount)} errors.\n${schemaLines.join('\n')}`;
+  return `Found ${String(errorCount)} errors.\n${schemaLines.join("\n")}`;
 };
 
-const getLoreLinterModule = (
-  value: unknown,
-): LoreLinterModule | null => {
-  if (isRecord(value) && typeof value.scanLoreDirectory === 'function') {
+const getLoreLinterModule = (value: unknown): LoreLinterModule | null => {
+  if (isRecord(value) && typeof value.scanLoreDirectory === "function") {
     return value as LoreLinterModule;
   }
   if (isRecord(value) && isRecord(value.default)) {
     const defaultExport = value.default;
-    if (typeof defaultExport.scanLoreDirectory === 'function') {
+    if (typeof defaultExport.scanLoreDirectory === "function") {
       return defaultExport as LoreLinterModule;
     }
   }
@@ -81,8 +81,8 @@ const getLoreLinterModule = (
 };
 
 const loadLoreLinter = async (): Promise<LoreLinterModule> => {
-  const distModulePath = '../../../lore-linter/dist/index.js';
-  const srcModulePath = '../../../lore-linter/src/index';
+  const distModulePath = "../../../lore-linter/dist/index.js";
+  const srcModulePath = "../../../lore-linter/src/index";
   const modulePaths = [distModulePath, srcModulePath];
 
   for (const modulePath of modulePaths) {
@@ -97,7 +97,7 @@ const loadLoreLinter = async (): Promise<LoreLinterModule> => {
     }
   }
 
-  throw new Error('Unable to load lore-linter module');
+  throw new Error("Unable to load lore-linter module");
 };
 
 /**
@@ -108,7 +108,7 @@ const loadLoreLinter = async (): Promise<LoreLinterModule> => {
 export const runCheckCommand = async (
   options: CheckOptions,
 ): Promise<CommandResult> => {
-  const contentDir = options.contentDir ?? getDefaultContentDir();
+  const contentDir = options.contentDir ?? resolveDefaultContentDir();
 
   try {
     const { scanLoreDirectory } = await loadLoreLinter();
@@ -119,7 +119,7 @@ export const runCheckCommand = async (
       return failResult(formatCheckOutput(report));
     }
 
-    return okResult('No errors.');
+    return okResult("No errors.");
   } catch (error: unknown) {
     return errorResult(error);
   }

@@ -1,12 +1,17 @@
-import { readFile } from 'node:fs/promises';
-import path from 'node:path';
-import { getStringArrayField, getStringField, parseFrontmatter } from './frontmatter';
-import { parseLocationRef } from './location-refs';
-import { listMarkdownFiles } from './markdown-files';
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { resolveContentRoot } from "./content-root";
+import {
+  getStringArrayField,
+  getStringField,
+  parseFrontmatter,
+} from "./frontmatter";
+import { parseLocationRef } from "./location-refs";
+import { listMarkdownFiles } from "./markdown-files";
 import {
   listSimpleEntities,
   type SimpleEntityListItem,
-} from './simple-entities';
+} from "./simple-entities";
 
 export type CardListItem = SimpleEntityListItem;
 export type Card = {
@@ -21,13 +26,13 @@ export type Card = {
 type NodeErrorWithCode = Error & { code?: string };
 
 const getCardsDir = (baseDir?: string): string => {
-  const resolvedBaseDir = baseDir ?? path.resolve(process.cwd(), 'content');
-  return path.join(resolvedBaseDir, 'cards');
+  const resolvedBaseDir = resolveContentRoot(baseDir);
+  return path.join(resolvedBaseDir, "cards");
 };
 
 const getElementsDir = (baseDir?: string): string => {
-  const resolvedBaseDir = baseDir ?? path.resolve(process.cwd(), 'content');
-  return path.join(resolvedBaseDir, 'elements');
+  const resolvedBaseDir = resolveContentRoot(baseDir);
+  return path.join(resolvedBaseDir, "elements");
 };
 
 const parseWithPrefix = (value: string, prefix: string): string | null => {
@@ -38,14 +43,17 @@ const parseWithPrefix = (value: string, prefix: string): string | null => {
   return id.length > 0 ? id : null;
 };
 
-const allowedRepresentsPrefixes = ['character:', 'event:'] as const;
-const allowedLocationKinds = new Set(['place', 'planet']);
+const allowedRepresentsPrefixes = ["character:", "event:"] as const;
+const allowedLocationKinds = new Set(["place", "planet"]);
 
-const hasAllowedPrefix = (value: string, prefixes: readonly string[]): boolean =>
+const hasAllowedPrefix = (
+  value: string,
+  prefixes: readonly string[],
+): boolean =>
   prefixes.some((prefix) => parseWithPrefix(value, prefix) !== null);
 
 const isValidElementRef = (value: string, elementIds: Set<string>): boolean => {
-  const elementId = parseWithPrefix(value, 'element:');
+  const elementId = parseWithPrefix(value, "element:");
   return elementId ? elementIds.has(elementId) : false;
 };
 
@@ -59,7 +67,7 @@ const isAllowedRepresentsRef = (value: string): boolean => {
 
 const listElementIds = async (baseDir?: string): Promise<Set<string>> => {
   const elementsDir = getElementsDir(baseDir);
-  const elements = await listSimpleEntities(elementsDir, 'element');
+  const elements = await listSimpleEntities(elementsDir, "element");
   return new Set(elements.map((element) => element.id));
 };
 
@@ -98,21 +106,21 @@ const parseAndValidateCardMarkdown = (
   elementIds: Set<string>,
 ): Card => {
   const { data, content } = parseFrontmatter(markdown);
-  if (data.type !== 'card') {
-    throw new Error('Invalid type');
+  if (data.type !== "card") {
+    throw new Error("Invalid type");
   }
 
-  const id = getStringField(data, 'id');
-  const name = getStringField(data, 'name');
-  const elements = parseElementsField(data, 'elements', elementIds);
-  const represents = parseRepresentsField(data, 'represents');
-  const image = typeof data.image === 'string' ? data.image : null;
+  const id = getStringField(data, "id");
+  const name = getStringField(data, "name");
+  const elements = parseElementsField(data, "elements", elementIds);
+  const represents = parseRepresentsField(data, "represents");
+  const image = typeof data.image === "string" ? data.image : null;
 
   return { id, name, elements, represents, image, body: content };
 };
 
 const isEnoentError = (error: unknown): error is NodeErrorWithCode =>
-  error instanceof Error && (error as NodeErrorWithCode).code === 'ENOENT';
+  error instanceof Error && (error as NodeErrorWithCode).code === "ENOENT";
 
 const readCardFromFile = async (
   cardsDir: string,
@@ -120,11 +128,13 @@ const readCardFromFile = async (
   elementIds: Set<string>,
 ): Promise<Card> => {
   const filePath = path.join(cardsDir, filename);
-  const markdown = await readFile(filePath, 'utf8');
+  const markdown = await readFile(filePath, "utf8");
   return parseAndValidateCardMarkdown(markdown, elementIds);
 };
 
-export async function listCards(baseDir?: string): Promise<Array<CardListItem>> {
+export async function listCards(
+  baseDir?: string,
+): Promise<Array<CardListItem>> {
   const cardsDir = getCardsDir(baseDir);
   const elementIds = await listElementIds(baseDir);
   const markdownFiles = await listMarkdownFiles(cardsDir);

@@ -11,6 +11,12 @@ node_modules/
 .astro/
 dist/
 coverage/
+.env
+.env.local
+.env.*.local
+
+# local temporary artifacts
+.temp/
 
 
 # astro / build

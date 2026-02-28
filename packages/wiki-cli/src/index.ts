@@ -1,27 +1,25 @@
 #!/usr/bin/env node
-import path from 'node:path';
-import { runBuildCommand } from './commands/build';
-import { runCheckCommand } from './commands/check';
-import { runNewCommand } from './commands/new';
+import path from "node:path";
+import { runBuildCommand } from "./commands/build";
+import { runCheckCommand } from "./commands/check";
+import { runNewCommand } from "./commands/new";
+import { resolveDefaultContentDir } from "./content-dir";
 import {
   errorResult,
   failResult,
   formatErrorOutput,
   type CommandResult,
-} from './commands/result';
-
-const getDefaultContentDir = (): string => {
-  return path.resolve(process.cwd(), 'content');
-};
+} from "./commands/result";
 
 const getDefaultTemplatesDir = (): string => {
-  return path.resolve(process.cwd(), 'templates');
+  return path.resolve(process.cwd(), "templates");
 };
 
 const printResult = (result: CommandResult): void => {
   if (result.output) {
-    const output =
-      result.output.endsWith('\n') ? result.output : `${result.output}\n`;
+    const output = result.output.endsWith("\n")
+      ? result.output
+      : `${result.output}\n`;
     process.stdout.write(output);
   }
   process.exitCode = result.exitCode;
@@ -30,30 +28,30 @@ const printResult = (result: CommandResult): void => {
 const runCommand = async (args: string[]): Promise<CommandResult> => {
   const [command, ...rest] = args;
   if (!command) {
-    return failResult(formatErrorOutput('missing command'));
+    return failResult(formatErrorOutput("missing command"));
   }
 
-  if (command === 'check') {
+  if (command === "check") {
     const [contentDir] = rest;
     return await runCheckCommand({ contentDir });
   }
 
-  if (command === 'build') {
-    const contentDir = rest.at(0) ?? getDefaultContentDir();
+  if (command === "build") {
+    const contentDir = rest.at(0) ?? resolveDefaultContentDir();
     return await runBuildCommand({
       contentDir,
     });
   }
 
-  if (command === 'new') {
+  if (command === "new") {
     const [type, id] = rest;
     if (!type || !id) {
-      return failResult(formatErrorOutput('missing type or id'));
+      return failResult(formatErrorOutput("missing type or id"));
     }
     return await runNewCommand({
       type,
       id,
-      contentDir: getDefaultContentDir(),
+      contentDir: resolveDefaultContentDir(),
       templatesDir: getDefaultTemplatesDir(),
     });
   }

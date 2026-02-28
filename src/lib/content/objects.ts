@@ -6,6 +6,7 @@ import {
   parseFrontmatter,
 } from "./frontmatter";
 import { listMarkdownFiles } from "./markdown-files";
+import { resolveContentRoot } from "./content-root";
 import { type SimpleEntityListItem } from "./simple-entities";
 
 export type ObjectListItem = SimpleEntityListItem;
@@ -58,7 +59,7 @@ const isTypedRef = (value: string): boolean => {
 };
 
 const getObjectsDir = (baseDir?: string): string => {
-  const resolvedBaseDir = baseDir ?? path.resolve(process.cwd(), "content");
+  const resolvedBaseDir = resolveContentRoot(baseDir);
   return path.join(resolvedBaseDir, "objects");
 };
 

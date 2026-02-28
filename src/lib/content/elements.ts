@@ -1,14 +1,15 @@
-import { readFile } from 'node:fs/promises';
-import path from 'node:path';
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { resolveContentRoot } from "./content-root";
 import {
   getOptionalLocationField,
   getStringField,
   parseFrontmatter,
-} from './frontmatter';
+} from "./frontmatter";
 import {
   listSimpleEntities,
   type SimpleEntityListItem,
-} from './simple-entities';
+} from "./simple-entities";
 
 export type ElementListItem = SimpleEntityListItem;
 export type Element = {
@@ -22,8 +23,8 @@ export type Element = {
 type NodeErrorWithCode = Error & { code?: string };
 
 const getElementsDir = (baseDir?: string): string => {
-  const resolvedBaseDir = baseDir ?? path.resolve(process.cwd(), 'content');
-  return path.join(resolvedBaseDir, 'elements');
+  const resolvedBaseDir = resolveContentRoot(baseDir);
+  return path.join(resolvedBaseDir, "elements");
 };
 
 const getOptionalStringField = (
@@ -31,10 +32,10 @@ const getOptionalStringField = (
   field: string,
 ): string | null => {
   const value = record[field];
-  if (typeof value === 'undefined') {
+  if (typeof value === "undefined") {
     return null;
   }
-  if (typeof value !== 'string' || value.length === 0) {
+  if (typeof value !== "string" || value.length === 0) {
     throw new Error(`Invalid ${field}`);
   }
   return value;
@@ -42,27 +43,27 @@ const getOptionalStringField = (
 
 const parseAndValidateElementMarkdown = (markdown: string): Element => {
   const { data, content } = parseFrontmatter(markdown);
-  if (data.type !== 'element') {
-    throw new Error('Invalid type');
+  if (data.type !== "element") {
+    throw new Error("Invalid type");
   }
 
-  const id = getStringField(data, 'id');
-  const name = getStringField(data, 'name');
-  const origin = getOptionalLocationField(data, 'origin');
-  const image = getOptionalStringField(data, 'image');
+  const id = getStringField(data, "id");
+  const name = getStringField(data, "name");
+  const origin = getOptionalLocationField(data, "origin");
+  const image = getOptionalStringField(data, "image");
 
   return { id, name, origin, image, body: content };
 };
 
 const isEnoentError = (error: unknown): error is NodeErrorWithCode =>
-  error instanceof Error && (error as NodeErrorWithCode).code === 'ENOENT';
+  error instanceof Error && (error as NodeErrorWithCode).code === "ENOENT";
 
 export async function listElements(
   baseDir?: string,
 ): Promise<Array<ElementListItem>> {
   const elementsDir = getElementsDir(baseDir);
   // Reusa el parser basico del MVP para mantener el esquema minimo consistente.
-  return await listSimpleEntities(elementsDir, 'element');
+  return await listSimpleEntities(elementsDir, "element");
 }
 
 export async function getElementById(
@@ -74,7 +75,7 @@ export async function getElementById(
 
   let markdown: string;
   try {
-    markdown = await readFile(filePath, 'utf8');
+    markdown = await readFile(filePath, "utf8");
   } catch (error: unknown) {
     if (isEnoentError(error)) {
       return null;

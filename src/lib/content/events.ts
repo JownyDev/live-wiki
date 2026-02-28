@@ -1,5 +1,6 @@
-import { readFile } from 'node:fs/promises';
-import path from 'node:path';
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { resolveContentRoot } from "./content-root";
 import {
   getDateField,
   getEventParticipantsField,
@@ -7,31 +8,31 @@ import {
   getStringField,
   parseFrontmatter,
   type EventParticipant,
-} from './frontmatter';
-import { parseLocationRef } from './location-refs';
-import { listMarkdownFiles } from './markdown-files';
+} from "./frontmatter";
+import { parseLocationRef } from "./location-refs";
+import { listMarkdownFiles } from "./markdown-files";
 
 const generatePreview = (markdown: string): string => {
   // Remove headers
-  let text = markdown.replace(/^#+\s+.*$/gm, '');
+  let text = markdown.replace(/^#+\s+.*$/gm, "");
   // Remove images
-  text = text.replace(/!\s*\[.*?\]\(.*?\)/g, '');
+  text = text.replace(/!\s*\[.*?\]\(.*?\)/g, "");
   // Remove links, keeping text
-  text = text.replace(/\s*\[([^\]]+)\]\(.*?\)/g, '$1');
+  text = text.replace(/\s*\[([^\]]+)\]\(.*?\)/g, "$1");
   // Remove bold/italic
-  text = text.replace(/[*_]{1,2}([^*_]+)[*_]{1,2}/g, '$1');
+  text = text.replace(/[*_]{1,2}([^*_]+)[*_]{1,2}/g, "$1");
   // Remove blockquotes
-  text = text.replace(/^>\s+/gm, '');
+  text = text.replace(/^>\s+/gm, "");
   // Remove code blocks
-  text = text.replace(/```[\s\S]*?```/g, '');
-  
+  text = text.replace(/```[\s\S]*?```/g, "");
+
   // Clean whitespace
   text = text.trim();
-  
+
   // Get first paragraph or limited chars
   const firstParagraph = text.split(/\n\s*\n/)[0];
   if (firstParagraph.length > 200) {
-    return firstParagraph.slice(0, 197) + '...';
+    return firstParagraph.slice(0, 197) + "...";
   }
   return firstParagraph;
 };
@@ -56,13 +57,13 @@ type Event = {
 type NodeErrorWithCode = Error & { code?: string };
 
 const getEventsDir = (baseDir?: string): string => {
-  const resolvedBaseDir = baseDir ?? path.resolve(process.cwd(), 'content');
-  return path.join(resolvedBaseDir, 'events');
+  const resolvedBaseDir = resolveContentRoot(baseDir);
+  return path.join(resolvedBaseDir, "events");
 };
 
 const getPlacesDir = (baseDir?: string): string => {
-  const resolvedBaseDir = baseDir ?? path.resolve(process.cwd(), 'content');
-  return path.join(resolvedBaseDir, 'places');
+  const resolvedBaseDir = resolveContentRoot(baseDir);
+  return path.join(resolvedBaseDir, "places");
 };
 
 const getOptionalStringField = (
@@ -70,10 +71,10 @@ const getOptionalStringField = (
   field: string,
 ): string | null => {
   const value = record[field];
-  if (typeof value === 'undefined') {
+  if (typeof value === "undefined") {
     return null;
   }
-  if (typeof value !== 'string' || value.length === 0) {
+  if (typeof value !== "string" || value.length === 0) {
     throw new Error(`Invalid ${field}`);
   }
   return value;
@@ -81,26 +82,29 @@ const getOptionalStringField = (
 
 const parseAndValidateEventMarkdown = (markdown: string): Event => {
   const { data, content } = parseFrontmatter(markdown);
-  if (data.type !== 'event') {
-    throw new Error('Invalid type');
+  if (data.type !== "event") {
+    throw new Error("Invalid type");
   }
 
-  const id = getStringField(data, 'id');
-  const title = getStringField(data, 'title');
-  const date = getDateField(data, 'date');
-  const who = getEventParticipantsField(data, 'who');
-  const locations = getLocationsField(data, 'locations');
-  const image = getOptionalStringField(data, 'image');
+  const id = getStringField(data, "id");
+  const title = getStringField(data, "title");
+  const date = getDateField(data, "date");
+  const who = getEventParticipantsField(data, "who");
+  const locations = getLocationsField(data, "locations");
+  const image = getOptionalStringField(data, "image");
 
   return { id, title, date, who, locations, image, body: content };
 };
 
 const isEnoentError = (error: unknown): error is NodeErrorWithCode =>
-  error instanceof Error && (error as NodeErrorWithCode).code === 'ENOENT';
+  error instanceof Error && (error as NodeErrorWithCode).code === "ENOENT";
 
-const readEventFromFile = async (eventsDir: string, filename: string): Promise<Event> => {
+const readEventFromFile = async (
+  eventsDir: string,
+  filename: string,
+): Promise<Event> => {
   const filePath = path.join(eventsDir, filename);
-  const markdown = await readFile(filePath, 'utf8');
+  const markdown = await readFile(filePath, "utf8");
   return parseAndValidateEventMarkdown(markdown);
 };
 
@@ -108,28 +112,30 @@ const parsePlacePlanetId = (
   markdown: string,
 ): { id: string; planetId: string | null } => {
   const { data } = parseFrontmatter(markdown);
-  if (data.type !== 'place') {
-    throw new Error('Invalid type');
+  if (data.type !== "place") {
+    throw new Error("Invalid type");
   }
 
-  const id = getStringField(data, 'id');
+  const id = getStringField(data, "id");
   const planetValue = data.planetId;
-  if (typeof planetValue === 'undefined') {
+  if (typeof planetValue === "undefined") {
     return { id, planetId: null };
   }
-  if (typeof planetValue !== 'string') {
-    throw new Error('Invalid planetId');
+  if (typeof planetValue !== "string") {
+    throw new Error("Invalid planetId");
   }
 
   const parsed = parseLocationRef(planetValue);
-  if (!parsed || parsed.kind !== 'planet') {
-    throw new Error('Invalid planetId');
+  if (!parsed || parsed.kind !== "planet") {
+    throw new Error("Invalid planetId");
   }
 
   return { id, planetId: parsed.id };
 };
 
-const listPlacePlanetIds = async (baseDir?: string): Promise<Map<string, string>> => {
+const listPlacePlanetIds = async (
+  baseDir?: string,
+): Promise<Map<string, string>> => {
   const placesDir = getPlacesDir(baseDir);
   const markdownFiles = await listMarkdownFiles(placesDir);
   const planetIdsByPlace = new Map<string, string>();
@@ -137,7 +143,7 @@ const listPlacePlanetIds = async (baseDir?: string): Promise<Map<string, string>
   // Deriva planetas desde places para evitar duplicar el dato en events (ver docs/design/002-life-wiki.md).
   for (const filename of markdownFiles) {
     const filePath = path.join(placesDir, filename);
-    const markdown = await readFile(filePath, 'utf8');
+    const markdown = await readFile(filePath, "utf8");
     const { id, planetId } = parsePlacePlanetId(markdown);
     if (planetId) {
       planetIdsByPlace.set(id, planetId);
@@ -149,16 +155,21 @@ const listPlacePlanetIds = async (baseDir?: string): Promise<Map<string, string>
 
 const getPlaceIdFromLocation = (location: string): string | null => {
   const parsed = parseLocationRef(location);
-  return parsed?.kind === 'place' ? parsed.id : null;
+  return parsed?.kind === "place" ? parsed.id : null;
 };
 
-export async function listEvents(baseDir?: string): Promise<Array<EventListItem>> {
+export async function listEvents(
+  baseDir?: string,
+): Promise<Array<EventListItem>> {
   const eventsDir = getEventsDir(baseDir);
   const markdownFiles = await listMarkdownFiles(eventsDir);
 
   const events: EventListItem[] = [];
   for (const filename of markdownFiles) {
-    const { id, title, date, body } = await readEventFromFile(eventsDir, filename);
+    const { id, title, date, body } = await readEventFromFile(
+      eventsDir,
+      filename,
+    );
     events.push({ id, title, date, preview: generatePreview(body) });
   }
 
@@ -175,7 +186,7 @@ export async function getEventById(
 
   let markdown: string;
   try {
-    markdown = await readFile(filePath, 'utf8');
+    markdown = await readFile(filePath, "utf8");
   } catch (error: unknown) {
     if (isEnoentError(error)) {
       return null;
@@ -195,7 +206,10 @@ export async function listEventsByCharacterId(
 
   const events: EventListItem[] = [];
   for (const filename of markdownFiles) {
-    const { id, title, date, who, body } = await readEventFromFile(eventsDir, filename);
+    const { id, title, date, who, body } = await readEventFromFile(
+      eventsDir,
+      filename,
+    );
     if (who.some((participant) => participant.character === characterId)) {
       events.push({ id, title, date, preview: generatePreview(body) });
     }
@@ -216,7 +230,10 @@ export async function listEventsByPlaceId(
 
   const events: EventListItem[] = [];
   for (const filename of markdownFiles) {
-    const { id, title, date, locations, body } = await readEventFromFile(eventsDir, filename);
+    const { id, title, date, locations, body } = await readEventFromFile(
+      eventsDir,
+      filename,
+    );
     if (locations.includes(targetLocation)) {
       events.push({ id, title, date, preview: generatePreview(body) });
     }
@@ -239,7 +256,10 @@ export async function listEventsByPlanetId(
   // Evita duplicados cuando un evento coincide por planet directo y por place derivado.
   const eventsById = new Map<string, EventListItem>();
   for (const filename of markdownFiles) {
-    const { id, title, date, locations, body } = await readEventFromFile(eventsDir, filename);
+    const { id, title, date, locations, body } = await readEventFromFile(
+      eventsDir,
+      filename,
+    );
     const hasDirectPlanet = locations.includes(targetLocation);
     const hasDerivedPlanet = locations.some((location) => {
       const placeRef = getPlaceIdFromLocation(location);

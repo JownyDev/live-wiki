@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { resolveContentRoot } from "./content-root";
 import {
   getStringArrayField,
   getStringField,
@@ -20,7 +21,7 @@ export type Mechanic = {
 type NodeErrorWithCode = Error & { code?: string };
 
 const getMechanicsDir = (baseDir?: string): string => {
-  const resolvedBaseDir = baseDir ?? path.resolve(process.cwd(), "content");
+  const resolvedBaseDir = resolveContentRoot(baseDir);
   return path.join(resolvedBaseDir, "mechanics");
 };
 

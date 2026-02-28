@@ -24,7 +24,6 @@
 
 ![Ejemplo de Evento](public/readme-img/example-event.png)
 
-
 ---
 
 ## 📖 Descripción General
@@ -43,10 +42,10 @@ A diferencia de las wikis tradicionales (MediaWiki), Live-Wiki **no usa base de 
 
 Este proyecto utiliza un stack moderno enfocado en rendimiento y DX (Developer Experience):
 
-* **Core:** ![Astro](https://img.shields.io/badge/-Astro-ff5d01?style=flat-square&logo=astro&logoColor=white) ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
-* **Estilos:** ![Tailwind CSS](https://img.shields.io/badge/-Tailwind-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
-* **Testing & Calidad:** ![Vitest](https://img.shields.io/badge/-Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white) ![Playwright](https://img.shields.io/badge/-Playwright-45ba4b?style=flat-square&logo=playwright&logoColor=white) ![ESLint](https://img.shields.io/badge/-ESLint-4B32C3?style=flat-square&logo=eslint&logoColor=white)
-* **Infraestructura:** ![Cloudflare Pages](https://img.shields.io/badge/-Cloudflare-F38020?style=flat-square&logo=cloudflare&logoColor=white) ![GitHub Actions](https://img.shields.io/badge/-GitHub%20Actions-2088FF?style=flat-square&logo=github-actions&logoColor=white)
+- **Core:** ![Astro](https://img.shields.io/badge/-Astro-ff5d01?style=flat-square&logo=astro&logoColor=white) ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+- **Estilos:** ![Tailwind CSS](https://img.shields.io/badge/-Tailwind-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
+- **Testing & Calidad:** ![Vitest](https://img.shields.io/badge/-Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white) ![Playwright](https://img.shields.io/badge/-Playwright-45ba4b?style=flat-square&logo=playwright&logoColor=white) ![ESLint](https://img.shields.io/badge/-ESLint-4B32C3?style=flat-square&logo=eslint&logoColor=white)
+- **Infraestructura:** ![Cloudflare Pages](https://img.shields.io/badge/-Cloudflare-F38020?style=flat-square&logo=cloudflare&logoColor=white) ![GitHub Actions](https://img.shields.io/badge/-GitHub%20Actions-2088FF?style=flat-square&logo=github-actions&logoColor=white)
 
 ---
 
@@ -55,7 +54,8 @@ Este proyecto utiliza un stack moderno enfocado en rendimiento y DX (Developer E
 Existen dos formas principales de utilizar Live-Wiki. Elige la que se adapte a tu objetivo:
 
 ### Opción A: Autor de Lore / Uso Personal (Fork)
-*Ideal si quieres documentar tu propia novela, campaña de RPG o videojuego usando esta herramienta como base.*
+
+_Ideal si quieres documentar tu propia novela, campaña de RPG o videojuego usando esta herramienta como base._
 
 1.  **Haz un Fork** de este repositorio a tu cuenta de GitHub.
 2.  Clona **tu** repositorio:
@@ -71,7 +71,8 @@ Existen dos formas principales de utilizar Live-Wiki. Elige la que se adapte a t
 5.  **Personaliza:** Puedes modificar colores, componentes o añadir nuevos tipos de entidad según las necesidades específicas de tu mundo.
 
 ### Opción B: Contribuidor del Core
-*Ideal si quieres mejorar el motor, añadir componentes reutilizables, corregir bugs o expandir el sistema base para la comunidad.*
+
+_Ideal si quieres mejorar el motor, añadir componentes reutilizables, corregir bugs o expandir el sistema base para la comunidad._
 
 1.  Clona el repositorio original:
     ```bash
@@ -83,41 +84,81 @@ Existen dos formas principales de utilizar Live-Wiki. Elige la que se adapte a t
     ```
 3.  **Reglas de Ingeniería:** Consulta [AGENTS.md](./AGENTS.md) antes de tocar código lógico o estructural.
 
+### Opción C: Core público + Lore privado (recomendado para IA)
+
+_Ideal si quieres publicar el motor pero mantener mundos privados en repos separados._
+
+1. Crea una carpeta de trabajo local llamada `live-wiki-workspace`.
+2. Dentro, usa esta estructura:
+   ```text
+   live-wiki-workspace/
+   ├── code/   # este repo (público)
+   └── lore/   # repo privado con uno o más proyectos
+   ```
+3. Define la variable `LORE_CONTENT_DIR` apuntando al proyecto de lore activo.
+
+   Ejemplo:
+
+   ```bash
+   export LORE_CONTENT_DIR=../lore/project-a/content
+   pnpm dev
+   ```
+
+Con esto puedes trabajar código + lore a la vez en local, sin publicar contenido privado.
+
 ---
 
 ## 💻 Comandos Globales
 
 Independientemente de tu modo de uso, estos son los comandos que usarás día a día:
 
-| Comando | Descripción |
-| :--- | :--- |
-| `pnpm dev` | Inicia el servidor de desarrollo local. |
-| `pnpm build` | Construye el sitio estático para producción. |
-| `pnpm quality` | **CI Local:** Ejecuta lint, typecheck y tests unitarios. |
-`pnpm test:e2e` | Ejecuta los tests end-to-end con Playwright. |
-| `pnpm wiki:new` | Crea una nueva entidad (ej: `pnpm wiki:new character gannicus`). |
-| `pnpm wiki:check` | **Lore Linter:** Valida la integridad de tu historia. |
+| Comando           | Descripción                                                      |
+| :---------------- | :--------------------------------------------------------------- |
+| `pnpm dev`        | Inicia el servidor de desarrollo local.                          |
+| `pnpm build`      | Construye el sitio estático para producción.                     |
+| `pnpm quality`    | **CI Local:** Ejecuta lint, typecheck y tests unitarios.         |
+| `pnpm test:e2e`   | Ejecuta los tests end-to-end con Playwright.                     |
+| `pnpm wiki:new`   | Crea una nueva entidad (ej: `pnpm wiki:new character gannicus`). |
+| `pnpm wiki:check` | **Lore Linter:** Valida la integridad de tu historia.            |
+
+### Variable opcional: `LORE_CONTENT_DIR`
+
+Si está definida, el sitio y el CLI leerán/escribirán lore desde esa ruta en lugar de `./content`.
+
+```bash
+# Ejemplo: lore privado fuera del repo público
+export LORE_CONTENT_DIR=../lore/project-a/content
+pnpm wiki:check
+pnpm dev
+```
 
 ---
 
 ## 🧩 Funcionalidades Clave
 
 ### 1. Sistema de Entidades
+
 Soporte nativo para 7 tipos de contenido con esquemas estrictos:
+
 - `character`, `event`, `place`, `planet`, `element`, `card`, `mechanic`.
 
 ### 2. Lore Linter (Motor propio)
+
 Un paquete desarrollado a medida (`packages/lore-linter`) que impide "romper" la historia:
+
 - Detecta referencias a personajes que no existen.
 - Valida cronologías (un evento no puede ocurrir antes de nacer sus participantes).
 - Asegura IDs únicos en todo el universo.
 
 ### 3. Relaciones Automáticas
+
 El sistema cruza los datos del frontmatter para generar automáticamente:
+
 - "Aparece en..." (Backlinks).
 - Líneas de tiempo de personajes.
 
 ### 4. Seguridad
+
 - Renderizado estático (sin servidor runtime).
 - Sanitización estricta de HTML para prevenir XSS.
 
@@ -159,19 +200,25 @@ Este proyecto sigue reglas estrictas para mantener la calidad tanto del código 
 ## 🛠️ Flujo de Trabajo (Dev & IA)
 
 ### 1. Creación de Contenido
+
 Usa el CLI para generar nuevas entidades basadas en plantillas:
+
 ```bash
 pnpm wiki:new character mi-personaje
 ```
 
 ### 2. Validación de Consistencia
+
 Antes de cada commit, el **Lore Linter** asegura que no existan contradicciones:
+
 ```bash
 pnpm wiki:check
 ```
 
 ### 3. Automatización con Skills
+
 Si usas un asistente compatible (como Gemini CLI), puedes activar "skills" para automatizar tareas complejas:
+
 - `activate_skill content-creator`: Guía paso a paso para crear lore coherente.
 - `activate_skill entity-type-creator`: Ayuda a extender el sistema con nuevos tipos de datos.
 
