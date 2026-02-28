@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import EntityList from '../../../components/EntityList.astro';
+import Section from '../../../components/Section.astro';
+import { listObjects } from '../../../lib/content/objects';
+import { languages } from '../../../i18n/ui';
+import { useTranslations } from '../../../i18n/utils';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const t = useTranslations(lang as any);
+
+const title = t('nav.objects');
+const objects = await listObjects();
+const objectItems = objects.map((item) => ({
+  label: item.name,
+  href: getRelativeLocaleUrl(lang as any, `/objects/${item.id}`),
+}));
+---
+
+<BaseLayout title={title} lang={lang as any}>
+  <Header title={title} icon="deployed-code" />
+  <Section>
+    <div class="max-w-prose mb-12">
+      <p class="text-muted text-sm">{t('desc.objects')}</p>
+    </div>
+    {objects.length === 0 ? <p>{t('obj.list.empty')}</p> : <EntityList items={objectItems} />}
+  </Section>
+</BaseLayout>

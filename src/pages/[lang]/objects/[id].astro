@@ -1,0 +1,289 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs, { type BreadcrumbItem } from '../../../components/Breadcrumbs.astro';
+import CharacterHero from '../../../components/CharacterHero.astro';
+import DataPanel, { type DataPanelItem } from '../../../components/DataPanel.astro';
+import MarkdownDescription from '../../../components/MarkdownDescription.astro';
+import ObjectStatsGrid, { type ObjectStatItem } from '../../../components/ObjectStatsGrid.astro';
+import RelationList, { type RelationItem } from '../../../components/RelationList.astro';
+import Section from '../../../components/Section.astro';
+import SectionHeader from '../../../components/SectionHeader.astro';
+import Tabs, { type TabItem } from '../../../components/Tabs.astro';
+import { type InlineMetaItem } from '../../../components/InlineMetaList.astro';
+import { getCardById } from '../../../lib/content/cards';
+import { getCharacterById } from '../../../lib/content/characters';
+import { getElementById } from '../../../lib/content/elements';
+import { getEventById } from '../../../lib/content/events';
+import { getMechanicById } from '../../../lib/content/mechanics';
+import { getObjectById, listObjects } from '../../../lib/content/objects';
+import { getPlaceById } from '../../../lib/content/places';
+import { getPlanetById } from '../../../lib/content/planets';
+import { formatEntityId } from '../../../lib/format';
+import { languages } from '../../../i18n/ui';
+import { useTranslations } from '../../../i18n/utils';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+export async function getStaticPaths() {
+  const objects = await listObjects();
+  const paths = [];
+  for (const lang of Object.keys(languages)) {
+    for (const object of objects) {
+      paths.push({ params: { lang, id: object.id } });
+    }
+  }
+  return paths;
+}
+
+const { lang, id } = Astro.params;
+const t = useTranslations(lang as any);
+const objectId = typeof id === 'string' ? id : null;
+const loreObject = objectId ? await getObjectById(objectId) : null;
+const title = loreObject ? loreObject.name : t('obj.not_found');
+
+const statLabelByKey = {
+  attack: t('ui.stat.attack'),
+  defense: t('ui.stat.defense'),
+  cdr: t('ui.stat.cdr'),
+  maxHp: t('ui.stat.max_hp'),
+} as const;
+
+const parseTypedRef = (value: string): { type: string; id: string } | null => {
+  const separator = value.indexOf(':');
+  if (separator <= 0 || separator >= value.length - 1) {
+    return null;
+  }
+  if (value.lastIndexOf(':') !== separator) {
+    return null;
+  }
+  return {
+    type: value.slice(0, separator),
+    id: value.slice(separator + 1),
+  };
+};
+
+const resolveRefView = async (ref: string): Promise<RelationItem> => {
+  const parsed = parseTypedRef(ref);
+  if (!parsed) {
+    return { text: ref, missing: true };
+  }
+
+  if (parsed.type === 'character') {
+    const character = await getCharacterById(parsed.id);
+    if (!character) {
+      return { text: `${formatEntityId(parsed.id)} (${t('ui.unknown')})`, missing: true };
+    }
+    return {
+      text: character.name,
+      href: getRelativeLocaleUrl(lang as any, `/characters/${character.id}`),
+    };
+  }
+
+  if (parsed.type === 'event') {
+    const event = await getEventById(parsed.id);
+    if (!event) {
+      return { text: `${formatEntityId(parsed.id)} (${t('ui.unknown')})`, missing: true };
+    }
+    return {
+      text: event.title,
+      href: getRelativeLocaleUrl(lang as any, `/events/${event.id}`),
+    };
+  }
+
+  if (parsed.type === 'place') {
+    const place = await getPlaceById(parsed.id);
+    if (!place) {
+      return { text: `${formatEntityId(parsed.id)} (${t('ui.unknown')})`, missing: true };
+    }
+    return {
+      text: place.name,
+      href: getRelativeLocaleUrl(lang as any, `/places/${place.id}`),
+    };
+  }
+
+  if (parsed.type === 'planet') {
+    const planet = await getPlanetById(parsed.id);
+    if (!planet) {
+      return { text: `${formatEntityId(parsed.id)} (${t('ui.unknown')})`, missing: true };
+    }
+    return {
+      text: planet.name,
+      href: getRelativeLocaleUrl(lang as any, `/planets/${planet.id}`),
+    };
+  }
+
+  if (parsed.type === 'element') {
+    const element = await getElementById(parsed.id);
+    if (!element) {
+      return { text: `${formatEntityId(parsed.id)} (${t('ui.unknown')})`, missing: true };
+    }
+    return {
+      text: element.name,
+      href: getRelativeLocaleUrl(lang as any, `/elements/${element.id}`),
+    };
+  }
+
+  if (parsed.type === 'card') {
+    const card = await getCardById(parsed.id);
+    if (!card) {
+      return { text: `${formatEntityId(parsed.id)} (${t('ui.unknown')})`, missing: true };
+    }
+    return {
+      text: card.name,
+      href: getRelativeLocaleUrl(lang as any, `/cards/${card.id}`),
+    };
+  }
+
+  if (parsed.type === 'mechanic') {
+    const mechanic = await getMechanicById(parsed.id);
+    if (!mechanic) {
+      return { text: `${formatEntityId(parsed.id)} (${t('ui.unknown')})`, missing: true };
+    }
+    return {
+      text: mechanic.name,
+      href: getRelativeLocaleUrl(lang as any, `/mechanics/${mechanic.id}`),
+    };
+  }
+
+  if (parsed.type === 'object') {
+    const relatedObject = await getObjectById(parsed.id);
+    if (!relatedObject) {
+      return { text: `${formatEntityId(parsed.id)} (${t('ui.unknown')})`, missing: true };
+    }
+    return {
+      text: relatedObject.name,
+      href: getRelativeLocaleUrl(lang as any, `/objects/${relatedObject.id}`),
+    };
+  }
+
+  return { text: ref };
+};
+
+const sharesEffectWithItems = loreObject
+  ? await Promise.all(loreObject.sharesEffectWith.map(resolveRefView))
+  : [];
+const boostsItems = loreObject
+  ? await Promise.all(loreObject.boosts.map(resolveRefView))
+  : [];
+
+const statsItems: ObjectStatItem[] = loreObject?.stats
+  ? Object.entries(loreObject.stats).map(([key, value]) => ({
+      label: statLabelByKey[key as keyof typeof statLabelByKey] ?? key,
+      min: value.min,
+      max: value.max,
+    }))
+  : [];
+
+const breadcrumbs: BreadcrumbItem[] = loreObject
+  ? [
+      { label: t('nav.home'), href: getRelativeLocaleUrl(lang as any, '/') },
+      { label: t('nav.objects'), href: getRelativeLocaleUrl(lang as any, '/objects') },
+      { label: loreObject.name, current: true },
+    ]
+  : [
+      { label: t('nav.home'), href: getRelativeLocaleUrl(lang as any, '/') },
+      { label: t('nav.objects'), href: getRelativeLocaleUrl(lang as any, '/objects') },
+      { label: t('obj.not_found'), current: true },
+    ];
+
+const objectMeta: InlineMetaItem[] = loreObject
+  ? [{ label: 'ID', value: `#${loreObject.id}` }]
+  : [];
+
+const dataItems: DataPanelItem[] = loreObject
+  ? [
+      { label: t('ui.rarity'), value: loreObject.rarity, icon: 'diamond' },
+      { label: t('ui.slot'), value: loreObject.slot, icon: 'checkroom' },
+    ]
+  : [];
+
+const tabItems: TabItem[] = [
+  { id: 'info', label: t('ui.description'), icon: 'description' },
+  { id: 'stats', label: t('ui.stats'), icon: 'bar-chart' },
+  { id: 'relations', label: t('ui.relations'), icon: 'hub' },
+];
+---
+
+<BaseLayout title={title} lang={lang as any} pageClass="page--object">
+  {loreObject ? (
+    <div class="object-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero name={loreObject.name} meta={objectMeta} imageUrl={loreObject.image ?? undefined} />
+      <div class:list={['object-page__grid', { '!grid-cols-1': dataItems.length === 0 }]}>
+        {dataItems.length > 0 && (
+          <aside class="object-page__sidebar">
+            <DataPanel title={t('ui.object_data')} items={dataItems} />
+          </aside>
+        )}
+        <div class="object-page__content">
+          <Tabs items={tabItems} defaultTab="info">
+            <div data-tab-panel="info" class="animate-fadeIn">
+              <Section>
+                <SectionHeader title={t('ui.description')} showDivider />
+                <p class="object-page__effect">{loreObject.effectDescription}</p>
+                <MarkdownDescription content={loreObject.body} />
+              </Section>
+            </div>
+            <div data-tab-panel="stats" class="animate-fadeIn" hidden>
+              <Section>
+                <SectionHeader title={t('ui.stats')} showDivider />
+                {statsItems.length > 0 ? (
+                  <ObjectStatsGrid
+                    title={t('ui.stat_ranges')}
+                    items={statsItems}
+                    minLabel={t('ui.min')}
+                    maxLabel={t('ui.max')}
+                  />
+                ) : (
+                  <p>{t('ui.no_stats')}</p>
+                )}
+              </Section>
+            </div>
+            <div data-tab-panel="relations" class="animate-fadeIn" hidden>
+              <Section>
+                <SectionHeader title={t('ui.relations')} showDivider />
+                <div class="object-page__relations">
+                  <RelationList
+                    label={t('ui.shares_effect_with')}
+                    items={sharesEffectWithItems}
+                    emptyText={t('ui.no_relations')}
+                  />
+                  <RelationList
+                    label={t('ui.boosts')}
+                    items={boostsItems}
+                    emptyText={t('ui.no_relations')}
+                  />
+                </div>
+              </Section>
+            </div>
+          </Tabs>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div class="object-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <Section>
+        <p>{t('obj.not_found')}</p>
+        <p>
+          <a href={getRelativeLocaleUrl(lang as any, '/objects')}>{t('obj.back_to_list')}</a>
+        </p>
+      </Section>
+    </div>
+  )}
+</BaseLayout>
+
+<style>
+  .object-page__effect {
+    margin: 0 0 var(--space-6);
+    padding: var(--space-4);
+    border-left: 3px solid var(--color-accent);
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+
+  .object-page__relations {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--space-6);
+  }
+</style>

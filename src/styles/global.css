@@ -1208,28 +1208,32 @@
   .event-page,
   .element-page,
   .card-page,
-  .mechanic-page {
+  .mechanic-page,
+  .object-page {
     @apply flex flex-col gap-space-4;
   }
 
   .event-page__grid,
   .element-page__grid,
   .card-page__grid,
-  .mechanic-page__grid {
+  .mechanic-page__grid,
+  .object-page__grid {
     @apply grid gap-space-5;
   }
 
   .event-page__sidebar,
   .element-page__sidebar,
   .card-page__sidebar,
-  .mechanic-page__sidebar {
+  .mechanic-page__sidebar,
+  .object-page__sidebar {
     @apply flex flex-col gap-space-4 self-start;
   }
 
   .event-page__content,
   .element-page__content,
   .card-page__content,
-  .mechanic-page__content {
+  .mechanic-page__content,
+  .object-page__content {
     @apply flex flex-col gap-space-6;
   }
 
@@ -1237,7 +1241,8 @@
   .event-page__sidebar .data-panel,
   .element-page__sidebar .data-panel,
   .card-page__sidebar .data-panel,
-  .mechanic-page__sidebar .data-panel {
+  .mechanic-page__sidebar .data-panel,
+  .object-page__sidebar .data-panel {
     @apply sticky top-[5.5rem];
   }
 
@@ -1245,7 +1250,8 @@
   .event-page__sidebar section,
   .element-page__sidebar section,
   .card-page__sidebar section,
-  .mechanic-page__sidebar section {
+  .mechanic-page__sidebar section,
+  .object-page__sidebar section {
     margin: 0;
   }
 
@@ -1253,7 +1259,8 @@
   .event-page__content section,
   .element-page__content section,
   .card-page__content section,
-  .mechanic-page__content section {
+  .mechanic-page__content section,
+  .object-page__content section {
     margin: 0;
   }
 
@@ -1314,7 +1321,8 @@
     .event-page__grid,
     .element-page__grid,
     .card-page__grid,
-    .mechanic-page__grid {
+    .mechanic-page__grid,
+    .object-page__grid {
       @apply grid-cols-[minmax(0,17rem)_minmax(0,1fr)];
     }
 
@@ -1453,7 +1461,11 @@
   }
 
   .character-list__item:hover {
-    background-color: color-mix(in srgb, var(--color-surface-muted), transparent 50%);
+    background-color: color-mix(
+      in srgb,
+      var(--color-surface-muted),
+      transparent 50%
+    );
   }
 
   .character-list__item:hover .character-list__name {
