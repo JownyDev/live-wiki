@@ -4,10 +4,10 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { afterEach, describe, expect, it } from "vitest";
 
 const loadContentRoot = async (): Promise<{
-  resolveContentRoot: (baseDir?: string) => string;
+  resolveContentRoot: (baseDir?: string, cwd?: string) => string;
 }> => {
   return (await import("../src/lib/content/content-root")) as {
-    resolveContentRoot: (baseDir?: string) => string;
+    resolveContentRoot: (baseDir?: string, cwd?: string) => string;
   };
 };
 

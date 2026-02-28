@@ -4,10 +4,10 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { afterEach, describe, expect, it } from "vitest";
 
 const loadContentDir = async (): Promise<{
-  resolveDefaultContentDir: () => string;
+  resolveDefaultContentDir: (cwd?: string) => string;
 }> => {
   return (await import("../packages/wiki-cli/src/content-dir")) as {
-    resolveDefaultContentDir: () => string;
+    resolveDefaultContentDir: (cwd?: string) => string;
   };
 };
 
