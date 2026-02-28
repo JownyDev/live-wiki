@@ -1,17 +1,19 @@
-import { parseLocationRef } from './location-refs';
+import { parseLocationRef } from "./location-refs";
 
 /** Error de referencia cruzada a un id inexistente. */
 export type BrokenReference = {
   type: string;
   id: string;
   field:
-    | 'who'
-    | 'locations'
-    | 'origin'
-    | 'affinity'
-    | 'planetId'
-    | 'elements'
-    | 'represents'
+    | "who"
+    | "locations"
+    | "origin"
+    | "affinity"
+    | "planetId"
+    | "elements"
+    | "represents"
+    | "shares_effect_with"
+    | "boosts"
     | `related_${string}`;
   reference: string;
 };
@@ -25,6 +27,7 @@ export type ReferenceIndex = {
   events: Set<string>;
   cards: Set<string>;
   mechanics: Set<string>;
+  objects: Set<string>;
 };
 
 /** Documento parseado con type/id disponible para validaciones. */
@@ -37,16 +40,16 @@ export type LoreDoc = {
 type ReferenceCandidate = {
   docType: string;
   docId: string;
-  field: BrokenReference['field'];
+  field: BrokenReference["field"];
   reference: string;
   referenceType: string;
   referenceId: string;
 };
 
-const isString = (value: unknown): value is string => typeof value === 'string';
+const isString = (value: unknown): value is string => typeof value === "string";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null;
+  typeof value === "object" && value !== null;
 
 const getStringEntries = (value: unknown): string[] | null => {
   if (isString(value)) {
@@ -65,12 +68,12 @@ const getStringArrayEntries = (value: unknown): string[] | null => {
   return value.filter(isString);
 };
 
-const characterRefTypes = new Set(['character']);
-const elementRefTypes = new Set(['element']);
-const representsRefTypes = new Set(['character', 'event', 'place', 'planet']);
+const characterRefTypes = new Set(["character"]);
+const elementRefTypes = new Set(["element"]);
+const representsRefTypes = new Set(["character", "event", "place", "planet"]);
 
 const parseTypedRef = (value: string): { type: string; id: string } | null => {
-  const separatorIndex = value.indexOf(':');
+  const separatorIndex = value.indexOf(":");
   if (separatorIndex <= 0 || separatorIndex >= value.length - 1) {
     return null;
   }
@@ -85,20 +88,22 @@ const getReferenceSet = (
   type: string,
 ): Set<string> | null => {
   switch (type) {
-    case 'character':
+    case "character":
       return index.characters;
-    case 'place':
+    case "place":
       return index.places;
-    case 'planet':
+    case "planet":
       return index.planets;
-    case 'element':
+    case "element":
       return index.elements;
-    case 'event':
+    case "event":
       return index.events;
-    case 'card':
+    case "card":
       return index.cards;
-    case 'mechanic':
+    case "mechanic":
       return index.mechanics;
+    case "object":
+      return index.objects;
     default:
       return null;
   }
@@ -107,7 +112,7 @@ const getReferenceSet = (
 const collectCandidate = (
   candidates: ReferenceCandidate[],
   doc: LoreDoc,
-  field: BrokenReference['field'],
+  field: BrokenReference["field"],
   reference: string,
   referenceType: string,
   referenceId: string,
@@ -138,18 +143,20 @@ const collectWhoCandidates = (
     if (!isString(character)) {
       continue;
     }
-    collectCandidate(candidates, doc, 'who', character, 'character', character);
+    collectCandidate(candidates, doc, "who", character, "character", character);
   }
 };
 
 const collectLocationCandidates = (
   candidates: ReferenceCandidate[],
   doc: LoreDoc,
-  field: 'locations' | 'origin' | 'planetId',
+  field: "locations" | "origin" | "planetId",
   value: unknown,
 ): void => {
   const entries =
-    field === 'locations' ? getStringArrayEntries(value) : getStringEntries(value);
+    field === "locations"
+      ? getStringArrayEntries(value)
+      : getStringEntries(value);
   if (!entries) {
     return;
   }
@@ -158,7 +165,7 @@ const collectLocationCandidates = (
     if (!parsed) {
       continue;
     }
-    if (parsed.kind === 'place' || parsed.kind === 'planet') {
+    if (parsed.kind === "place" || parsed.kind === "planet") {
       collectCandidate(candidates, doc, field, entry, parsed.kind, parsed.id);
     }
   }
@@ -167,7 +174,7 @@ const collectLocationCandidates = (
 const collectTypedRefCandidates = (
   candidates: ReferenceCandidate[],
   doc: LoreDoc,
-  field: BrokenReference['field'],
+  field: BrokenReference["field"],
   value: unknown,
   allowedTypes?: ReadonlySet<string>,
 ): void => {
@@ -190,7 +197,7 @@ const collectTypedRefCandidates = (
 const collectSingleTypedRefCandidate = (
   candidates: ReferenceCandidate[],
   doc: LoreDoc,
-  field: BrokenReference['field'],
+  field: BrokenReference["field"],
   value: unknown,
   allowedTypes?: ReadonlySet<string>,
 ): void => {
@@ -212,7 +219,7 @@ const collectRelatedCandidates = (
   doc: LoreDoc,
 ): void => {
   for (const [field, value] of Object.entries(doc.data)) {
-    if (!field.startsWith('related_')) {
+    if (!field.startsWith("related_")) {
       continue;
     }
     const entries = getStringEntries(value);
@@ -251,7 +258,7 @@ const collectRelatedCharactersCandidates = (
     collectSingleTypedRefCandidate(
       candidates,
       doc,
-      'related_characters',
+      "related_characters",
       entry.character,
       characterRefTypes,
     );
@@ -262,52 +269,62 @@ const collectOriginCandidates = (
   candidates: ReferenceCandidate[],
   doc: LoreDoc,
 ): void => {
-  collectLocationCandidates(candidates, doc, 'origin', doc.data.origin);
+  collectLocationCandidates(candidates, doc, "origin", doc.data.origin);
 };
 
 const collectReferenceCandidates = (doc: LoreDoc): ReferenceCandidate[] => {
   const candidates: ReferenceCandidate[] = [];
 
-  if (doc.type === 'event') {
+  if (doc.type === "event") {
     collectWhoCandidates(candidates, doc);
-    collectLocationCandidates(candidates, doc, 'locations', doc.data.locations);
+    collectLocationCandidates(candidates, doc, "locations", doc.data.locations);
   }
 
-  if (doc.type === 'character') {
+  if (doc.type === "character") {
     collectOriginCandidates(candidates, doc);
     collectSingleTypedRefCandidate(
       candidates,
       doc,
-      'affinity',
+      "affinity",
       doc.data.affinity,
       elementRefTypes,
     );
     collectRelatedCharactersCandidates(candidates, doc);
   }
 
-  if (doc.type === 'element') {
+  if (doc.type === "element") {
     collectOriginCandidates(candidates, doc);
   }
 
-  if (doc.type === 'place') {
-    collectLocationCandidates(candidates, doc, 'planetId', doc.data.planetId);
+  if (doc.type === "place") {
+    collectLocationCandidates(candidates, doc, "planetId", doc.data.planetId);
   }
 
-  if (doc.type === 'card') {
+  if (doc.type === "card") {
     collectTypedRefCandidates(
       candidates,
       doc,
-      'elements',
+      "elements",
       doc.data.elements,
       elementRefTypes,
     );
     collectTypedRefCandidates(
       candidates,
       doc,
-      'represents',
+      "represents",
       doc.data.represents,
       representsRefTypes,
     );
+  }
+
+  if (doc.type === "object") {
+    collectTypedRefCandidates(
+      candidates,
+      doc,
+      "shares_effect_with",
+      doc.data.shares_effect_with,
+    );
+    collectTypedRefCandidates(candidates, doc, "boosts", doc.data.boosts);
   }
 
   collectRelatedCandidates(candidates, doc);
@@ -329,29 +346,33 @@ export const buildReferenceIndex = (docs: LoreDoc[]): ReferenceIndex => {
     events: new Set<string>(),
     cards: new Set<string>(),
     mechanics: new Set<string>(),
+    objects: new Set<string>(),
   };
 
   for (const doc of docs) {
-    if (doc.type === 'character') {
+    if (doc.type === "character") {
       index.characters.add(doc.id);
     }
-    if (doc.type === 'place') {
+    if (doc.type === "place") {
       index.places.add(doc.id);
     }
-    if (doc.type === 'planet') {
+    if (doc.type === "planet") {
       index.planets.add(doc.id);
     }
-    if (doc.type === 'element') {
+    if (doc.type === "element") {
       index.elements.add(doc.id);
     }
-    if (doc.type === 'event') {
+    if (doc.type === "event") {
       index.events.add(doc.id);
     }
-    if (doc.type === 'card') {
+    if (doc.type === "card") {
       index.cards.add(doc.id);
     }
-    if (doc.type === 'mechanic') {
+    if (doc.type === "mechanic") {
       index.mechanics.add(doc.id);
+    }
+    if (doc.type === "object") {
+      index.objects.add(doc.id);
     }
   }
 
