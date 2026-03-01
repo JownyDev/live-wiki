@@ -100,6 +100,7 @@ const isValidWho = (value: unknown): boolean => {
 
 const requiredStringFieldsByType: Partial<Record<string, string[]>> = {
   character: ["id", "name"],
+  ability: ["id", "name"],
   element: ["id", "name"],
   place: ["id", "name"],
   planet: ["id", "name"],
@@ -366,6 +367,9 @@ const parseWithPrefix = (value: string, prefix: string): string | null => {
 };
 
 const getCharacterRefId = (value: string): string | null => {
+  if (!isTypedRef(value)) {
+    return null;
+  }
   return parseWithPrefix(value, "character:");
 };
 
@@ -421,6 +425,24 @@ const validateOptionalOriginField = (
     return;
   }
   if (!parseLocationRef(stringValue)) {
+    addSchemaError(context, field, "invalid-reference");
+  }
+};
+
+const validateRequiredCharacterRefField = (
+  context: SchemaContext,
+  field: string,
+  value: unknown,
+): void => {
+  if (typeof value === "undefined") {
+    addSchemaError(context, field, "required");
+    return;
+  }
+  if (!isString(value)) {
+    addSchemaError(context, field, "invalid-shape");
+    return;
+  }
+  if (!getCharacterRefId(value)) {
     addSchemaError(context, field, "invalid-reference");
   }
 };
@@ -853,6 +875,14 @@ const validateElementFields = (context: SchemaContext): void => {
   validateOptionalOriginField(context, "origin", context.data.origin);
 };
 
+const validateAbilityFields = (context: SchemaContext): void => {
+  validateRequiredCharacterRefField(
+    context,
+    "related_character",
+    context.data.related_character,
+  );
+};
+
 const validateMechanicFields = (context: SchemaContext): void => {
   const relatedElements = context.data.related_elements;
   if (
@@ -921,6 +951,9 @@ const validateRelatedFields = (context: SchemaContext): void => {
     if (field === "related_characters" && context.type === "character") {
       continue;
     }
+    if (field === "related_character" && context.type === "ability") {
+      continue;
+    }
     if (isString(value) || isStringArray(value)) {
       continue;
     }
@@ -952,6 +985,7 @@ const typeValidators: Partial<
   Record<string, (context: SchemaContext) => void>
 > = {
   character: validateCharacterFields,
+  ability: validateAbilityFields,
   element: validateElementFields,
   event: validateEventFields,
   card: validateCardFields,

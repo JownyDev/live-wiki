@@ -626,3 +626,84 @@ describe('lore-linter card schema', () => {
     expect(report.schemaErrors).toEqual([]);
   });
 });
+
+describe('lore-linter ability schema', () => {
+  it('reports ability required fields and related_character reference errors', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'schema-ability-invalid',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    const expected: SchemaError[] = [
+      {
+        type: 'ability',
+        id: 'missing-name',
+        field: 'name',
+        reason: 'required',
+      },
+      {
+        type: 'ability',
+        id: 'missing-related-character',
+        field: 'related_character',
+        reason: 'required',
+      },
+      {
+        type: 'ability',
+        id: 'related-character-invalid-shape',
+        field: 'related_character',
+        reason: 'invalid-shape',
+      },
+      {
+        type: 'ability',
+        id: 'related-character-invalid-reference',
+        field: 'related_character',
+        reason: 'invalid-reference',
+      },
+      {
+        type: 'ability',
+        id: 'related-character-empty-string',
+        field: 'related_character',
+        reason: 'invalid-reference',
+      },
+      {
+        type: 'ability',
+        id: 'related-character-empty-id',
+        field: 'related_character',
+        reason: 'invalid-reference',
+      },
+      {
+        type: 'ability',
+        id: 'related-character-extra-colon',
+        field: 'related_character',
+        reason: 'invalid-reference',
+      },
+    ];
+
+    expect(sortSchemaErrors(report.schemaErrors)).toEqual(sortSchemaErrors(expected));
+  });
+
+  it('accepts valid ability schema with related_character', async () => {
+    const fixturesDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      'packages',
+      'lore-linter',
+      'test',
+      'fixtures',
+      'schema-ability-valid',
+    );
+    const { scanLoreDirectory } = await loadLoreLinter();
+
+    const report = await scanLoreDirectory(fixturesDir);
+
+    expect(report.schemaErrors).toEqual([]);
+  });
+});
