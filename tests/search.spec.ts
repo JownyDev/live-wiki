@@ -29,6 +29,7 @@ const searchFixtures: SearchFixtures = {
   elements: ['ember-shard.md'],
   mechanics: ['flux-weave.md'],
   cards: ['prism-ward.md'],
+  abilities: ['herencia-del-ultimo-aliento.md'],
 };
 
 describe('content/search index', () => {
@@ -39,6 +40,7 @@ describe('content/search index', () => {
     const index = await buildSearchIndex(baseDir);
 
     expect(index.map((entry) => `${entry.type}:${entry.id}`)).toEqual([
+      'ability:herencia-del-ultimo-aliento',
       'card:prism-ward',
       'character:lira-vox',
       'character:tovin-ash',

@@ -47,6 +47,21 @@ export const getMechanicsFixtureBaseDir = (): string => {
   return path.resolve(import.meta.dirname, "..", "fixtures", "mechanics");
 };
 
+export type AbilityFixtureName =
+  | "herencia-del-ultimo-aliento.md"
+  | "sello-de-rutina.md"
+  | "vortice-hematomorfo.md"
+  | "invalid-missing-id.md"
+  | "invalid-missing-name.md"
+  | "invalid-missing-related-character.md"
+  | "invalid-missing-type.md"
+  | "invalid-related-character-reference.md"
+  | "invalid-wrong-type.md";
+
+export const getAbilitiesFixtureBaseDir = (): string => {
+  return path.resolve(import.meta.dirname, "..", "fixtures", "abilities");
+};
+
 export type ObjectFixtureName =
   | "aegis-bastion.md"
   | "swift-gloves.md"
@@ -173,6 +188,8 @@ export type SearchMechanicFixtureName = "flux-weave.md";
 
 export type SearchCardFixtureName = "prism-ward.md";
 
+export type SearchAbilityFixtureName = "herencia-del-ultimo-aliento.md";
+
 export const getSearchFixtureBaseDir = (): string => {
   return path.resolve(import.meta.dirname, "..", "fixtures", "search");
 };
@@ -238,6 +255,24 @@ export const createTempBaseDirWithMechanicFixtures = async (
   for (const fixtureName of fixtureNames) {
     const sourcePath = path.join(fixtureBaseDir, "mechanics", fixtureName);
     const destPath = path.join(mechanicsDir, fixtureName);
+    const contents = await readFile(sourcePath, "utf8");
+    await writeFile(destPath, contents, "utf8");
+  }
+
+  return tempBaseDir;
+};
+
+export const createTempBaseDirWithAbilityFixtures = async (
+  fixtureNames: readonly AbilityFixtureName[],
+): Promise<string> => {
+  const tempBaseDir = await mkdtemp(path.join(os.tmpdir(), "live-wiki-"));
+  const abilitiesDir = path.join(tempBaseDir, "abilities");
+  await mkdir(abilitiesDir, { recursive: true });
+
+  const fixtureBaseDir = getAbilitiesFixtureBaseDir();
+  for (const fixtureName of fixtureNames) {
+    const sourcePath = path.join(fixtureBaseDir, "abilities", fixtureName);
+    const destPath = path.join(abilitiesDir, fixtureName);
     const contents = await readFile(sourcePath, "utf8");
     await writeFile(destPath, contents, "utf8");
   }
@@ -414,6 +449,7 @@ export type SearchFixtures = {
   elements: readonly SearchElementFixtureName[];
   mechanics: readonly SearchMechanicFixtureName[];
   cards: readonly SearchCardFixtureName[];
+  abilities: readonly SearchAbilityFixtureName[];
 };
 
 const copySearchFixtures = async (
@@ -483,6 +519,12 @@ export const createTempBaseDirWithSearchFixtures = async (
     fixtureBaseDir,
     "cards",
     fixtures.cards,
+  );
+  await copySearchFixtures(
+    tempBaseDir,
+    fixtureBaseDir,
+    "abilities",
+    fixtures.abilities,
   );
 
   return tempBaseDir;

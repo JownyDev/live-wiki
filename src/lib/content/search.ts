@@ -16,6 +16,12 @@ type SearchTypeConfig = {
 };
 
 const searchTypes: SearchTypeConfig[] = [
+  {
+    type: "ability",
+    dir: "abilities",
+    titleField: "name",
+    hrefPrefix: "/abilities/",
+  },
   { type: "card", dir: "cards", titleField: "name", hrefPrefix: "/cards/" },
   {
     type: "character",

@@ -5,6 +5,7 @@ import CharacterHero from '../../../components/CharacterHero.astro';
 import CharacterList from '../../../components/CharacterList.astro';
 import DataPanel, { type DataPanelItem } from '../../../components/DataPanel.astro';
 import EventSummaryCard from '../../../components/EventSummaryCard.astro';
+import RelationList, { type RelationItem } from '../../../components/RelationList.astro';
 import MarkdownDescription from '../../../components/MarkdownDescription.astro';
 import EntityLink from '../../../components/EntityLink.astro';
 import CapabilityCard from '../../../components/CapabilityCard.astro';
@@ -31,6 +32,7 @@ import SectionHeader from '../../../components/SectionHeader.astro';
 import Tabs, { type TabItem } from '../../../components/Tabs.astro';
 import { type InlineMetaItem } from '../../../components/InlineMetaList.astro';
 import { getCharacterById, listCharacters } from '../../../lib/content/characters';
+import { listAbilitiesByCharacterId } from '../../../lib/content/abilities';
 import { getElementById } from '../../../lib/content/elements';
 import { getPlaceById } from '../../../lib/content/places';
 import { getPlanetById } from '../../../lib/content/planets';
@@ -171,6 +173,13 @@ const affinityView = character?.affinity
   ? await resolveAffinityView(character.affinity)
   : null;
 const allRelatedCharacters = character ? await buildRelatedCharacters(character.relatedCharacters) : [];
+const allRelatedAbilities: RelationItem[] = character
+  ? (await listAbilitiesByCharacterId(character.id))
+      .map((ability) => ({
+        text: ability.name,
+        href: getRelativeLocaleUrl(lang as any, `/abilities/${ability.id}`),
+      }))
+  : [];
 const knowledge = character?.knowledge ?? null;
 const knowledgeSummary = knowledge?.summary ?? null;
 const knowledgeKnowsAbout = knowledge?.knowsAbout ?? [];
@@ -488,11 +497,21 @@ const tabItems: TabItem[] = [
             </div>
 
             <div data-tab-panel="relations" class="animate-fadeIn" hidden>
-              {allRelatedCharacters.length > 0 ? (
+              {allRelatedCharacters.length > 0 || allRelatedAbilities.length > 0 ? (
                 <Section>
                   <SectionHeader title={t('ui.relations')} showDivider />
                   <div class="character-page__relations">
-                    <CharacterList characters={allRelatedCharacters} variant="relations" />
+                    {allRelatedCharacters.length > 0 ? (
+                      <div class="mb-8">
+                        <CharacterList characters={allRelatedCharacters} variant="relations" />
+                      </div>
+                    ) : null}
+                    {allRelatedAbilities.length > 0 ? (
+                      <RelationList
+                        label={t('ui.related_abilities')}
+                        items={allRelatedAbilities}
+                      />
+                    ) : null}
                   </div>
                 </Section>
               ) : (

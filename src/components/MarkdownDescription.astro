@@ -18,11 +18,12 @@ parser.use({
       if (!href) return false;
 
       // Detect internal schema links (e.g., character:jonathan-pineda)
-      const match = href.match(/^(character|place|event|planet|element|mechanic|card):([a-z0-9-]+)$/);
+      const match = href.match(/^(ability|character|place|event|planet|element|mechanic|card):([a-z0-9-]+)$/);
 
       if (match) {
         const [_, schema, id] = match;
         const collectionMap: Record<string, string> = {
+          ability: 'abilities',
           character: 'characters',
           place: 'places',
           event: 'events',

@@ -11,6 +11,7 @@ import SectionHeader from '../../../components/SectionHeader.astro';
 import Tabs, { type TabItem } from '../../../components/Tabs.astro';
 import { type InlineMetaItem } from '../../../components/InlineMetaList.astro';
 import { getCardById } from '../../../lib/content/cards';
+import { getAbilityById } from '../../../lib/content/abilities';
 import { getCharacterById } from '../../../lib/content/characters';
 import { getElementById } from '../../../lib/content/elements';
 import { getEventById } from '../../../lib/content/events';
@@ -130,6 +131,17 @@ const resolveRefView = async (ref: string): Promise<RelationItem> => {
     return {
       text: card.name,
       href: getRelativeLocaleUrl(lang as any, `/cards/${card.id}`),
+    };
+  }
+
+  if (parsed.type === 'ability') {
+    const ability = await getAbilityById(parsed.id);
+    if (!ability) {
+      return { text: `${formatEntityId(parsed.id)} (${t('ui.unknown')})`, missing: true };
+    }
+    return {
+      text: ability.name,
+      href: getRelativeLocaleUrl(lang as any, `/abilities/${ability.id}`),
     };
   }
 

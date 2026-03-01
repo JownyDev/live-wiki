@@ -1,0 +1,143 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs, { type BreadcrumbItem } from '../../../components/Breadcrumbs.astro';
+import CharacterHero from '../../../components/CharacterHero.astro';
+import DataPanel, { type DataPanelItem } from '../../../components/DataPanel.astro';
+import MarkdownDescription from '../../../components/MarkdownDescription.astro';
+import Section from '../../../components/Section.astro';
+import SectionHeader from '../../../components/SectionHeader.astro';
+import Tabs, { type TabItem } from '../../../components/Tabs.astro';
+import { type InlineMetaItem } from '../../../components/InlineMetaList.astro';
+import { getAbilityById, listAbilities } from '../../../lib/content/abilities';
+import { getCharacterById } from '../../../lib/content/characters';
+import { formatEntityId } from '../../../lib/format';
+import { languages } from '../../../i18n/ui';
+import { useTranslations } from '../../../i18n/utils';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+export async function getStaticPaths() {
+  const abilities = await listAbilities();
+  const paths = [];
+  for (const lang of Object.keys(languages)) {
+    for (const ability of abilities) {
+      paths.push({ params: { lang, id: ability.id } });
+    }
+  }
+  return paths;
+}
+
+const { lang, id } = Astro.params;
+const t = useTranslations(lang as any);
+const abilityId = typeof id === 'string' ? id : null;
+const ability = abilityId ? await getAbilityById(abilityId) : null;
+const title = ability ? ability.name : t('ability.not_found');
+
+const parseCharacterRef = (value: string): string | null => {
+  const prefix = 'character:';
+  if (!value.startsWith(prefix)) {
+    return null;
+  }
+  const separator = value.indexOf(':');
+  if (separator !== value.lastIndexOf(':')) {
+    return null;
+  }
+  const parsedId = value.slice(prefix.length);
+  return parsedId.length > 0 ? parsedId : null;
+};
+
+const ownerId = ability ? parseCharacterRef(ability.relatedCharacter) : null;
+const ownerCharacter = ownerId ? await getCharacterById(ownerId) : null;
+
+const breadcrumbs: BreadcrumbItem[] = ability
+  ? [
+      { label: t('nav.home'), href: getRelativeLocaleUrl(lang as any, '/') },
+      { label: t('nav.abilities'), href: getRelativeLocaleUrl(lang as any, '/abilities') },
+      { label: ability.name, current: true },
+    ]
+  : [
+      { label: t('nav.home'), href: getRelativeLocaleUrl(lang as any, '/') },
+      { label: t('nav.abilities'), href: getRelativeLocaleUrl(lang as any, '/abilities') },
+      { label: t('ability.not_found'), current: true },
+    ];
+
+const abilityMeta: InlineMetaItem[] = ability
+  ? [{ label: 'ID', value: `#${ability.id}` }]
+  : [];
+
+const dataItems: DataPanelItem[] = [];
+
+if (ability) {
+  dataItems.push({
+    label: t('ui.owner'),
+    value: ownerCharacter?.name ?? formatEntityId(ownerId ?? ability.relatedCharacter),
+    href: ownerCharacter
+      ? getRelativeLocaleUrl(lang as any, `/characters/${ownerCharacter.id}`)
+      : undefined,
+    icon: 'person',
+  });
+}
+
+const tabItems: TabItem[] = [
+  { id: 'info', label: t('ui.description'), icon: 'description' },
+];
+---
+
+<BaseLayout title={title} lang={lang as any} pageClass="page--ability">
+  {ability ? (
+    <div class="ability-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <CharacterHero
+        name={ability.name}
+        meta={abilityMeta}
+        imageUrl={ability.image ?? undefined}
+      />
+      <div class:list={['ability-page__grid', { '!grid-cols-1': dataItems.length === 0 }]}>
+        {dataItems.length > 0 && (
+          <aside class="ability-page__sidebar">
+            <DataPanel title={t('ui.ability_data')} items={dataItems} />
+          </aside>
+        )}
+        <div class="ability-page__content">
+          <Tabs items={tabItems} defaultTab="info">
+            <div data-tab-panel="info" class="animate-fadeIn">
+              <Section>
+                <SectionHeader title={t('ui.description')} showDivider />
+                <MarkdownDescription content={ability.body} />
+              </Section>
+            </div>
+          </Tabs>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div class="ability-page">
+      <Breadcrumbs items={breadcrumbs} />
+      <Section>
+        <p>{t('ability.not_found')}</p>
+        <p>
+          <a href={getRelativeLocaleUrl(lang as any, '/abilities')}>
+            {t('ability.back_to_list')}
+          </a>
+        </p>
+      </Section>
+    </div>
+  )}
+</BaseLayout>
+
+<style>
+  .ability-page__grid {
+    display: grid;
+    grid-template-columns: minmax(15rem, 20rem) minmax(0, 1fr);
+    gap: var(--space-6);
+  }
+
+  .ability-page__sidebar {
+    align-self: start;
+  }
+
+  @media (max-width: 900px) {
+    .ability-page__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
