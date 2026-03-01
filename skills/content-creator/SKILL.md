@@ -1,7 +1,7 @@
 ---
 name: content-creator
 description: >
-  Handles creation and modification of lore entities (characters, events, places, planets, elements, mechanics, cards) 
+  Handles creation and modification of lore entities (abilities, characters, events, places, planets, elements, mechanics, cards, objects) 
   ensuring compliance with AGENTS-LORE.md and project conventions.
   Trigger: When asked to create, edit, or extend lore content/entities.
 license: Apache-2.0
@@ -15,7 +15,7 @@ metadata:
 ## When to Use
 
 Use this skill when:
-- Creating a new entity: Character, Event, Place, Planet, Element, Mechanic, or Card.
+- Creating a new entity: Ability, Character, Event, Place, Planet, Element, Mechanic, Card, or Object.
 - Modifying existing lore to add depth or resolve inconsistencies.
 - Expanding the world building of the project.
 
@@ -35,6 +35,7 @@ Before writing a single line of lore, you **MUST** read:
 
 ### 3. Technical Compliance
 - **Supported Types**:
+  - `ability` (Character-linked abilities)
   - `character` (People, NPCs)
   - `event` (History, timeline)
   - `place` (Specific locations)
@@ -42,6 +43,7 @@ Before writing a single line of lore, you **MUST** read:
   - `element` (Magic, matter)
   - `mechanic` (Game rules, laws of physics)
   - `card` (Items, abilities)
+  - `object` (Equipment with effects/stats)
 - Use the correct template from `templates/`.
 - Maintain `kebab-case` for IDs.
 - Keep frontmatter strictly technical; narrative belongs in the body.
@@ -51,7 +53,8 @@ Before writing a single line of lore, you **MUST** read:
 1. **Investigate**: Search `content/` for relevant context.
 2. **Contextualize**: Read `AGENTS-LORE.md`.
 3. **Draft**: Create the file using the appropriate template.
-4. **Validate**: Run `pnpm wiki:check` to validate lore and `pnpm verify` for general quality.
+4. **Schema/Docs Sync (when entity structure changed)**: If you created a new type or changed fields/validation, update `packages/lore-linter/LORE_SCHEMA.md`, `AGENTS-LORE.md`, and `skills/content-creator/SKILL.md`.
+5. **Validate**: Run `pnpm wiki:check` to validate lore and `pnpm verify` for general quality.
 
 ## Code Examples
 
@@ -83,6 +86,7 @@ pnpm verify
 - [ ] Read `AGENTS-LORE.md` and related entities in `content/`.
 - [ ] Verified consistency (chronology, relationships, tone).
 - [ ] Used correct template and technical schema (`LORE_SCHEMA.md`).
+- [ ] If entity schema changed, updated `packages/lore-linter/LORE_SCHEMA.md`, `AGENTS-LORE.md`, and this skill accordingly.
 - [ ] IDs follow `kebab-case`.
 - [ ] Ran `pnpm wiki:check` and `pnpm verify` successfully.
 

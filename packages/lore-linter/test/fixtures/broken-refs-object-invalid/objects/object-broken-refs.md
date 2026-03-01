@@ -6,6 +6,7 @@ shares_effect_with:
   - character:does-not-exist
 boosts:
   - mechanic:missing-mechanic
+  - ability:missing-ability
 ---
 
 Object references missing entities.

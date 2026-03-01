@@ -35,15 +35,18 @@ Use this skill when:
 - **LORE_SCHEMA.md**: Document the new field/change.
 - **Templates**: Update the corresponding template in `templates/`.
 - **Content Migration**: Check if existing entities need manual updates to pass validation.
+- **Lore/Skill Docs**: If schema semantics changed, update `AGENTS-LORE.md` and `skills/content-creator/SKILL.md`.
+- **Skill Sync**: If any skill file changed, run `bash ./skills/skill-sync/assets/sync.sh`.
 
 ## Workflow
 
 1.  **Analyze**: Identify the type and fields to be modified. Check how many existing entities are affected.
 2.  **Test**: Add failing test cases to `tests/lore-linter-schema.spec.ts`.
 3.  **Implement**: Modify `packages/lore-linter/src/schema-validation.ts`.
-4.  **Update Docs**: Reflect changes in `packages/lore-linter/LORE_SCHEMA.md` and `templates/`.
-5.  **Migrate**: Update existing `.md` files in `content/` if necessary.
-6.  **Verify**: Run `pnpm wiki:check` and `pnpm verify`.
+4.  **Update Docs**: Reflect changes in `packages/lore-linter/LORE_SCHEMA.md`, `templates/`, and (if behavior changed) `AGENTS-LORE.md` + `skills/content-creator/SKILL.md`.
+5.  **Sync Skills**: Run `bash ./skills/skill-sync/assets/sync.sh` when skill docs were modified.
+6.  **Migrate**: Update existing `.md` files in `content/` if necessary.
+7.  **Verify**: Run `pnpm wiki:check` and `pnpm verify`.
 
 ## Code Examples
 
@@ -84,6 +87,9 @@ pnpm verify
 - [ ] Updated `packages/lore-linter/src/schema-validation.ts`.
 - [ ] Updated `packages/lore-linter/LORE_SCHEMA.md`.
 - [ ] Updated `templates/[type].md`.
+- [ ] Updated `AGENTS-LORE.md` when lore-authoring rules changed.
+- [ ] Updated `skills/content-creator/SKILL.md` when supported fields/types changed.
+- [ ] Ran `bash ./skills/skill-sync/assets/sync.sh` after skill edits.
 - [ ] Verified/Migrated existing content in `content/`.
 - [ ] Ran `pnpm verify` and all checks pass.
 

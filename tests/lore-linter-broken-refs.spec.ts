@@ -33,6 +33,12 @@ describe('lore-linter broken references', () => {
 
     const expected: BrokenReference[] = [
       {
+        type: 'ability',
+        id: 'broken-related-character',
+        field: 'related_character',
+        reference: 'character:missing-character',
+      },
+      {
         type: 'character',
         id: 'broken-affinity',
         field: 'affinity',

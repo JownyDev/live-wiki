@@ -28,6 +28,22 @@
 
 ---
 
+## ✨ Ability (`type: ability`)
+
+### Campos Obligatorios
+| Campo | UI Component / Visualización | Notas |
+|-------|------------------------------|-------|
+| `id` | URL slug `/abilities/:id` | Debe ser kebab-case. |
+| `name` | **Header** | Nombre visible de la habilidad. |
+| `related_character` | **DataPanel** (`Owner`) | Referencia obligatoria `character:*` para indicar el portador. |
+
+### Campos Opcionales
+| Campo | UI Component / Visualización | Notas |
+|-------|------------------------------|-------|
+| `image` | **CharacterHero** | Imagen de cabecera de la habilidad. |
+
+---
+
 ## 🗓️ Event (`type: event`)
 
 ### Campos Obligatorios
@@ -85,6 +101,12 @@
 |-------|------------------------------|-------|
 | `id` | URL slug | |
 | `name` | **Header** | |
+| `difficulty` | **DataPanel / body** (según vista) | Nivel de complejidad obligatorio para validación. |
+
+### Campos Opcionales
+| Campo | UI Component / Visualización | Notas |
+|-------|------------------------------|-------|
+| `related_elements` | **DataPanel** | Lista de refs `element:*` relacionadas con la mecánica. |
 
 ---
 
@@ -101,3 +123,24 @@
 | Campo | UI Component / Visualización | Notas |
 |-------|------------------------------|-------|
 | `represents` | **EntityLink** ("Invocación") | Link a la entidad (personaje/evento) que la carta invoca. |
+
+---
+
+## 🧱 Object (`type: object`)
+
+### Campos Obligatorios
+| Campo | UI Component / Visualización | Notas |
+|-------|------------------------------|-------|
+| `id` | URL slug `/objects/:id` | Debe ser kebab-case. |
+| `name` | **Header** | Nombre visible del objeto. |
+| `rarity` | **DataPanel** | Rareza mostrada en ficha. |
+| `slot` | **DataPanel** | Valor permitido: `helmet`, `shoulders`, `gloves`, `pants`, `boots`. |
+| `effect_description` | **Descripción destacada** | Texto corto del efecto principal. |
+| `shares_effect_with` | **RelationList** | Array de referencias tipadas (`type:id`) existentes. |
+| `boosts` | **RelationList** | Array de referencias tipadas (`type:id`) existentes. |
+
+### Campos Opcionales
+| Campo | UI Component / Visualización | Notas |
+|-------|------------------------------|-------|
+| `stats` | **ObjectStatsGrid** | Mapa opcional con `attack`, `defense`, `cdr`, `max_hp`, cada uno `{min,max}` con `min <= max`. |
+| `image` | **CharacterHero** | Imagen de portada del objeto. |

@@ -16,6 +16,11 @@ Antes de realizar cualquier acción o modificación, **analiza siempre** si exis
 
 Usa estas skills para instrucciones y flujos detallados cuando apliquen.
 
+### Nota de Setup (obligatoria)
+
+Cuando ejecutes scripts de setup de skills (`./skills/setup.sh`), **usa siempre `--all` por defecto**.
+Solo omite `--all` si el usuario indica explícitamente un scope distinto.
+
 ### Skills del proyecto
 
 | Skill | Description | URL |

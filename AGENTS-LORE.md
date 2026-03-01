@@ -25,6 +25,8 @@ Aplicar estas reglas cuando se cree o modifique cualquier entidad del lore:
 - `type: element`
 - `type: mechanic`
 - `type: card`
+- `type: ability`
+- `type: object`
 - relaciones (`related_*`, refs)
 - cualquier otro `type:*` del universo
 
@@ -125,6 +127,23 @@ Aunque sea fantasía, el lector debe pensar: “esto podría pasar aquí”.
 - Representan cartas jugables o habilidades encapsuladas.
 - Requiere `elements` (array de 2 refs a `element:*`) y `represents` (refs a character, place, event, etc.).
 - Descripción clara del efecto o la representación simbólica.
+
+### ✨ Abilities (`type: ability`)
+
+**Obligatorio:** `id`, `name`, `related_character`.
+
+- Representan habilidades concretas asociadas a un personaje.
+- `related_character` debe apuntar a `character:*` y actúa como dueño de la habilidad.
+- Mantén la descripción breve y orientada a gameplay/narrativa (qué hace y coste/limitación si aplica).
+
+### 🧱 Objects (`type: object`)
+
+**Obligatorio:** `id`, `name`, `rarity`, `slot`, `effect_description`, `shares_effect_with`, `boosts`.
+
+- Representan equipo con efectos y estadísticas.
+- `slot` debe ser válido (`helmet`, `shoulders`, `gloves`, `pants`, `boots`).
+- `shares_effect_with` y `boosts` deben usar referencias tipadas existentes (`type:id`).
+- Si usas `stats`, respeta estructura `{ min, max }` con `min <= max`.
 
 ---
 
@@ -279,4 +298,3 @@ Para mantener la consistencia en `memory_profile` y sistemas de búsqueda, usa e
 - `family`
 - `mentor` / `student`
 - `superior` / `subordinate`
-

@@ -40,6 +40,12 @@ describe("lore-linter object broken references", () => {
         field: "boosts",
         reference: "mechanic:missing-mechanic",
       },
+      {
+        type: "object",
+        id: "object-broken-refs",
+        field: "boosts",
+        reference: "ability:missing-ability",
+      },
     ];
 
     expect(sortBrokenRefs(report.brokenReferences)).toEqual(

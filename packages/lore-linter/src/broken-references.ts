@@ -20,6 +20,7 @@ export type BrokenReference = {
 
 /** Indices de ids existentes por tipo para validar referencias. */
 export type ReferenceIndex = {
+  abilities: Set<string>;
   characters: Set<string>;
   places: Set<string>;
   planets: Set<string>;
@@ -90,6 +91,8 @@ const getReferenceSet = (
   switch (type) {
     case "character":
       return index.characters;
+    case "ability":
+      return index.abilities;
     case "place":
       return index.places;
     case "planet":
@@ -339,6 +342,7 @@ const collectReferenceCandidates = (doc: LoreDoc): ReferenceCandidate[] => {
  */
 export const buildReferenceIndex = (docs: LoreDoc[]): ReferenceIndex => {
   const index: ReferenceIndex = {
+    abilities: new Set<string>(),
     characters: new Set<string>(),
     places: new Set<string>(),
     planets: new Set<string>(),
@@ -352,6 +356,9 @@ export const buildReferenceIndex = (docs: LoreDoc[]): ReferenceIndex => {
   for (const doc of docs) {
     if (doc.type === "character") {
       index.characters.add(doc.id);
+    }
+    if (doc.type === "ability") {
+      index.abilities.add(doc.id);
     }
     if (doc.type === "place") {
       index.places.add(doc.id);

@@ -36,14 +36,15 @@ Use this skill when:
 *   **AGENTS-LORE.md:** Add a subsection in "Reglas de coherencia por tipo" explaining *how* to write this entity.
 *   **Content Creator:** Update `skills/content-creator/SKILL.md` to include the new type in supported lists.
 *   **Template:** Create a new template in `templates/[type].md`.
+*   **Skill Sync:** If any skill file changed, run `bash ./skills/skill-sync/assets/sync.sh`.
 
 ## Workflow
 
 1.  **Plan**: Define the fields (required/optional) and relationships.
 2.  **Test**: Create `tests/fixtures/schema-newtype-invalid` and `schema-newtype-valid`. Add test to `lore-linter-schema.spec.ts`.
 3.  **Implement**: Modify `schema-validation.ts`.
-4.  **Document**: Update `LORE_SCHEMA.md` and `AGENTS-LORE.md`.
-5.  **Enable**: Update `skills/content-creator/SKILL.md`.
+4.  **Document**: Update `packages/lore-linter/LORE_SCHEMA.md` and `AGENTS-LORE.md`.
+5.  **Enable**: Update `skills/content-creator/SKILL.md` and run `bash ./skills/skill-sync/assets/sync.sh`.
 6.  **Verify**: Run `pnpm verify` and `pnpm wiki:check`.
 
 ## Code Examples
@@ -93,10 +94,10 @@ pnpm verify
 - [ ] Updated `packages/lore-linter/LORE_SCHEMA.md`.
 - [ ] Updated `AGENTS-LORE.md`.
 - [ ] Updated `skills/content-creator/SKILL.md`.
+- [ ] Ran `bash ./skills/skill-sync/assets/sync.sh` after skill edits.
 - [ ] Ran `pnpm verify`.
 
 ## Resources
 
 - **Linter Source**: `packages/lore-linter/src/schema-validation.ts`
 - **Tests**: `tests/lore-linter-schema.spec.ts`
-
